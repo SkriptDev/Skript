@@ -91,10 +91,10 @@ skript command:
 		scripts: all scripts
 		main config: the main configuration
 		aliases: the aliases
-		script: <gold>%s<reset>
-		scripts in folder: all scripts in <gold>%s<reset>
-		x scripts in folder: <gold>%2$s <reset>script¦¦s¦ in <gold>%1$s<reset>
-		empty folder: <gold>%s<reset>r does not contain any enabled scripts.
+		script: <aqua>%s<reset>
+		scripts in folder: all scripts in <aqua>%s<reset>
+		x scripts in folder: <gold>%2$s <reset>script¦¦s¦ in <aqua>%1$s<reset>
+		empty folder: <aqua>%s<reset>r does not contain any enabled scripts.
 	enable:
 		all:
 			enabling: Enabling all disabled scripts...
@@ -135,11 +135,13 @@ skript command:
 			title: <bold><cyan>%s<reset> (%s)
 			next page: <grey>page %s of %s. Type <gold>/skript update changes %s<gray> for the next page (hint: use the up arrow key)
 	info:
-		aliases: Skript's aliases can be found here: <aqua>https://github.com/SkriptLang/skript-aliases
-		documentation: Skript's documentation can be found here: <aqua>https://skriptlang.github.io/Skript
-		version: Skript Version: <aqua>%s
-		server: Server Version: <aqua>%s
+		aliases: Skript's aliases can be found here: <light aqua>https://github.com/SkriptLang/skript-aliases
+		documentation: Skript's documentation can be found here: <light aqua>https://skriptlang.github.io/Skript
+		version: Skript Version: <light aqua>%s
+		server: Server Version: <light aqua>%s
 		addons: Installed Skript Addons:
+		addon: <lime><bold>%s <reset>[<magenta>v%s<reset>]
+		website: <reset> (<light aqua>%s<reset>)
 
 # -- Updater --
 updater:

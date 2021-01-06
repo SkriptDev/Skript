@@ -80,7 +80,7 @@ public class SkriptCommand implements CommandExecutor {
 	
 	// TODO /skript scripts show/list - lists all enabled and/or disabled scripts in the scripts folder and/or subfolders (maybe add a pattern [using * and **])
 	// TODO document this command on the website
-	private final static CommandHelp skriptCommandHelp = new CommandHelp("<gray>/<gold>skript", SkriptColor.LIGHT_CYAN, NODE + ".help")
+	private final static CommandHelp skriptCommandHelp = new CommandHelp("<gray>/<aqua>skript", SkriptColor.LIGHT_CYAN, NODE + ".help")
 			.add(new CommandHelp("reload", SkriptColor.DARK_RED)
 					.add("all")
 					.add("config")
@@ -332,8 +332,10 @@ public class SkriptCommand implements CommandExecutor {
 				info(sender, "info.addons");
 				for (SkriptAddon addon : Skript.getAddons()) {
 					PluginDescriptionFile desc = addon.plugin.getDescription();
-					String web = desc.getWebsite();
-					Skript.info(sender, " - " + desc.getFullName() + (web != null ? " (" + web + ")" : ""));
+					String website = desc.getWebsite();
+					String name = String.format(Language.get(NODE + ".info.addon"), desc.getName(), desc.getVersion());
+					String web = website != null ? String.format(Language.get(NODE + ".info.website"), website) : "";
+					Skript.info(sender, " - " + name + web);
 				}
 			} else if (args[0].equalsIgnoreCase("help")) {
 				skriptCommandHelp.showHelp(sender);
