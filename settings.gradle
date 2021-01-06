@@ -1,2 +1,3 @@
 rootProject.name = 'Skript'
 include 'skript-worldguard6'
+include 'skript-aliases'
