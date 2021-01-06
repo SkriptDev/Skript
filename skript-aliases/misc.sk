@@ -1,0 +1,18 @@
+misc:
+	book with text = writable book, written book
+
+	any helmet = chainmail helmet, iron helmet, golden helmet, diamond helmet
+	any chestplate = chainmail chestplate, iron chestplate, golden chestplate, diamond chestplate
+	any leggings = chainmail leggings, iron leggings, golden leggings, diamond leggings
+	any boots = chainmail boots, iron boots, golden boots, diamond boots
+	any armor = any helmet, any chestplate, any leggings, any boots
+	any horse armor = golden horse armor, iron horse armor, diamond horse armor
+
+misc 116:
+	minecraft version = 1.16 or newer
+	any helmet = any helmet, netherite helmet
+	any chestplate = any chestplate, netherite chestplate
+	any leggings = any leggings, netherite leggings
+	any boots = any boots, netherite boots
+	any armor = any helmet, any chestplate, any leggings, any boots
+	any horse armor = any horse armor, leather horse armor

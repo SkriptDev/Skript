@@ -1,0 +1,69 @@
+potions:
+	{potion types}:
+		{default} = - # Match all potions
+
+		night vision = - {"Potion": "minecraft:night_vision"}
+		long night vision = - {"Potion": "minecraft:long_night_vision"}
+
+		invisibility = - {"Potion": "minecraft:invisibility"}
+		long invisibility = - {"Potion": "minecraft:long_invisibility"}
+
+		leaping = - {"Potion": "minecraft:leaping"}
+		long leaping = - {"Potion": "minecraft:long_leaping"}
+		strong leaping = - {"Potion": "minecraft:strong_leaping"}
+
+		fire resistance = - {"Potion": "minecraft:fire_resistance"}
+		long fire resistance = - {"Potion": "minecraft:long_fire_resistance"}
+
+		swiftness = - {"Potion": "minecraft:swiftness"}
+		long swiftness = - {"Potion": "minecraft:long_swiftness"}
+		strong swiftness = - {"Potion": "minecraft:strong_swiftness"}
+
+		slowness = - {"Potion": "minecraft:slowness"}
+		long slowness = - {"Potion": "minecraft:long_slowness"}
+		strong slowness = - {"Potion": "minecraft:strong_slowness"}
+
+		turtle master = - {"Potion": "minecraft:turtle_master"}
+		long turtle master = - {"Potion": "minecraft:long_turtle_master"}
+		strong turtle master = - {"Potion": "minecraft:strong_turtle_master"}
+
+		water breathing = - {"Potion": "minecraft:water_breathing"}
+		long water breathing = - {"Potion": "minecraft:long_water_breathing"}
+
+		healing = - {"Potion": "minecraft:healing"}
+		strong healing = - {"Potion": "minecraft:strong_healing"}
+
+		harming = - {"Potion": "minecraft:harming"}
+		strong harming = - {"Potion": "minecraft:strong_harming"}
+
+		poison = - {"Potion": "minecraft:poison"}
+		long poison = - {"Potion": "minecraft:long_poison"}
+		strong poison = - {"Potion": "minecraft:strong_poison"}
+
+		regeneration = - {"Potion": "minecraft:regeneration"}
+		long regeneration = - {"Potion": "minecraft:long_regeneration"}
+		strong regeneration = - {"Potion": "minecraft:strong_regeneration"}
+
+		strength = - {"Potion": "minecraft:strength"}
+		long strength = - {"Potion": "minecraft:long_strength"}
+		strong strength = - {"Potion": "minecraft:strong_strength"}
+
+		weakness = - {"Potion": "minecraft:weakness"}
+		long weakness = - {"Potion": "minecraft:long_weakness"}
+
+		slow falling = - {"Potion": "minecraft:slow_falling"}
+		long slow falling = - {"Potion": "minecraft:long_slow_falling"}
+
+		luck = - {"Potion": "minecraft:luck"}
+
+	potion of {potion types} = minecraft:potion
+	splash potion of {potion types} = minecraft:splash_potion
+	lingering potion of {potion types} = minecraft:lingering_potion
+
+	water bottle = minecraft:potion {"Potion": "minecraft:water"}
+	thick potion = minecraft:potion {"Potion": "minecraft:thick"}
+	mundane potion = minecraft:potion {"Potion": "minecraft:mundane"}
+	awkward potion = minecraft:potion {"Potion": "minecraft:awkward"}
+
+	tipped arrow of {potion types} = minecraft:tipped_arrow
+
