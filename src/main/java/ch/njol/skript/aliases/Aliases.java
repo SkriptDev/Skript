@@ -239,13 +239,19 @@ public abstract class Aliases {
 	 * <p>
 	 * Prints errors.
 	 * 
-	 * @param s
+	 * @param s String to parse as ItemType
 	 * @return The parsed ItemType or null if the input is invalid.
 	 */
 	@Nullable
 	public static ItemType parseItemType(String s) {
 		if (s.isEmpty())
 			return null;
+		if (s.contains("_")) {
+			s = s.replace("_", " ");
+		}
+		if (s.contains("minecraft:")) {
+			s = s.replace("minecraft:", "");
+		}
 		s = "" + s.trim();
 		
 		final ItemType t = new ItemType();
