@@ -46,7 +46,6 @@ import com.destroystokyo.paper.block.BlockSoundGroup;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.bukkitutil.block.BlockCompat;
-import ch.njol.skript.bukkitutil.block.MagicBlockCompat;
 
 /**
  * A block that gets all data from the world, but either delays
@@ -101,10 +100,6 @@ public class DelayedChangeBlock implements Block {
 	@Override
 	public byte getData() {
 		return b.getData();
-	}
-	
-	public void setData(byte data) throws Throwable {
-		MagicBlockCompat.setDataMethod.invokeExact(b, data);
 	}
 	
 	@Override

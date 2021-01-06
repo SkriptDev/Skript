@@ -1,18 +1,18 @@
 /**
- *   This file is part of Skript.
+ * This file is part of Skript.
  *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * Skript is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * Skript is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with Skript.  If not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright Peter Güttinger, SkriptLang team and contributors
  */
@@ -23,13 +23,9 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
-import org.bukkit.material.Directional;
-import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.Nullable;
 
-import ch.njol.skript.Skript;
-import ch.njol.skript.bukkitutil.block.MagicBlockCompat;
 import ch.njol.skript.classes.Changer.ChangeMode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -48,12 +44,10 @@ import ch.njol.util.coll.CollectionUtils;
 @Name("Facing")
 @Description("The facing of an entity or block, i.e. exactly north, south, east, west, up or down (unlike <a href='#ExprDirection'>direction</a> which is the exact direction, e.g. '0.5 south and 0.7 east')")
 @Examples({"# makes a bridge",
-		"loop blocks from the block below the player in the horizontal facing of the player:",
-		"\tset loop-block to cobblestone"})
+	"loop blocks from the block below the player in the horizontal facing of the player:",
+	"\tset loop-block to cobblestone"})
 @Since("1.4")
 public class ExprFacing extends SimplePropertyExpression<Object, Direction> {
-	
-	private static final boolean useBlockData = Skript.isRunningMinecraft(1, 13);
 	
 	static {
 		register(ExprFacing.class, Direction.class, "(1¦horizontal|) facing", "livingentities/blocks");
@@ -72,15 +66,9 @@ public class ExprFacing extends SimplePropertyExpression<Object, Direction> {
 	@Nullable
 	public Direction convert(final Object o) {
 		if (o instanceof Block) {
-			if (useBlockData) {
-				BlockData data = ((Block) o).getBlockData();
-				if (data instanceof org.bukkit.block.data.Directional) {
-					return new Direction(((org.bukkit.block.data.Directional) data).getFacing(), 1);
-				}
-			} else {
-				final MaterialData d = ((Block) o).getType().getNewData(((Block) o).getData());
-				if (d instanceof Directional)
-					return new Direction(((Directional) d).getFacing(), 1);
+			BlockData data = ((Block) o).getBlockData();
+			if (data instanceof org.bukkit.block.data.Directional) {
+				return new Direction(((org.bukkit.block.data.Directional) data).getFacing(), 1);
 			}
 			return null;
 		} else if (o instanceof LivingEntity) {
@@ -119,23 +107,12 @@ public class ExprFacing extends SimplePropertyExpression<Object, Direction> {
 		final Block b = (Block) getExpr().getSingle(e);
 		if (b == null)
 			return;
-		if (useBlockData) {
-			BlockData data = b.getBlockData();
-			if (data instanceof org.bukkit.block.data.Directional) {
-				((org.bukkit.block.data.Directional) data).setFacing(toBlockFace(((Direction) delta[0]).getDirection(b)));
-				b.setBlockData(data, false);
-			}
-		} else {
-			final MaterialData d = b.getType().getNewData(b.getData());
-			if (!(d instanceof Directional))
-				return;
-			((Directional) d).setFacingDirection(toBlockFace(((Direction) delta[0]).getDirection(b)));
-			try { // Quick and dirty fix for getting pre-1.13 setData(byte)
-				MagicBlockCompat.setDataMethod.invokeExact(b, d.getData());
-			} catch (Throwable ex) {
-				Skript.exception(ex);
-			}
+		BlockData data = b.getBlockData();
+		if (data instanceof org.bukkit.block.data.Directional) {
+			((org.bukkit.block.data.Directional) data).setFacing(toBlockFace(((Direction) delta[0]).getDirection(b)));
+			b.setBlockData(data, false);
 		}
+		
 	}
 	
 	private static BlockFace toBlockFace(final Vector dir) {
