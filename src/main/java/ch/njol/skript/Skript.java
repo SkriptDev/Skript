@@ -249,10 +249,11 @@ public final class Skript extends JavaPlugin implements Listener {
 		Skript.debug("Loading for Minecraft " + minecraftVersion);
 		
 		// Check that MC version is supported
-		if (!isRunningMinecraft(1, 9)) {
-			// Prevent loading when not running at least Minecraft 1.9
-			Skript.error("This version of Skript does not work with Minecraft " + minecraftVersion + " and requires Minecraft 1.9.4+");
-			Skript.error("You probably want Skript 2.2 or 2.1 (Google to find where to get them)");
+		// We require 1.13+
+		if (!isRunningMinecraft(1, 13)) {
+			// Prevent loading when not running at least Minecraft 1.13
+			Skript.error("This version of Skript does not work with Minecraft " + minecraftVersion + " and requires Minecraft 1.13.2+");
+			Skript.error("You probably want Skript 2.2.x-2.5.x (Google to find where to get them)");
 			Skript.error("Note that those versions are, of course, completely unsupported!");
 			return false;
 		}
