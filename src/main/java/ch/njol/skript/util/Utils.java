@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -38,7 +39,7 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.Nullable;
 
-import net.md_5.bungee.api.ChatColor;
+
 
 import com.google.common.collect.Iterables;
 import com.google.common.io.ByteArrayDataInput;
@@ -526,7 +527,7 @@ public abstract class Utils {
 				if (f != null)
 					return f;
 				if (HEX_SUPPORTED && tag.startsWith("#")) { // Check for parsing hex colors
-					ChatColor chatColor = parseHexColor(tag);
+					net.md_5.bungee.api.ChatColor chatColor = parseHexColor(tag);
 					if (chatColor != null)
 						return chatColor.toString();
 				}
@@ -564,7 +565,7 @@ public abstract class Utils {
 				if (f != null)
 					return f;
 				if (HEX_SUPPORTED && tag.startsWith("#")) { // Check for parsing hex colors
-					ChatColor chatColor = parseHexColor(tag);
+					net.md_5.bungee.api.ChatColor chatColor = parseHexColor(tag);
 					if (chatColor != null)
 						return chatColor.toString();
 				}
@@ -588,12 +589,12 @@ public abstract class Utils {
 	 */
 	@SuppressWarnings("null")
 	@Nullable
-	public static ChatColor parseHexColor(String hex) {
+	public static net.md_5.bungee.api.ChatColor parseHexColor(String hex) {
 		hex = hex.replace("#", "");
 		if (hex.length() < 6)
 			return null;
 		try {
-			return ChatColor.of('#' + hex.substring(0, 6));
+			return net.md_5.bungee.api.ChatColor.of('#' + hex.substring(0, 6));
 		} catch (IllegalArgumentException e) {
 			return null;
 		}
