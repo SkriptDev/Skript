@@ -8,7 +8,7 @@ test "potion effects":
 
 	assert type of potion effects of {_e} contains speed with "the sheep should have had the speed potion type"
 
-	set {_i} to potion of speed
+	set {_i} to potion of swiftness
 	assert type of potion effects of {_i} contains speed with "the item should have had the speed potion type"
 
 	set {_i} to potion of slowness
