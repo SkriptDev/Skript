@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -393,10 +394,31 @@ public abstract class Aliases {
 	public static void load() {
 		try {
 			long start = System.currentTimeMillis();
+			// Load aliases from Materials before loading from alias file
+			loadMaterials();
+			Skript.info("Loaded " + provider.getAliasCount() + " material based aliases in " + (System.currentTimeMillis() - start) + "ms");
 			loadInternal();
-			Skript.info("Loaded " + provider.getAliasCount() + " aliases in " + (System.currentTimeMillis() - start) + "ms");
+			Skript.info("Loaded " + provider.getAliasCount() + " total aliases in " + (System.currentTimeMillis() - start) + "ms");
 		} catch (IOException e) {
 			Skript.exception(e);
+		}
+	}
+	
+	/**
+	 * Load dynamic aliases from {@link Material Materials}
+	 */
+	private static void loadMaterials() {
+		for (Material material : Material.values()) {
+			String string = material.toString().toLowerCase(Locale.ROOT);
+			// Skip legacy materials
+			// It seems Bukkit magically skips these anyways?!?!
+			// but we're leave this here for safety
+			if (material.isLegacy()) {
+				continue;
+			}
+			
+			String name = string.replace("_" , " ");
+			parser.loadAlias(name, "minecraft:" + string);
 		}
 	}
 	
@@ -555,7 +577,7 @@ public abstract class Aliases {
 				Skript.error("type " + name + " not found");
 				type = new ItemType(); // Return garbage
 			} else {
-				throw new IllegalArgumentException("type " + name + " not found");
+				throw new IllegalArgumentException("type '" + name + "' not found");
 			}
 		}
 		trackedTypes.put(name, type);

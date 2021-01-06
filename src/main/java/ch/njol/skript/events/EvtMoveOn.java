@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
@@ -56,11 +57,6 @@ public class EvtMoveOn extends SelfRegisteringSkriptEvent { // TODO on jump
 				.examples("on walking on dirt or grass:", "on stepping on stone:")
 				.since("2.0");
 	}
-	
-	/**
-	 * Actual fence blocks and fence gates.
-	 */
-	private static final ItemType fencePart = Aliases.javaItemType("fence part");
 	
 	final static HashMap<Material, List<Trigger>> itemTypeTriggers = new HashMap<>();
 	@SuppressWarnings("null")
@@ -110,16 +106,23 @@ public class EvtMoveOn extends SelfRegisteringSkriptEvent { // TODO on jump
 		Block block = l.getWorld().getBlockAt(l.getBlockX(), (int) (Math.ceil(l.getY()) - 1), l.getBlockZ());
 		if (block.getType() == Material.AIR && Math.abs((l.getY() - l.getBlockY()) - 0.5) < Skript.EPSILON) { // Fences
 			block = l.getWorld().getBlockAt(l.getBlockX(), l.getBlockY() - 1, l.getBlockZ());
-			if (!fencePart.isOfType(block))
+			if (!isFencePart(block.getType()))
 				return null;
 		}
 		return block;
 	}
 	
 	final static int getBlockY(final double y, final Material id) {
-		if (fencePart.isOfType(id) && Math.abs((y - Math.floor(y)) - 0.5) < Skript.EPSILON)
+		if (isFencePart(id) && Math.abs((y - Math.floor(y)) - 0.5) < Skript.EPSILON)
 			return (int) Math.floor(y) - 1;
 		return (int) Math.ceil(y) - 1;
+	}
+	
+	private static boolean isFencePart(Material material) {
+		if (Skript.isRunningMinecraft(1, 16)) {
+			return Tag.FENCE_GATES.isTagged(material) || Tag.FENCES.isTagged(material);
+		}
+		return material.toString().contains("FENCE");
 	}
 	
 	public static Block getBlock(final PlayerMoveEvent e) {

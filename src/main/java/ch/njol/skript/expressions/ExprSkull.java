@@ -48,7 +48,7 @@ public class ExprSkull extends SimplePropertyExpression<Object, ItemType> {
 		register(ExprSkull.class, ItemType.class, "(head|skull)", "offlineplayers");
 	}
 	
-	private static final ItemType playerSkull = Aliases.javaItemType("player skull");
+	private static final ItemType playerSkull = Aliases.javaItemType("player head");
 	
 	/**
 	 * In 2017, SkullMeta finally got a method that takes OfflinePlayer.

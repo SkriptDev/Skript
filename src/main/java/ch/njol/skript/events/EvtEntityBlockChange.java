@@ -55,8 +55,6 @@ public class EvtEntityBlockChange extends SkriptEvent {
 				.since("<i>unknown</i>, 2.5.2 (falling block)");
 	}
 	
-	static final ItemType monsterEgg = Aliases.javaItemType("any spawn egg");
-	
 	private static enum ChangeEvent {
 		ENDERMAN_PLACE("enderman place", new Checker<EntityChangeBlockEvent>() {
 			@Override
@@ -79,13 +77,13 @@ public class EvtEntityBlockChange extends SkriptEvent {
 		SILVERFISH_ENTER("silverfish enter", new Checker<EntityChangeBlockEvent>() {
 			@Override
 			public boolean check(final EntityChangeBlockEvent e) {
-				return e.getEntity() instanceof Silverfish && e.getTo() != monsterEgg.getMaterial();
+				return e.getEntity() instanceof Silverfish && e.getTo() != Material.SILVERFISH_SPAWN_EGG;
 			}
 		}),
 		SILVERFISH_EXIT("silverfish exit", new Checker<EntityChangeBlockEvent>() {
 			@Override
 			public boolean check(final EntityChangeBlockEvent e) {
-				return e.getEntity() instanceof Silverfish && e.getTo() != monsterEgg.getMaterial();
+				return e.getEntity() instanceof Silverfish && e.getTo() != Material.SILVERFISH_SPAWN_EGG;
 			}
 		}),
 		FALLING_BLOCK_LANDING("falling block land[ing]", new Checker<EntityChangeBlockEvent>() {

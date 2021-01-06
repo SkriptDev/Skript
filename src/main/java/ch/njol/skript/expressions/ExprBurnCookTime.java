@@ -21,6 +21,7 @@ package ch.njol.skript.expressions;
 import java.util.Arrays;
 import java.util.function.Function;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Furnace;
 import org.bukkit.event.Event;
@@ -62,8 +63,6 @@ public class ExprBurnCookTime extends PropertyExpression<Block, Timespan> {
 				"[the] (burn|1¦cook)[ing] time of %blocks%",
 				"%blocks%'[s] (burn|1¦cook)[ing] time");
 	}
-	
-	static final ItemType anyFurnace = Aliases.javaItemType("any furnace");
 
 	private boolean cookTime;
 	private boolean isEvent;
@@ -87,7 +86,7 @@ public class ExprBurnCookTime extends PropertyExpression<Block, Timespan> {
 			return CollectionUtils.array(Timespan.fromTicks_i(((FurnaceBurnEvent) e).getBurnTime()));
 		else {
 			Timespan[] result = Arrays.stream(source)
-					.filter(block -> anyFurnace.isOfType(block))
+					.filter(ExprBurnCookTime::isFurnace)
 					.map(furnace -> {
 						Furnace state = (Furnace) furnace.getState();
 						return Timespan.fromTicks_i(cookTime ? state.getCookTime() : state.getBurnTime());
@@ -155,7 +154,7 @@ public class ExprBurnCookTime extends PropertyExpression<Block, Timespan> {
 		}
 
 		for (Block block : getExpr().getArray(e)) {
-			if (!anyFurnace.isOfType(block))
+			if (!isFurnace(block))
 				continue;
 			Furnace furnace = (Furnace) block.getState();
 			long time = value.apply(Timespan.fromTicks_i(cookTime ? furnace.getCookTime() : furnace.getBurnTime())).getTicks_i();
@@ -167,5 +166,19 @@ public class ExprBurnCookTime extends PropertyExpression<Block, Timespan> {
 
 			furnace.update();
 		}
+	}
+	
+	public static boolean isFurnace(Block block) {
+		if (Skript.isRunningMinecraft(1, 14)) {
+			switch (block.getType()) {
+				case FURNACE:
+				case BLAST_FURNACE:
+				case SMOKER:
+					return true;
+				default:
+					return false;
+			}
+		}
+		return block.getType() == Material.FURNACE;
 	}
 }

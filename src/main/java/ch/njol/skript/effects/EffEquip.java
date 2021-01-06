@@ -19,6 +19,7 @@
 package ch.njol.skript.effects;
 
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.ChestedHorse;
 import org.bukkit.entity.Horse;
@@ -82,14 +83,13 @@ public class EffEquip extends Effect implements Testable {
 	private static final boolean SUPPORTS_LLAMAS = Skript.classExists("org.bukkit.entity.Llama");
 	private static final boolean SUPPORTS_STEERABLE = Skript.classExists("org.bukkit.entity.Steerable");
 	
-	private static final ItemType HELMET = Aliases.javaItemType("helmet");
-	private static final ItemType CHESTPLATE = Aliases.javaItemType("chestplate");
-	private static final ItemType LEGGINGS = Aliases.javaItemType("leggings");
-	private static final ItemType BOOTS = Aliases.javaItemType("boots");
-	private static final ItemType HORSE_ARMOR = Aliases.javaItemType("horse armor");
+	private static final ItemType HELMET = Aliases.javaItemType("any helmet");
+	private static final ItemType CHESTPLATE = Aliases.javaItemType("any chestplate");
+	private static final ItemType LEGGINGS = Aliases.javaItemType("any leggings");
+	private static final ItemType BOOTS = Aliases.javaItemType("any boots");
+	private static final ItemType HORSE_ARMOR = Aliases.javaItemType("any horse armor");
 	private static final ItemType SADDLE = Aliases.javaItemType("saddle");
 	private static final ItemType CHEST = Aliases.javaItemType("chest");
-	private static final ItemType CARPET = Aliases.javaItemType("carpet");
 	
 	@SuppressWarnings("deprecation")
 	@Override
@@ -114,7 +114,7 @@ public class EffEquip extends Effect implements Testable {
 				LlamaInventory invi = ((Llama) en).getInventory();
 				for (ItemType t : ts) {
 					for (ItemStack item : t.getAll()) {
-						if (CARPET.isOfType(item)) {
+						if (Tag.CARPETS.isTagged(item.getType())) {
 							invi.setDecor(item);
 						} else if (CHEST.isOfType(item)) {
 							((Llama) en).setCarryingChest(true);

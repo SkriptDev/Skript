@@ -162,7 +162,7 @@ public class ExprFurnaceSlot extends PropertyExpression<Block, Slot> {
 			@Override
 			@Nullable
 			public Slot get(final Block b) {
-				if (!ExprBurnCookTime.anyFurnace.isOfType(b))
+				if (!ExprBurnCookTime.isFurnace(b))
 					return null;
 				if (isEvent && getTime() > -1 && !Delay.isDelayed(e)) {
 					FurnaceInventory invi = ((Furnace) b.getState()).getInventory();

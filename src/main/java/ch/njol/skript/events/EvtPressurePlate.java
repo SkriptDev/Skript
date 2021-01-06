@@ -46,8 +46,6 @@ public class EvtPressurePlate extends SkriptEvent {
 				.since("1.0 (pressure plate), 1.4.4 (tripwire)");
 	}
 	
-	private static final ItemType plate = Aliases.javaItemType("pressure plate");
-	
 	private boolean tripwire;
 	
 	@Override
@@ -62,7 +60,7 @@ public class EvtPressurePlate extends SkriptEvent {
 		final Material type = b == null ? null : b.getType();
 		return type != null && ((PlayerInteractEvent) e).getAction() == Action.PHYSICAL &&
 				(tripwire ? (type == Material.TRIPWIRE || type == Material.TRIPWIRE_HOOK)
-						: plate.isOfType(type));
+						: type.toString().contains("PRESSURE"));
 	}
 	
 	@Override

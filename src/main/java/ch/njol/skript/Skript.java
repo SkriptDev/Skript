@@ -289,6 +289,7 @@ public final class Skript extends JavaPlugin implements Listener {
 	
 	@Override
 	public void onEnable() {
+		long start = System.currentTimeMillis();
 		if (disabled) {
 			Skript.error(m_invalid_reload.toString());
 			setEnabled(false);
@@ -600,7 +601,8 @@ public final class Skript extends JavaPlugin implements Listener {
 				
 				ScriptLoader.loadScripts();
 				
-				Skript.info(m_finished_loading.toString());
+				float done = (float)(System.currentTimeMillis() - start) / 1000;
+				Skript.info(String.format(m_finished_loading.toString(), done));
 				
 				EvtSkript.onSkriptStart();
 				

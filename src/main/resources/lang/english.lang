@@ -48,7 +48,7 @@ skript:
 	no scripts: No scripts were found, maybe you should write some ;)
 	no errors: All scripts loaded without errors.
 	scripts loaded: Loaded %s script¦¦s¦ with a total of %s trigger¦¦s¦ and %s command¦¦s¦ in %s
-	finished loading: Finished loading.
+	finished loading: Finished loading in %.2f seconds.
 
 # -- Skript command --
 skript command:

@@ -56,7 +56,7 @@ public class ExprSignText extends SimpleExpression<String> {
 				"[the] line %number% [of %block%]", "[the] (1¦1st|1¦first|2¦2nd|2¦second|3¦3rd|3¦third|4¦4th|4¦fourth) line [of %block%]");
 	}
 	
-	private static final ItemType sign = Aliases.javaItemType("sign");
+	//private static final ItemType sign = Aliases.javaItemType("any sign");
 	
 	@SuppressWarnings("null")
 	private Expression<Number> line;
@@ -99,7 +99,7 @@ public class ExprSignText extends SimpleExpression<String> {
 		final Block b = block.getSingle(e);
 		if (b == null)
 			return new String[0];
-		if (!sign.isOfType(b))
+		if (!isSign(b))
 			return new String[0];
 		return new String[] {((Sign) b.getState()).getLine(line)};
 	}
@@ -143,7 +143,7 @@ public class ExprSignText extends SimpleExpression<String> {
 					break;
 			}
 		} else {
-			if (!sign.isOfType(b))
+			if (!isSign(b))
 				return;
 			final Sign s = (Sign) b.getState();
 			switch (mode) {
@@ -166,6 +166,10 @@ public class ExprSignText extends SimpleExpression<String> {
 				s.update();
 			}
 		}
+	}
+	
+	private static boolean isSign(Block block) {
+		return block.getType().toString().contains("SIGN");
 	}
 	
 	@Override
