@@ -37,8 +37,6 @@ import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.Nullable;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.aliases.Aliases;
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.aliases.MatchQuality;
 
 /**
@@ -109,12 +107,6 @@ public class NewBlockCompat implements BlockCompat {
 	
 	private static class NewBlockSetter implements BlockSetter {
 		
-		private ItemType floorTorch;
-		private ItemType wallTorch;
-		
-		private ItemType specialTorchSides;
-		private ItemType specialTorchFloors;
-		
 		private boolean typesLoaded = false;
 
 		/**
@@ -147,13 +139,13 @@ public class NewBlockCompat implements BlockCompat {
 			 */
 			boolean placed = false;
 			if (rotate) {
-				if (floorTorch.isOfType(type) || (rotateFixType && wallTorch.isOfType(type))) {
+				if (type == Material.TORCH || (rotateFixType && type == Material.WALL_TORCH)) {
 					// If floor torch cannot be placed, try a wall torch
 					Block under = block.getRelative(0, -1, 0);
 					boolean canPlace = true;
 					if (!under.getType().isOccluding()) { // Usually cannot be placed, but there are exceptions
 						// TODO check for stairs and slabs, currently complicated since there is no 'any' alias
-						if (specialTorchFloors.isOfType(under)) {
+						if (isSpecialTorchFloor(under.getType())) {
 							canPlace = true;
 						} else {
 							canPlace = false;
@@ -164,14 +156,14 @@ public class NewBlockCompat implements BlockCompat {
 					if (!canPlace) {
 						BlockFace face = findWallTorchSide(block);
 						if (face != null) { // Found better torch spot
-							block.setType(wallTorch.getMaterial());
+							block.setType(Material.TORCH);
 							Directional data = (Directional) block.getBlockData();
 							data.setFacing(face);
 							block.setBlockData(data, applyPhysics);
 							placed = true;
 						}
 					}
-				} else if (wallTorch.isOfType(type)) {
+				} else if (type == Material.WALL_TORCH) {
 					Directional data;
 					if (ourValues != null)
 						data = (Directional) ourValues.data;
@@ -179,7 +171,7 @@ public class NewBlockCompat implements BlockCompat {
 						data = (Directional) Bukkit.createBlockData(type);
 					
 					Block relative = block.getRelative(data.getFacing());
-					if ((!relative.getType().isOccluding() && !specialTorchSides.isOfType(relative)) || rotateForce) {
+					if ((!relative.getType().isOccluding() && !isSpecialTorchSide(relative.getType())) || rotateForce) {
 						// Attempt to figure out a better rotation
 						BlockFace face = findWallTorchSide(block);
 						if (face != null) { // Found better torch spot
@@ -265,11 +257,6 @@ public class NewBlockCompat implements BlockCompat {
 		}
 		
 		private void loadTypes() {
-			floorTorch = Aliases.javaItemType("floor torch");
-			wallTorch = Aliases.javaItemType("wall torch");
-			
-			specialTorchSides = Aliases.javaItemType("special torch sides");
-			specialTorchFloors = Aliases.javaItemType("special torch floors");
 			
 			typesLoaded = true;
 		}
@@ -279,7 +266,7 @@ public class NewBlockCompat implements BlockCompat {
 			for (BlockFace face : faces) {
 				assert face != null;
 				Block relative = block.getRelative(face);
-				if (relative.getType().isOccluding() || specialTorchSides.isOfType(relative))
+				if (relative.getType().isOccluding() || isSpecialTorchSide(relative.getType()))
 					return face.getOppositeFace(); // Torch can be rotated towards from this face
 			}
 			
@@ -372,6 +359,21 @@ public class NewBlockCompat implements BlockCompat {
 	@Override
 	public boolean isLiquid(Material type) {
 		return type == Material.WATER || type == Material.LAVA;
+	}
+	
+	private static boolean isSpecialTorchSide(Material material) {
+		return material == Material.SOUL_SAND || material == Material.SPAWNER;
+	}
+	
+	private static boolean isSpecialTorchFloor(Material material) {
+		if (isSpecialTorchSide(material)) {
+			return true;
+		}
+		String mat = material.toString();
+		if (mat.contains("FENCE") || material == Material.SNOW || material == Material.HOPPER) {
+			return true;
+		}
+		return mat.contains("STAINED_GLASS") && !mat.contains("PANE");
 	}
 	
 }
