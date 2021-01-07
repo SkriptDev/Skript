@@ -24,7 +24,6 @@ import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Parrot.Variant;
 import org.eclipse.jdt.annotation.Nullable;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 
@@ -35,11 +34,9 @@ public class ParrotData extends EntityData<Parrot> {
 	private static Object[] variants;
 	
 	static {
-		if (Skript.classExists("org.bukkit.entity.Parrot")) {
-			variants = Parrot.Variant.values();
-			EntityData.register(ParrotData.class, "parrot", Parrot.class, 0,
-					"parrot", "red parrot", "blue parrot", "green parrot", "cyan parrot", "gray parrot");
-		}
+		variants = Parrot.Variant.values();
+		EntityData.register(ParrotData.class, "parrot", Parrot.class, 0,
+				"parrot", "red parrot", "blue parrot", "green parrot", "cyan parrot", "gray parrot");
 	}
 	
 	/**

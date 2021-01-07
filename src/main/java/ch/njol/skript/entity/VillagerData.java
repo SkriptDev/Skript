@@ -44,7 +44,6 @@ public class VillagerData extends EntityData<Villager> {
 	 */
 	private static List<Profession> professions;
 	
-	private static final boolean HAS_NITWIT = Skript.isRunningMinecraft(1, 11);
 	static {
 		// professions in order!
 		// NORMAL(-1), FARMER(0), LIBRARIAN(1), PRIEST(2), BLACKSMITH(3), BUTCHER(4), NITWIT(5);
@@ -59,7 +58,7 @@ public class VillagerData extends EntityData<Villager> {
 					"leatherworker", "librarian", "mason", "nitwit",
 					"shepherd", "toolsmith", "weaponsmith");
 			professions = Arrays.asList(Profession.values());
-		} else if (Skript.isRunningMinecraft(1, 10)) { // Post 1.10: Not all professions go for villagers
+		} else { // Post 1.10: Not all professions go for villagers
 			EntityData.register(VillagerData.class, "villager", Villager.class, 0,
 					"normal", "villager", "farmer", "librarian",
 					"priest", "blacksmith", "butcher", "nitwit");
@@ -71,14 +70,6 @@ public class VillagerData extends EntityData<Villager> {
 				if (!prof.toString().equals("NORMAL") && !prof.toString().equals("HUSK"))
 					professions.add(prof);
 			}
-		} else { // Pre 1.10: method Profession#isZombie() doesn't exist
-			EntityData.register(VillagerData.class, "villager", Villager.class, 0,
-					"villager", "farmer", "librarian", "priest",
-					"blacksmith", "butcher", "nitwit");
-			
-			List<Profession> prof = Arrays.asList(Profession.values());
-			assert prof != null;
-			professions = prof;
 		}
 	}
 	
@@ -110,7 +101,7 @@ public class VillagerData extends EntityData<Villager> {
 		Profession prof = profession == null ? CollectionUtils.getRandom(professions) : profession;
 		assert prof != null;
 		entity.setProfession(prof);
-		if (HAS_NITWIT && profession == Profession.NITWIT)
+		if (profession == Profession.NITWIT)
 			entity.setRecipes(Collections.emptyList());
 	}
 	

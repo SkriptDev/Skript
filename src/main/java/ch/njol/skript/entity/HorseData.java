@@ -1,18 +1,18 @@
 /**
- *   This file is part of Skript.
+ * This file is part of Skript.
  *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * Skript is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * Skript is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with Skript.  If not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright Peter Güttinger, SkriptLang team and contributors
  */
@@ -24,7 +24,6 @@ import org.bukkit.entity.Horse.Style;
 import org.bukkit.entity.Horse.Variant;
 import org.eclipse.jdt.annotation.Nullable;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.variables.Variables;
@@ -35,15 +34,12 @@ import ch.njol.skript.variables.Variables;
 @SuppressWarnings("deprecation") // Until 1.12: use old deprecated methods for backwards compatibility
 public class HorseData extends EntityData<Horse> {
 	static {
-		if (Skript.classExists("org.bukkit.entity.Horse")) {
-			if (!Skript.isRunningMinecraft(1, 11)) // For 1.11+ see SimpleEntityData
-				EntityData.register(HorseData.class, "horse", Horse.class, 0,
-						"horse", "donkey", "mule", "undead horse", "skeleton horse");
-			
-			Variables.yggdrasil.registerSingleClass(Variant.class, "Horse.Variant");
-			Variables.yggdrasil.registerSingleClass(Color.class, "Horse.Color");
-			Variables.yggdrasil.registerSingleClass(Style.class, "Horse.Style");
-		}
+		EntityData.register(HorseData.class, "horse", Horse.class, 0,
+			"horse", "donkey", "mule", "undead horse", "skeleton horse");
+		
+		Variables.yggdrasil.registerSingleClass(Variant.class, "Horse.Variant");
+		Variables.yggdrasil.registerSingleClass(Color.class, "Horse.Color");
+		Variables.yggdrasil.registerSingleClass(Style.class, "Horse.Style");
 	}
 	
 	@Nullable
@@ -53,7 +49,8 @@ public class HorseData extends EntityData<Horse> {
 	@Nullable
 	private Style style;
 	
-	public HorseData() {}
+	public HorseData() {
+	}
 	
 	public HorseData(final @Nullable Variant variant) {
 		this.variant = variant;
@@ -95,8 +92,8 @@ public class HorseData extends EntityData<Horse> {
 	@Override
 	protected boolean match(final Horse entity) {
 		return (variant == null || variant == entity.getVariant())
-				&& (color == null || color == entity.getColor())
-				&& (style == null || style == entity.getStyle());
+			&& (color == null || color == entity.getColor())
+			&& (style == null || style == entity.getStyle());
 	}
 	
 	@Override
@@ -120,8 +117,8 @@ public class HorseData extends EntityData<Horse> {
 			return false;
 		final HorseData d = (HorseData) e;
 		return (variant == null || variant == d.variant)
-				&& (color == null || color == d.color)
-				&& (style == null || style == d.style);
+			&& (color == null || color == d.color)
+			&& (style == null || style == d.style);
 	}
 	
 	@Override
@@ -129,7 +126,7 @@ public class HorseData extends EntityData<Horse> {
 		return Horse.class;
 	}
 	
-//		return (variant == null ? "" : variant.name()) + "," + (color == null ? "" : color.name()) + "," + (style == null ? "" : style.name());
+	//		return (variant == null ? "" : variant.name()) + "," + (color == null ? "" : color.name()) + "," + (style == null ? "" : style.name());
 	@Override
 	protected boolean deserialize(final String s) {
 		final String[] split = s.split(",");

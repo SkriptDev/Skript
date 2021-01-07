@@ -26,7 +26,6 @@ import org.bukkit.entity.TropicalFish;
 import org.bukkit.entity.TropicalFish.Pattern;
 import org.eclipse.jdt.annotation.Nullable;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.Color;
@@ -37,13 +36,11 @@ public class TropicalFishData extends EntityData<TropicalFish> {
 	private static Object[] patterns;
 
 	static {
-		if (Skript.isRunningMinecraft(1, 13)) {
-			register(TropicalFishData.class, "tropical fish", TropicalFish.class, 0,
-					"tropical fish", "kob", "sunstreak", "snooper",
-					"dasher", "brinely", "spotty", "flopper",
-					"stripey", "glitter", "blockfish", "betty", "clayfish");
-			patterns = Pattern.values();
-		}
+		register(TropicalFishData.class, "tropical fish", TropicalFish.class, 0,
+				"tropical fish", "kob", "sunstreak", "snooper",
+				"dasher", "brinely", "spotty", "flopper",
+				"stripey", "glitter", "blockfish", "betty", "clayfish");
+		patterns = Pattern.values();
 	}
 
 	public TropicalFishData() {

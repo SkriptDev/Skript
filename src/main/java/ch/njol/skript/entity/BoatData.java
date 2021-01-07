@@ -25,7 +25,6 @@ import org.bukkit.entity.Boat;
 import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.Nullable;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.aliases.Aliases;
 import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.lang.Literal;
@@ -33,12 +32,9 @@ import ch.njol.skript.lang.SkriptParser.ParseResult;
 
 public class BoatData extends EntityData<Boat> {
 	static {
-		// It will only register for 1.10+,
-		// See SimpleEntityData if 1.9 or lower.
-		if (Skript.methodExists(Boat.class, "getWoodType")) { //The 'boat' is the same of 'oak boat', 'any boat' works as supertype and it can spawn random boat.
-			EntityData.register(BoatData.class, "boat", Boat.class, 0,
-					"boat", "any boat", "oak boat", "spruce boat", "birch boat", "jungle boat", "acacia boat", "dark oak boat");
-		}
+		EntityData.register(BoatData.class, "boat", Boat.class, 0,
+				"boat", "any boat", "oak boat", "spruce boat", "birch boat", "jungle boat", "acacia boat", "dark oak boat");
+	
 	}
 	
 	public BoatData(){
