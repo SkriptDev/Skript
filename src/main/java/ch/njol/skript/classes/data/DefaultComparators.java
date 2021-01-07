@@ -46,6 +46,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptConfig;
@@ -565,6 +566,20 @@ public class DefaultComparators {
 				}
 			});
 		}
+		
+		// PotionEffectType comparator
+		// For some reason Skript is not comparing these two
+		Comparators.registerComparator(PotionEffectType.class, PotionEffectType.class, new Comparator<PotionEffectType, PotionEffectType>() {
+			@Override
+			public Relation compare(PotionEffectType o1, PotionEffectType o2) {
+				return Relation.get(o1.getName().equalsIgnoreCase(o2.getName()));
+			}
+			
+			@Override
+			public boolean supportsOrdering() {
+				return false;
+			}
+		});
 	}
 	
 }

@@ -97,9 +97,8 @@ import ch.njol.skript.util.DamageCauseUtils;
 import ch.njol.skript.util.EnchantmentType;
 import ch.njol.skript.util.EnumUtils;
 import ch.njol.skript.util.InventoryActions;
-import ch.njol.skript.util.PotionEffectUtils;
+import ch.njol.skript.bukkitutil.PotionEffectUtils;
 import ch.njol.skript.util.StringMode;
-import ch.njol.util.StringUtils;
 import ch.njol.yggdrasil.Fields;
 
 /**
@@ -1222,9 +1221,9 @@ public class BukkitClasses {
 		Classes.registerClass(new ClassInfo<>(PotionEffectType.class, "potioneffecttype")
 				.user("potion( ?effect)? ?types?") // "type" had to be made non-optional to prevent clashing with potion effects
 				.name("Potion Effect Type")
-				.description("A potion effect type, e.g. 'strength' or 'swiftness'.")
-				.usage(StringUtils.join(PotionEffectUtils.getNames(), ", "))
-				.examples("apply swiftness 5 to the player",
+				.description("A potion effect type, e.g. 'strength' or 'speed'.")
+				.usage(PotionEffectUtils.getNames())
+				.examples("apply speed 5 to the player",
 						"apply potion of speed 2 to the player for 60 seconds",
 						"remove invisibility from the victim")
 				.since("")

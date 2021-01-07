@@ -32,7 +32,7 @@ import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.util.PotionEffectUtils;
+import ch.njol.skript.bukkitutil.PotionEffectUtils;
 import ch.njol.skript.util.Timespan;
 import ch.njol.util.Kleenean;
 

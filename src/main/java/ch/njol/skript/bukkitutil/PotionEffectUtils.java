@@ -16,97 +16,149 @@
  *
  * Copyright Peter Güttinger, SkriptLang team and contributors
  */
-package ch.njol.skript.util;
+package ch.njol.skript.bukkitutil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.ThrownPotion;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SuspiciousStewMeta;
-import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 import org.eclipse.jdt.annotation.Nullable;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.aliases.ItemType;
-import ch.njol.skript.localization.Language;
-import ch.njol.skript.localization.LanguageChangeListener;
+import ch.njol.skript.util.Timespan;
+import ch.njol.util.StringUtils;
 
 /**
+ * Util class for managing {@link PotionEffectType PotionEffectsTypes}
  * @author Peter Güttinger
  */
-@SuppressWarnings("deprecation")
 public abstract class PotionEffectUtils {
+	
+	// Bukkit does not have the minecraft namespaces for potion effect types
+	// so we create a small class to manage these
+	enum PotionEffectTypes {
+		SPEED(PotionEffectType.SPEED, "speed"),
+		SLOWNESS(PotionEffectType.SLOW, "slowness"),
+		HASTE(PotionEffectType.FAST_DIGGING, "haste"),
+		MINING_FATIGUE(PotionEffectType.SLOW_DIGGING, "mining_fatigue"),
+		STRENGTH(PotionEffectType.INCREASE_DAMAGE, "strength"),
+		INSTANT_HEALTH(PotionEffectType.HEAL, "instant_health"),
+		INSTANT_DAMAGE(PotionEffectType.HARM, "instant_damage"),
+		JUMP_BOOST(PotionEffectType.JUMP, "jump_boost"),
+		NAUSEA(PotionEffectType.CONFUSION, "nausea"),
+		REGENERATION(PotionEffectType.REGENERATION, "regeneration"),
+		RESISTANCE(PotionEffectType.DAMAGE_RESISTANCE, "resistance"),
+		FIRE_RESISTANCE(PotionEffectType.FIRE_RESISTANCE, "fire_resistance"),
+		WATER_BREATHING(PotionEffectType.WATER_BREATHING, "water_breathing"),
+		INVISIBILITY(PotionEffectType.INVISIBILITY, "invisibility"),
+		BLINDNESS(PotionEffectType.BLINDNESS, "blindness"),
+		NIGHT_VISION(PotionEffectType.NIGHT_VISION, "night_vision"),
+		HUNGER(PotionEffectType.HUNGER, "hunger"),
+		WEAKNESS(PotionEffectType.WEAKNESS, "weakness"),
+		POISON(PotionEffectType.POISON, "poison"),
+		WITHER(PotionEffectType.WITHER, "wither"),
+		HEALTH_BOOST(PotionEffectType.HEALTH_BOOST, "health_boost"),
+		ABSORPTION(PotionEffectType.ABSORPTION, "absorption"),
+		SATURATION(PotionEffectType.SATURATION, "saturation"),
+		GLOWING(PotionEffectType.GLOWING, "glowing"),
+		LEVITATION(PotionEffectType.LEVITATION, "levitation"),
+		LUCK(PotionEffectType.LUCK, "luck"),
+		UNLUCK(PotionEffectType.UNLUCK, "unluck"),
+		// 1.13
+		SLOW_FALLING(PotionEffectType.SLOW_FALLING, "slow_falling"),
+		CONDUIT_POWER(PotionEffectType.CONDUIT_POWER, "conduit_power"),
+		DOLPHINS_GRACE(PotionEffectType.DOLPHINS_GRACE, "dolphins_grace"),
+		// 1.14
+		BAD_OMEN("BAD_OMEN", "bad_omen"),
+		HERO_OF_THE_VILLAGE("HERO_OF_THE_VILLAGE", "hero_of_the_village");
+		
+		@Nullable
+		private PotionEffectType bukkit = null;
+		private final String minecraft;
+		private static final Map<String, PotionEffectType> BY_NAME = new HashMap<>();
+		private static final Map<PotionEffectType, String> BY_TYPE = new HashMap<>();
+		
+		PotionEffectTypes(PotionEffectType bukkit, String minecraft) {
+			this.bukkit = bukkit;
+			this.minecraft = minecraft;
+		}
+		
+		PotionEffectTypes(String bukkit, String minecraft) {
+			for (PotionEffectType value : PotionEffectType.values()) {
+				if (value.toString().equalsIgnoreCase(bukkit)) {
+					this.bukkit = value;
+				}
+			}
+			this.minecraft = minecraft;
+		}
+		
+		static {
+			for (PotionEffectTypes p : values()) {
+				if (p.bukkit != null) {
+					BY_NAME.put(p.minecraft, p.bukkit);
+					BY_TYPE.put(p.bukkit, p.minecraft);
+				}
+			}
+			for (PotionEffectType value : PotionEffectType.values()) {
+				if (!BY_NAME.containsValue(value)) {
+					Skript.debug("Missing PotionEffectType for '" + value + "' please let dev know.");
+				}
+			}
+		}
+		
+		public static String getNames() {
+			List<String> names = new ArrayList<>();
+			for (PotionEffectTypes value : PotionEffectTypes.values()) {
+				names.add(value.minecraft.replace("_", " "));
+			}
+			return StringUtils.join(names, ", ");
+		}
+		
+		@Nullable
+		public static PotionEffectType getByName(String name) {
+			String n = name.toLowerCase(Locale.ROOT).replace(" ", "_");
+			if (BY_NAME.containsKey(n)) {
+				return BY_NAME.get(n);
+			}
+			return null;
+		}
+		
+		@Nullable
+		public static String getByType(PotionEffectType potionEffectType) {
+			if (BY_TYPE.containsKey(potionEffectType)) {
+				return BY_TYPE.get(potionEffectType);
+			}
+			return null;
+		}
+	}
 	
 	private static final boolean HAS_SUSPICIOUS_META = Skript.classExists("org.bukkit.inventory.meta.SuspiciousStewMeta");
 	
 	private PotionEffectUtils() {}
 	
-	final static Map<String, PotionEffectType> types = new HashMap<>();
-	
-	final static String[] names = new String[getMaxPotionId() + 1];
-	
-	// MCPC+ workaround
-	private static int getMaxPotionId() {
-		int i = 0;
-		for (final PotionEffectType t : PotionEffectType.values()) {
-			if (t != null && t.getId() > i)
-				i = t.getId();
-		}
-		return i;
-	}
-	
-	static {
-		Language.addListener(new LanguageChangeListener() {
-			@Override
-			public void onLanguageChange() {
-				types.clear();
-				for (final PotionEffectType t : PotionEffectType.values()) {
-					if (t == null)
-						continue;
-					final String[] ls = Language.getList("potions." + t.getName());
-					names[t.getId()] = ls[0];
-					for (final String l : ls) {
-						types.put(l.toLowerCase(), t);
-					}
-				}
-			}
-		});
-	}
-	
 	@Nullable
 	public static PotionEffectType parseType(final String s) {
-		return types.get(s.toLowerCase());
+		return PotionEffectTypes.getByName(s);
 	}
 	
-	// This is a stupid bandaid to fix comparison issues when converting potion datas
-	@Nullable
-	public static PotionEffectType parseByEffectType(PotionEffectType t) {
-		for (PotionEffectType value : types.values()) {
-			if (t.equals(value)) {
-				return value;
-			}
-		}
-		return null;
-	}
-	
-	@SuppressWarnings("null")
+	@SuppressWarnings({"null", "ConstantConditions"})
 	public static String toString(final PotionEffectType t) {
-		return names[t.getId()];
+		return PotionEffectTypes.getByType(t);
 	}
 	
 	// REMIND flags?
-	@SuppressWarnings("null")
+	@SuppressWarnings({"null", "unused"})
 	public static String toString(final PotionEffectType t, final int flags) {
-		return names[t.getId()];
+		return toString(t);
 	}
 	
 	public static String toString(PotionEffect potionEffect) {
@@ -124,107 +176,8 @@ public abstract class PotionEffectUtils {
 		return builder.toString();
 	}
 	
-	public static String[] getNames() {
-		return names;
-	}
-	
-	public static short guessData(final ThrownPotion p) {
-		if (p.getEffects().size() == 1) {
-			final PotionEffect e = p.getEffects().iterator().next();
-			PotionType type = PotionType.getByEffect(e.getType());
-			assert type != null;
-			final Potion d = new Potion(type).splash();
-			return d.toDamageValue();
-		}
-		return 0;
-	}
-	
-	/**
-	 * Checks if given string represents a known potion type and returns that type.
-	 * Unused currently, will be used soon (TM).
-	 * @param name Name of potion type
-	 * @return
-	 */
-	@Nullable
-	public static PotionType checkPotionType(String name) {
-		switch (name) {
-			case "uncraftable":
-			case "empty":
-				return PotionType.UNCRAFTABLE;
-			case "mundane":
-				return PotionType.MUNDANE;
-			case "thick":
-				return PotionType.THICK;
-			case "night vision":
-			case "darkvision":
-				return PotionType.NIGHT_VISION;
-			case "invisibility":
-				return PotionType.INVISIBILITY;
-			case "leaping":
-			case "jump boost":
-				return PotionType.JUMP;
-			case "fire resistance":
-			case "fire immunity":
-				return PotionType.FIRE_RESISTANCE;
-			case "swiftness":
-			case "speed":
-				return PotionType.SPEED;
-			case "slowness":
-				return PotionType.SLOWNESS;
-			case "water breathing":
-				return PotionType.WATER_BREATHING;
-			case "instant health":
-			case "healing":
-			case "health":
-				return PotionType.INSTANT_HEAL;
-			case "instant damage":
-			case "harming":
-			case "damage":
-				return PotionType.INSTANT_DAMAGE;
-			case "poison":
-				return PotionType.POISON;
-			case "regeneration":
-			case "regen":
-				return PotionType.REGEN;
-			case "strength":
-				return PotionType.STRENGTH;
-			case "weakness":
-				return PotionType.WEAKNESS;
-			case "luck":
-				return PotionType.LUCK;
-		}
-		
-		return null;
-	}
-	
-	/**
-	 * Wrapper around deprecated API function, in case it gets removed.
-	 * Changing one method is easier that changing loads of them from different expressions.
-	 * @param effect Type.
-	 * @return Potion type.
-	 */
-	@Nullable
-	public static PotionType effectToType(PotionEffectType effect) {
-		return PotionType.getByEffect(effect);
-	}
-	
-	/**
-	 * Get potion string representation.
-	 * @param effect
-	 * @param extended
-	 * @param strong
-	 * @return
-	 */
-	public static String getPotionName(@Nullable PotionEffectType effect, boolean extended, boolean strong) {
-		if (effect == null) return "bottle of water"; 
-		
-		String s = "";
-		if (extended) s += "extended";
-		else if (strong) s += "strong";
-		s += " potion of ";
-		s += toString(effect);
-		
-		return s;
+	public static String getNames() {
+		return PotionEffectTypes.getNames();
 	}
 	
 	/**
