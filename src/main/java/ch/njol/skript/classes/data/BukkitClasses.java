@@ -66,7 +66,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.Metadatable;
-import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.CachedServerIcon;
@@ -92,7 +91,7 @@ import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.localization.Language;
 import ch.njol.skript.localization.Message;
 import ch.njol.skript.registrations.Classes;
-import ch.njol.skript.util.BiomeUtils;
+import ch.njol.skript.bukkitutil.BiomeUtils;
 import ch.njol.skript.util.BlockUtils;
 import ch.njol.skript.util.DamageCauseUtils;
 import ch.njol.skript.util.EnchantmentType;
@@ -100,7 +99,6 @@ import ch.njol.skript.util.EnumUtils;
 import ch.njol.skript.util.InventoryActions;
 import ch.njol.skript.util.PotionEffectUtils;
 import ch.njol.skript.util.StringMode;
-import ch.njol.skript.util.Timespan;
 import ch.njol.util.StringUtils;
 import ch.njol.yggdrasil.Fields;
 
@@ -1121,7 +1119,8 @@ public class BukkitClasses {
 		Classes.registerClass(new ClassInfo<>(Biome.class, "biome")
 				.user("biomes?")
 				.name("Biome")
-				.description("All possible biomes Minecraft uses to generate a world.")
+				.description("All possible biomes Minecraft uses to generate a world. Please remember biomes",
+					"will differ based on Minecraft versions.")
 				.usage(BiomeUtils.getAllNames())
 				.examples("biome at the player is desert")
 				.since("1.4.4")
