@@ -24,8 +24,6 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.eclipse.jdt.annotation.Nullable;
 
-import ch.njol.skript.Skript;
-
 /**
  * Miscellaneous static utility methods related to items.
  */
@@ -33,23 +31,16 @@ public class ItemUtils {
 	
 	private ItemUtils() {} // Not to be instanced
 	
-	private static final boolean damageMeta = Skript.classExists("org.bukkit.inventory.meta.Damageable");
-	
 	/**
 	 * Gets damage/durability of an item, or 0 if it does not have damage.
 	 * @param stack Item.
 	 * @return Damage.
 	 */
-	@SuppressWarnings("deprecation")
 	public static int getDamage(ItemStack stack) {
-		if (damageMeta) {
-			ItemMeta meta = stack.getItemMeta();
-			if (meta instanceof Damageable)
-				return ((Damageable) meta).getDamage();
-			return 0; // Not damageable item
-		} else {
-			return stack.getDurability();
-		}
+		ItemMeta meta = stack.getItemMeta();
+		if (meta instanceof Damageable)
+			return ((Damageable) meta).getDamage();
+		return 0; // Not damageable item
 	}
 	
 	/**
@@ -58,31 +49,11 @@ public class ItemUtils {
 	 * @param damage New damage. Note that on some Minecraft versions,
 	 * this might be truncated to short.
 	 */
-	@SuppressWarnings("deprecation")
 	public static void setDamage(ItemStack stack, int damage) {
-		if (damageMeta) {
-			ItemMeta meta = stack.getItemMeta();
-			if (meta instanceof Damageable) {
-				((Damageable) meta).setDamage(damage);
-				stack.setItemMeta(meta);
-			}
-		} else {
-			stack.setDurability((short) damage);
-		}
-	}
-	
-	@Nullable
-	private static final Material bedItem;
-	@Nullable
-	private static final Material bedBlock;
-	
-	static {
-		if (!damageMeta) {
-			bedItem = Material.valueOf("BED");
-			bedBlock = Material.valueOf("BED_BLOCK");
-		} else {
-			bedItem = null;
-			bedBlock = null;
+		ItemMeta meta = stack.getItemMeta();
+		if (meta instanceof Damageable) {
+			((Damageable) meta).setDamage(damage);
+			stack.setItemMeta(meta);
 		}
 	}
 	
@@ -94,12 +65,6 @@ public class ItemUtils {
 	 */
 	@Nullable
 	public static Material asBlock(Material type) {
-		if (!damageMeta) { // Apply some hacks on 1.12 and older
-			if (type == bedItem) { // BED and BED_BLOCK mess, issue #1856
-				return bedBlock;
-			}
-		}
-		
 		if (type.isBlock()) {
 			return type;
 		} else {
@@ -114,13 +79,6 @@ public class ItemUtils {
 	 * @return Item version of material or null.
 	 */
 	public static Material asItem(Material type) {
-		if (!damageMeta) {
-			if (type == bedBlock) {
-				assert bedItem != null;
-				return bedItem;
-			}
-		}
-		
 		// Assume (naively) that all types are valid items
 		return type;
 	}

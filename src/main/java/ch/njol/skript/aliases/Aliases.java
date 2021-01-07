@@ -415,7 +415,6 @@ public abstract class Aliases {
 	 */
 	private static void loadMaterials() {
 		for (Material material : Material.values()) {
-			String string = material.toString().toLowerCase(Locale.ROOT);
 			// Skip legacy materials
 			// It seems Bukkit magically skips these anyways?!?!
 			// but we're leave this here for safety
@@ -423,8 +422,10 @@ public abstract class Aliases {
 				continue;
 			}
 			
-			String name = string.replace("_" , " ");
-			parser.loadAlias(name, "minecraft:" + string);
+			String name = material.toString()
+				.toLowerCase(Locale.ROOT)
+				.replace("_" , " ");
+			parser.loadAlias(name, material.getKey().toString());
 		}
 	}
 	

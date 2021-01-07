@@ -66,7 +66,7 @@ public class EffBroadcast extends Effect {
 			final Expression<World> worlds = this.worlds;
 			if (worlds == null) {
 				// not Bukkit.broadcastMessage to ignore permissions
-				for (final Player p : PlayerUtils.getOnlinePlayers()) {
+				for (final Player p : Bukkit.getOnlinePlayers()) {
 					p.sendMessage(m);
 				}
 				Bukkit.getConsoleSender().sendMessage(m);

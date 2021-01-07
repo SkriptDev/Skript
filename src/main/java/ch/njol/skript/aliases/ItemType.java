@@ -968,35 +968,6 @@ public class ItemType implements Unit, Iterable<ItemData>, Container<ItemStack>,
 			}
 			b.append(types.get(i).toString(debug, plural));
 		}
-//		final Map<Enchantment, Integer> enchs = enchantments;
-//		if (enchs == null)
-//			return "" + b.toString();
-//		b.append(Language.getSpaced("enchantments.of"));
-//		int i = 0;
-//		for (final Entry<Enchantment, Integer> e : enchs.entrySet()) {
-//			if (i != 0) {
-//				if (i != enchs.size() - 1)
-//					b.append(", ");
-//				else
-//					b.append(" " + GeneralWords.and + " ");
-//			}
-//			final Enchantment ench = e.getKey();
-//			if (ench == null)
-//				continue;
-//			b.append(EnchantmentType.toString(ench));
-//			b.append(" ");
-//			b.append(e.getValue());
-//			i++;
-//		}
-//		if (meta != null) {
-//			final ItemMeta m = (ItemMeta) meta;
-//			if (m.hasDisplayName()) {
-//				b.append(" " + m_named.toString() + " ");
-//				b.append("\"" + m.getDisplayName() + "\"");
-//			}
-//			if (debug)
-//				b.append(" meta=[").append(meta).append("]");
-//		}
 		return "" + b.toString();
 	}
 	
@@ -1025,24 +996,6 @@ public class ItemType implements Unit, Iterable<ItemData>, Container<ItemStack>,
 	@Override
 	public void deserialize(final Fields fields) throws StreamCorruptedException, NotSerializableException {
 		fields.setFields(this);
-		
-		// Legacy data (before aliases rework) update
-		if (!types.isEmpty()) {
-			@SuppressWarnings("rawtypes")
-			ArrayList noGenerics = types;
-			if (noGenerics.get(0).getClass().equals(OldItemData.class)) { // Sorry generics :)
-				for (int i = 0; i < types.size(); i++) {
-					OldItemData old = (OldItemData) (Object) types.get(i); // Grab and hack together OldItemData
-					Material mat = BukkitUnsafe.getMaterialFromId(old.typeid);
-					if (mat != null) {
-						ItemData data = new ItemData(mat); // Create new ItemData based on it
-						types.set(i, data); // Replace old with new
-					} else {
-						throw new NotSerializableException("item with id " + old.typeid + " could not be converted to new alias system");
-					}
-				}
-			}
-		}
 	}
 	
 	/**

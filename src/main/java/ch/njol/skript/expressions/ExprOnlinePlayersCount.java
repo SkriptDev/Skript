@@ -18,6 +18,7 @@
  */
 package ch.njol.skript.expressions;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.eclipse.jdt.annotation.Nullable;
@@ -80,7 +81,7 @@ public class ExprOnlinePlayersCount extends SimpleExpression<Number> {
 	@Nullable
 	public Number[] get(Event e) {
 		if (isReal)
-			return CollectionUtils.array(PlayerUtils.getOnlinePlayers().size());
+			return CollectionUtils.array(Bukkit.getOnlinePlayers().size());
 		else
 			return CollectionUtils.array(((PaperServerListPingEvent) e).getNumPlayers());
 	}
@@ -121,7 +122,7 @@ public class ExprOnlinePlayersCount extends SimpleExpression<Number> {
 				break;
 			case DELETE:
 			case RESET:
-				event.setNumPlayers(PlayerUtils.getOnlinePlayers().size());
+				event.setNumPlayers(Bukkit.getOnlinePlayers().size());
 		}
 	}
 
