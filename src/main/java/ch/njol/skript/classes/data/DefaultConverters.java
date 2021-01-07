@@ -45,7 +45,7 @@ import ch.njol.skript.entity.EntityType;
 import ch.njol.skript.entity.XpOrbData;
 import ch.njol.skript.registrations.Converters;
 import ch.njol.skript.util.BlockInventoryHolder;
-import ch.njol.skript.util.BlockUtils;
+import ch.njol.skript.bukkitutil.BlockUtils;
 import ch.njol.skript.util.Direction;
 import ch.njol.skript.util.EnchantmentType;
 import ch.njol.skript.util.Experience;
@@ -163,7 +163,7 @@ public class DefaultConverters {
 			@Override
 			@Nullable
 			public Location convert(final Block b) {
-				return BlockUtils.getLocation(b);
+				return b.getLocation();
 			}
 		}, Converter.NO_COMMAND_ARGUMENTS);
 		

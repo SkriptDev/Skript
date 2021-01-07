@@ -54,7 +54,7 @@ import ch.njol.skript.localization.Adjective;
 import ch.njol.skript.localization.GeneralWords;
 import ch.njol.skript.localization.Language;
 import ch.njol.skript.localization.Noun;
-import ch.njol.skript.util.BlockUtils;
+import ch.njol.skript.bukkitutil.BlockUtils;
 import ch.njol.skript.util.Container;
 import ch.njol.skript.util.Container.ContainerType;
 import ch.njol.skript.util.EnchantmentType;

@@ -131,7 +131,7 @@ import ch.njol.skript.command.CommandEvent;
 import ch.njol.skript.events.EvtMoveOn;
 import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.util.BlockStateBlock;
-import ch.njol.skript.util.BlockUtils;
+import ch.njol.skript.bukkitutil.BlockUtils;
 import ch.njol.skript.util.DelayedChangeBlock;
 import ch.njol.skript.util.Direction;
 import ch.njol.skript.util.Getter;
@@ -214,7 +214,7 @@ public final class BukkitEventValues {
 			@Override
 			@Nullable
 			public Location get(final BlockEvent e) {
-				return BlockUtils.getLocation(e.getBlock());
+				return e.getBlock().getLocation();
 			}
 		}, 0);
 		// BlockPlaceEvent
