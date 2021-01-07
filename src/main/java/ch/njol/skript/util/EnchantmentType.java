@@ -36,8 +36,6 @@ import ch.njol.yggdrasil.YggdrasilSerializable;
  */
 public class EnchantmentType implements YggdrasilSerializable {
 	
-	private final static String LANGUAGE_NODE = "enchantments";
-	
 	private final Enchantment type;
 	private final int level;
 	
@@ -114,11 +112,9 @@ public class EnchantmentType implements YggdrasilSerializable {
 			NAMES.clear();
 			for (Enchantment e : Enchantment.values()) {
 				assert e != null;
-				final String[] names = Language.getList(LANGUAGE_NODE + ".names." + EnchantmentUtils.getKey(e));
-				NAMES.put(e, names[0]);
-				
-				for (String name : names)
-					PATTERNS.put(name.toLowerCase(), e);
+				String name = EnchantmentUtils.getName(e);
+				NAMES.put(e, name);
+				PATTERNS.put(name, e);
 			}
 		});
 	}

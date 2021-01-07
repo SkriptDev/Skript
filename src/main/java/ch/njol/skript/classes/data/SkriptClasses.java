@@ -755,9 +755,9 @@ public class SkriptClasses {
 				.user("enchant(ing|ment) types?")
 				.name("Enchantment Type")
 				.description("An enchantment with an optional level, e.g. 'sharpness 2' or 'fortune'.")
-				.usage("<code>&lt;enchantment&gt; [&lt;level&gt;]</code>")
+				.usage("<enchantment> <level>")
 				.examples("enchant the player's tool with sharpness 5",
-						"helmet is enchanted with waterbreathing")
+						"helmet is enchanted with aqua affinity")
 				.since("1.4.6")
 				.parser(new Parser<EnchantmentType>() {
 					@Override
