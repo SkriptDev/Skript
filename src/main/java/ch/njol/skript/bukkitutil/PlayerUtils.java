@@ -18,9 +18,11 @@
  */
 package ch.njol.skript.bukkitutil;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -37,6 +39,12 @@ public abstract class PlayerUtils {
 	public static void updateInventory(final @Nullable Player p) {
 		if (p != null)
 			inviUpdate.add(p);
+	}
+	
+	// Apparently some addons still use this
+	// *cough* Tuske *cough*
+	public static Collection<? extends Player> getOnlinePlayers() {
+		return Bukkit.getOnlinePlayers();
 	}
 	
 }
