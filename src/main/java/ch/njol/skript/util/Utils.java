@@ -699,4 +699,14 @@ public abstract class Utils {
 		}
 	}
 	
+	/**
+	 * Check if a string is a boolean
+	 *
+	 * @param string String to check
+	 * @return True if string == true/false
+	 */
+	public static boolean isBoolean(String string) {
+		return string.equalsIgnoreCase("true") || string.equalsIgnoreCase("false");
+	}
+	
 }
