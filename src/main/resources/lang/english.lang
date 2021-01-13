@@ -1435,13 +1435,6 @@ visual effects:
 		name: white ash @-
 		pattern: white ash
 
-# -- Resource Pack States --
-resource pack states:
-	accepted: accept, accepted
-	declined: decline, refuse, reject, declined, refused, rejected
-	failed_download: download fail, fail, failed to download, failed
-	successfully_loaded: successfully load, successfully install, success, successfully loaded, successfully installed
-
 # -- Sound Categories --
 sound categories:
 	ambient: ambient category, environment category

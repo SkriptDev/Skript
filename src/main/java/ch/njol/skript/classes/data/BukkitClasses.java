@@ -1722,7 +1722,7 @@ public class BukkitClasses {
 				})
 				.serializer(new EnumSerializer<>(Difficulty.class)));
 		
-		EnumUtils<Status> resourcePackStates = new EnumUtils<>(Status.class, "resource pack states");
+		EnumUtils<Status> resourcePackStates = new EnumUtils<>(Status.class);
 		Classes.registerClass(new ClassInfo<>(Status.class, "resourcepackstate")
 				.user("resource ?pack ?states?")
 				.name("Resource Pack State")
