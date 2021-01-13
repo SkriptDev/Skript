@@ -226,72 +226,6 @@ weather:
 		name: thunder, thundering, thunderstorm
 		adjective: thundering
 
-# -- Tree Types --
-tree types:
-	tree:
-		name: tree¦s
-		pattern: (any )?trees?
-	regular:
-		name: oak¦s
-		pattern: (any )?(regular|normal|oak)( tree)?s?
-	small_regular:
-		name: small oak¦s
-		pattern: small (regular|normal|oak)( tree)?s?
-	big_regular:
-		name: big tree¦s
-		pattern: (big|large) (regular|normal|oak)( tree)?s?
-	redwood:
-		name: redwood¦s
-		pattern: (any )?(fir|pine|spruce|redwood)( tree)?s?
-	small_redwood:
-		name: small redwood¦s
-		pattern: small (fir|pine|spruce|redwood)( tree)?s?
-	big_redwood:
-		name: tall redwood¦s
-		pattern: (big|tall) (fir|pine|spruce|redwood)( tree)?s?
-	mega_redwood:
-		name: mega redwood¦s
-		pattern: (mega|giant) (fir|pine|spruce|redwood)( tree)?s?
-	birch:
-		name: birch¦es
-		pattern: birch( trees?|es)
-	tall_birch:
-		name: tall birch¦es
-		pattern: (tall|big) birch( trees?|es)
-	jungle:
-		name: jungle tree¦s
-		pattern: (any )?jungle( tree)?s?
-	small_jungle:
-		name: small jungle tree¦s
-		pattern: small jungle( tree)?s?
-	big_jungle:
-		name: big jungle tree¦s
-		pattern: (big|tall|huge|giant|large) jungle( tree)?s?
-	cocoa_tree:
-		name: cocoa tree¦s
-		pattern: cocoa trees?
-	acacia:
-		name: acacia¦s
-		pattern: acacia( tree)?s?
-	dark_oak:
-		name: dark oak¦s
-		pattern: dark oak( tree)?s?
-	jungle_bush:
-		name: bush¦es
-		pattern: (jungle )?bush(es)?
-	swamp:
-		name: swamp tree¦s
-		pattern: swamp trees?
-	mushroom:
-		name: huge mushroom¦s
-		pattern: (any )?(huge|giant|large|big) mushrooms?
-	red_mushroom:
-		name: huge red mushroom¦s
-		pattern: (huge|giant|large|big) red mushrooms?
-	brown_mushroom:
-		name: huge brown mushroom¦s
-		pattern: (huge|giant|large|big) brown mushrooms?
-
 # -- Time --
 time:
 	tick: tick¦s
@@ -1473,6 +1407,7 @@ types:
 	gamerule: gamerule¦s @a
 	attributetype: attribute type¦s @a
 	enchantmentoffer: enchantment offer¦s @a
+	treetype: tree type¦s @a
 
 	# Skript
 	weathertype: weather type¦s @a
@@ -1486,7 +1421,6 @@ types:
 	direction: direction¦s @a
 	slot: slot¦s @a
 	color: color¦s @a
-	structuretype: tree type¦s @a
 	enchantmenttype: enchantment type¦s @an
 	experience: experience point¦s @an
 	experience.pattern: (e?xp|experience( points?)?)

@@ -38,6 +38,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.SoundCategory;
+import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Biome;
@@ -2001,5 +2002,46 @@ public class BukkitClasses {
 					}
 				})
 				.serializer(new EnumSerializer<>(Attribute.class)));
+		
+		EnumUtils<TreeType> treeTypes = new EnumUtils<>(TreeType.class, null, "tree");
+		Classes.registerClass(new ClassInfo<>(TreeType.class, "treetype")
+			.user("tree ?types?", "trees?")
+			.name("Tree Type")
+			.description("A tree type represents a tree species or a huge mushroom species.",
+				"These can be generated in a world with the <a href='../effects.html#EffTree'>generate tree</a> effect.")
+			.usage(treeTypes.getAllNames())
+			.examples("grow tall birch tree at the block",
+				"grow a mega redwood tree above the block")
+			.since("(unknown)")
+			.defaultExpression(new SimpleLiteral<>(TreeType.TREE, true))
+			.parser(new Parser<TreeType>() {
+				
+				@Override
+				public boolean canParse(ParseContext context) {
+					return true;
+				}
+				
+				@Override
+				@Nullable
+				public TreeType parse(final String s, final ParseContext context) {
+					return treeTypes.parse(s);
+				}
+				
+				@Override
+				public String toString(final TreeType o, final int flags) {
+					return treeTypes.toString(o, flags);
+				}
+				
+				@Override
+				public String toVariableNameString(final TreeType o) {
+					return "" + o.name().toLowerCase();
+				}
+				
+				@Override
+				public String getVariableNamePattern() {
+					return "[a-z ]+";
+				}
+			}).serializer(new EnumSerializer<>(TreeType.class)));
 	}
+	
 }

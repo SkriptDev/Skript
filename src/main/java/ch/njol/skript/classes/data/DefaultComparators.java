@@ -20,12 +20,6 @@ package ch.njol.skript.classes.data;
 
 import java.util.Objects;
 
-import ch.njol.skript.aliases.MatchQuality;
-import ch.njol.skript.util.GameruleValue;
-import ch.njol.skript.util.EnchantmentType;
-import ch.njol.skript.util.Experience;
-import ch.njol.skript.util.slot.EquipmentSlot;
-import ch.njol.util.Kleenean;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -33,12 +27,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.EnchantmentOffer;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Boat;
-import org.bukkit.entity.Chicken;
-import org.bukkit.entity.Egg;
-import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Item;
@@ -53,20 +41,23 @@ import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.aliases.Aliases;
 import ch.njol.skript.aliases.ItemData;
 import ch.njol.skript.aliases.ItemType;
+import ch.njol.skript.aliases.MatchQuality;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.classes.Comparator;
 import ch.njol.skript.entity.BoatData;
 import ch.njol.skript.entity.EntityData;
 import ch.njol.skript.registrations.Comparators;
 import ch.njol.skript.util.Date;
-import ch.njol.skript.util.StructureType;
+import ch.njol.skript.util.EnchantmentType;
+import ch.njol.skript.util.Experience;
+import ch.njol.skript.util.GameruleValue;
 import ch.njol.skript.util.Time;
 import ch.njol.skript.util.Timeperiod;
 import ch.njol.skript.util.Timespan;
+import ch.njol.skript.util.slot.EquipmentSlot;
 import ch.njol.skript.util.slot.Slot;
 import ch.njol.skript.util.slot.SlotWithIndex;
 import ch.njol.util.StringUtils;
-import ch.njol.util.coll.CollectionUtils;
 
 @SuppressWarnings({"rawtypes"})
 public class DefaultComparators {
@@ -419,19 +410,6 @@ public class DefaultComparators {
 			@Override
 			public Relation compare(final Time t, final Timeperiod p) {
 				return Relation.get(p.contains(t));
-			}
-			
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-		});
-		
-		// StructureType - StructureType
-		Comparators.registerComparator(StructureType.class, StructureType.class, new Comparator<StructureType, StructureType>() {
-			@Override
-			public Relation compare(final StructureType s1, final StructureType s2) {
-				return Relation.get(CollectionUtils.containsAll(s2.getTypes(), s2.getTypes()));
 			}
 			
 			@Override

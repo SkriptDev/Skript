@@ -18,6 +18,7 @@
  */
 package ch.njol.skript.events;
 
+import org.bukkit.TreeType;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.world.StructureGrowEvent;
@@ -28,7 +29,6 @@ import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.util.StructureType;
 import ch.njol.util.Checker;
 import ch.njol.util.coll.CollectionUtils;
 
@@ -45,14 +45,14 @@ public class EvtGrow extends SkriptEvent {
 	
 	static {
 		Skript.registerEvent("Grow", EvtGrow.class, CollectionUtils.array(StructureGrowEvent.class, BlockGrowEvent.class),
-				"grow [of (1¦%-structuretype%|2¦%-itemtype%)]")
+				"grow [of (1¦%-treetype%|2¦%-itemtype%)]")
 				.description("Called when a tree, giant mushroom or plant grows to next stage.")
 				.examples("on grow:", "on grow of a tree:", "on grow of a huge jungle tree:")
 				.since("1.0 (2.2-dev20 for plants)");
 	}
 	
 	@Nullable
-	private Literal<StructureType> types;
+	private Literal<TreeType> types;
 	@Nullable
 	private Literal<ItemType> blocks;
 	private int evtType;
@@ -62,7 +62,7 @@ public class EvtGrow extends SkriptEvent {
 	public boolean init(final Literal<?>[] args, final int matchedPattern, final ParseResult parser) {
 		evtType = parser.mark; // ANY, STRUCTURE or BLOCK
 		if (evtType == STRUCTURE)
-			types = (Literal<StructureType>) args[0];
+			types = (Literal<TreeType>) args[0];
 		else if (evtType == BLOCK)
 			blocks = (Literal<ItemType>) args[1]; // Arg 1 may not be present... but it is in the array still, as null
 		// Else: no type restrictions specified
@@ -72,10 +72,10 @@ public class EvtGrow extends SkriptEvent {
 	@Override
 	public boolean check(final Event e) {
 		if (evtType == STRUCTURE  && types != null && e instanceof StructureGrowEvent) {
-			return types.check(e, new Checker<StructureType>() {
+			return types.check(e, new Checker<TreeType>() {
 				@Override
-				public boolean check(final StructureType t) {
-					return t.is(((StructureGrowEvent) e).getSpecies());
+				public boolean check(final TreeType t) {
+					return ((StructureGrowEvent) e).getSpecies() == t;
 				}
 			});
 		} else if (evtType == BLOCK && blocks != null && e instanceof BlockGrowEvent) {
