@@ -1435,13 +1435,6 @@ visual effects:
 		name: white ash @-
 		pattern: white ash
 
-# -- Difficulties --
-difficulties:
-	easy: easy
-	normal: medium, normal
-	hard: hard
-	peaceful: peaceful
-
 # -- Resource Pack States --
 resource pack states:
 	accepted: accept, accepted
