@@ -81,6 +81,7 @@ import ch.njol.skript.bukkitutil.EnchantmentUtils;
 import ch.njol.skript.bukkitutil.ItemUtils;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.classes.ConfigurationSerializer;
+import ch.njol.skript.classes.EnumParser;
 import ch.njol.skript.classes.EnumSerializer;
 import ch.njol.skript.classes.Parser;
 import ch.njol.skript.classes.Serializer;
@@ -670,29 +671,7 @@ public class BukkitClasses {
 				.examples("")
 				.since("2.2-dev16")
 				.defaultExpression(new EventValueExpression<>(InventoryAction.class))
-				.parser(new Parser<InventoryAction>() {
-					@Override
-					@Nullable
-					public InventoryAction parse(String s, ParseContext context) {
-						return invActions.parse(s);
-					}
-					
-					@Override
-					public String toString(InventoryAction o, int flags) {
-						return invActions.toString(o, flags);
-					}
-					
-					@SuppressWarnings("null")
-					@Override
-					public String toVariableNameString(InventoryAction o) {
-						return o.name();
-					}
-					
-					@Override
-					public String getVariableNamePattern() {
-						return "\\S+";
-					}
-				}));
+				.parser(new EnumParser<>(invActions)));
 		
 		final EnumUtils<ClickType> invClicks = new EnumUtils<>(ClickType.class);
 		Classes.registerClass(new ClassInfo<>(ClickType.class, "clicktype")
@@ -704,29 +683,7 @@ public class BukkitClasses {
 				.examples("")
 				.since("2.2-dev16b, 2.2-dev35 (renamed to click type)")
 				.defaultExpression(new EventValueExpression<>(ClickType.class))
-				.parser(new Parser<ClickType>() {
-					@Override
-					@Nullable
-					public ClickType parse(String s, ParseContext context) {
-						return invClicks.parse(s);
-					}
-					
-					@Override
-					public String toString(ClickType o, int flags) {
-						return invClicks.toString(o, flags);
-					}
-					
-					@SuppressWarnings("null")
-					@Override
-					public String toVariableNameString(ClickType o) {
-						return o.name();
-					}
-					
-					@Override
-					public String getVariableNamePattern() {
-						return "\\S+";
-					}
-				}));
+				.parser(new EnumParser<>(invClicks)));
 		
 		final EnumUtils<InventoryType> invTypes = new EnumUtils<>(InventoryType.class, null, "inventory");
 		Classes.registerClass(new ClassInfo<>(InventoryType.class, "inventorytype")
@@ -737,29 +694,7 @@ public class BukkitClasses {
 				.examples("")
 				.since("2.2-dev32")
 				.defaultExpression(new EventValueExpression<>(InventoryType.class))
-				.parser(new Parser<InventoryType>() {
-					@Override
-					@Nullable
-					public InventoryType parse(String s, ParseContext context) {
-						return invTypes.parse(s);
-					}
-					
-					@Override
-					public String toString(InventoryType o, int flags) {
-						return invTypes.toString(o, flags);
-					}
-					
-					@SuppressWarnings("null")
-					@Override
-					public String toVariableNameString(InventoryType o) {
-						return o.name();
-					}
-					
-					@Override
-					public String getVariableNamePattern() {
-						return "\\S+";
-					}
-				}));
+				.parser(new EnumParser<>(invTypes)));
 		
 		Classes.registerClass(new ClassInfo<>(Player.class, "player")
 				.user("players?")
@@ -1020,29 +955,8 @@ public class BukkitClasses {
 						"set the player argument's game mode to creative")
 				.since("1.0")
 				.defaultExpression(new SimpleLiteral<>(GameMode.SURVIVAL, true))
-				.parser(new Parser<GameMode>() {
-					
-					@Override
-					@Nullable
-					public GameMode parse(final String s, final ParseContext context) {
-						return gamemodes.parse(s);
-					}
-					
-					@Override
-					public String toString(final GameMode m, final int flags) {
-						return gamemodes.toString(m, flags);
-					}
-					
-					@Override
-					public String toVariableNameString(final GameMode o) {
-						return "" + o.toString().toLowerCase(Locale.ENGLISH);
-					}
-					
-					@Override
-					public String getVariableNamePattern() {
-						return "[a-z]+";
-					}
-				}).serializer(new EnumSerializer<>(GameMode.class)));
+				.parser(new EnumParser<>(gamemodes))
+				.serializer(new EnumSerializer<>(GameMode.class)));
 		
 		Classes.registerClass(new ClassInfo<>(ItemStack.class, "itemstack")
 				.user("item", "material")
@@ -1117,28 +1031,7 @@ public class BukkitClasses {
 				.examples("biome at the player is desert")
 				.since("1.4.4")
 				.after("damagecause")
-				.parser(new Parser<Biome>() {
-					@Override
-					@Nullable
-					public Biome parse(final String s, final ParseContext context) {
-						return biomes.parse(s);
-					}
-					
-					@Override
-					public String toString(final Biome b, final int flags) {
-						return biomes.toString(b, flags);
-					}
-					
-					@Override
-					public String toVariableNameString(final Biome b) {
-						return "" + b.name();
-					}
-					
-					@Override
-					public String getVariableNamePattern() {
-						return "\\S+";
-					}
-				})
+				.parser(new EnumParser<>(biomes))
 				.serializer(new EnumSerializer<>(Biome.class)));
 		
 		Classes.registerClass(new ClassInfo<>(PotionEffect.class, "potioneffect")
@@ -1297,28 +1190,7 @@ public class BukkitClasses {
 				.since("2.0")
 				.defaultExpression(new ExprDamageCause())
 				.after("itemtype", "itemstack", "entitydata", "entitytype")
-				.parser(new Parser<DamageCause>() {
-					@Override
-					@Nullable
-					public DamageCause parse(final String s, final ParseContext context) {
-						return damageCauses.parse(s);
-					}
-					
-					@Override
-					public String toString(final DamageCause d, final int flags) {
-						return damageCauses.toString(d, flags);
-					}
-					
-					@Override
-					public String toVariableNameString(final DamageCause d) {
-						return "" + d.name();
-					}
-					
-					@Override
-					public String getVariableNamePattern() {
-						return "[a-z0-9_-]+";
-					}
-				})
+				.parser(new EnumParser<>(damageCauses))
 				.serializer(new EnumSerializer<>(DamageCause.class)));
 		
 		Classes.registerClass(new ClassInfo<>(Chunk.class, "chunk")
@@ -1530,29 +1402,7 @@ public class BukkitClasses {
 				.description("The teleport cause in a <a href='events.html#teleport'>teleport</a> event.")
 				.usage(teleportCauses.getAllNames())
 				.since("2.2-dev35")
-				.parser(new Parser<TeleportCause>() {
-					@Override
-					@Nullable
-					public TeleportCause parse(String input, ParseContext context) {
-						return teleportCauses.parse(input);
-					}
-					
-					@Override
-					public String toString(TeleportCause teleportCause, int flags) {
-						return teleportCauses.toString(teleportCause, flags);
-					}
-					
-					@SuppressWarnings("null")
-					@Override
-					public String toVariableNameString(TeleportCause teleportCause) {
-						return teleportCause.name();
-					}
-					
-					@Override
-					public String getVariableNamePattern() {
-						return "\\S+";
-					}
-				})
+				.parser(new EnumParser<>(teleportCauses))
 				.serializer(new EnumSerializer<>(TeleportCause.class)));
 		
 		EnumUtils<SpawnReason> spawnReasons = new EnumUtils<>(SpawnReason.class);
@@ -1562,29 +1412,7 @@ public class BukkitClasses {
 				.description("The spawn reason in a <a href='events.html#spawn'>spawn</a> event.")
 				.usage(spawnReasons.getAllNames())
 				.since("2.3")
-				.parser(new Parser<SpawnReason>() {
-					@Override
-					@Nullable
-					public SpawnReason parse(String input, ParseContext context) {
-						return spawnReasons.parse(input);
-					}
-					
-					@Override
-					public String toString(SpawnReason spawnReason, int flags) {
-						return spawnReasons.toString(spawnReason, flags);
-					}
-					
-					@SuppressWarnings("null")
-					@Override
-					public String toVariableNameString(SpawnReason spawnReason) {
-						return spawnReason.name();
-					}
-					
-					@Override
-					public String getVariableNamePattern() {
-						return "\\S+";
-					}
-				})
+				.parser(new EnumParser<>(spawnReasons))
 				.serializer(new EnumSerializer<>(SpawnReason.class)));
 		
 		if (Skript.classExists("com.destroystokyo.paper.event.server.PaperServerListPingEvent")) {
@@ -1623,38 +1451,16 @@ public class BukkitClasses {
 					}));
 		}
 		
-		EnumUtils<FireworkEffect.Type> fireworktypes = new EnumUtils<>(FireworkEffect.Type.class);
+		EnumUtils<FireworkEffect.Type> fireworkTypes = new EnumUtils<>(FireworkEffect.Type.class);
 		Classes.registerClass(new ClassInfo<>(FireworkEffect.Type.class, "fireworktype")
 				.user("firework ?types?")
 				.name("Firework Type")
 				.description("The type of a <a href='#fireworkeffect'>fireworkeffect</a>.")
 				.defaultExpression(new EventValueExpression<>(FireworkEffect.Type.class))
-				.usage(fireworktypes.getAllNames())
+				.usage(fireworkTypes.getAllNames())
 				.since("2.4")
 				.documentationId("FireworkType")
-				.parser(new Parser<FireworkEffect.Type>() {
-					@Override
-					@Nullable
-					public FireworkEffect.Type parse(String input, ParseContext context) {
-						return fireworktypes.parse(input);
-					}
-					
-					@Override
-					public String toString(FireworkEffect.Type type, int flags) {
-						return fireworktypes.toString(type, flags);
-					}
-					
-					@SuppressWarnings("null")
-					@Override
-					public String toVariableNameString(FireworkEffect.Type type) {
-						return type.name();
-					}
-					
-					@Override
-					public String getVariableNamePattern() {
-						return "\\S+";
-					}
-				})
+				.parser(new EnumParser<>(fireworkTypes))
 				.serializer(new EnumSerializer<>(FireworkEffect.Type.class)));
 		
 		Classes.registerClass(new ClassInfo<>(FireworkEffect.class, "fireworkeffect")
@@ -1698,29 +1504,7 @@ public class BukkitClasses {
 				.description("The difficulty of a <a href='#world'>world</a>.")
 				.usage(difficulties.getAllNames())
 				.since("2.3")
-				.parser(new Parser<Difficulty>() {
-					@Override
-					@Nullable
-					public Difficulty parse(final String input, final ParseContext context) {
-						return difficulties.parse(input);
-					}
-					
-					@Override
-					public String toString(Difficulty difficulty, int flags) {
-						return difficulties.toString(difficulty, flags);
-					}
-					
-					@SuppressWarnings("null")
-					@Override
-					public String toVariableNameString(Difficulty difficulty) {
-						return difficulty.name();
-					}
-					
-					@Override
-					public String getVariableNamePattern() {
-						return "\\S+";
-					}
-				})
+				.parser(new EnumParser<>(difficulties))
 				.serializer(new EnumSerializer<>(Difficulty.class)));
 		
 		EnumUtils<Status> resourcePackStates = new EnumUtils<>(Status.class);
@@ -1730,29 +1514,7 @@ public class BukkitClasses {
 				.description("The state in a <a href='events.html#resource_pack_request_action'>resource pack request response</a> event.")
 				.usage(resourcePackStates.getAllNames())
 				.since("2.4")
-				.parser(new Parser<Status>() {
-					@Override
-					public String toString(Status state, int flags) {
-						return resourcePackStates.toString(state, flags);
-					}
-					
-					@Override
-					@Nullable
-					public Status parse(final String s, final ParseContext context) {
-						return resourcePackStates.parse(s);
-					}
-					
-					@SuppressWarnings("null")
-					@Override
-					public String toVariableNameString(Status state) {
-						return state.name();
-					}
-					
-					@Override
-					public String getVariableNamePattern() {
-						return "\\S+";
-					}
-				})
+				.parser(new EnumParser<>(resourcePackStates))
 				.serializer(new EnumSerializer<>(Status.class)));
 		
 		EnumUtils<SoundCategory> soundCategories = new EnumUtils<>(SoundCategory.class, null, "category");
@@ -1763,29 +1525,7 @@ public class BukkitClasses {
 						"See the <a href='effects.html#EffPlaySound'>play sound</a> and <a href='effects.html#EffStopSound'>stop sound</a> effects.")
 				.usage(soundCategories.getAllNames())
 				.since("2.4")
-				.parser(new Parser<SoundCategory>() {
-					@Override
-					@Nullable
-					public SoundCategory parse(final String s, final ParseContext context) {
-						return soundCategories.parse(s);
-					}
-					
-					@Override
-					public String toString(SoundCategory state, int flags) {
-						return soundCategories.toString(state, flags);
-					}
-					
-					@SuppressWarnings("null")
-					@Override
-					public String toVariableNameString(SoundCategory category) {
-						return category.name();
-					}
-					
-					@Override
-					public String getVariableNamePattern() {
-						return "\\S+";
-					}
-				})
+				.parser(new EnumParser<>(soundCategories))
 				.serializer(new EnumSerializer<>(SoundCategory.class)));
 			
 		if (Skript.classExists("org.bukkit.entity.Panda$Gene")) { // added in 1.14
@@ -1798,28 +1538,7 @@ public class BukkitClasses {
 					.usage(genes.getAllNames())
 					.since("2.4")
 					.requiredPlugins("Minecraft 1.14 or newer")
-					.parser(new Parser<Gene>() {
-						@Nullable
-						@Override
-						public Gene parse(String expr, ParseContext context) {
-							return genes.parse(expr);
-						}
-						
-						@Override
-						public String toString(Gene gene, int flags) {
-							return genes.toString(gene, flags);
-						}
-						
-						@Override
-						public String toVariableNameString(Gene gene) {
-							return gene.name();
-						}
-						
-						@Override
-						public String getVariableNamePattern() {
-							return "\\S+";
-						}
-					})
+					.parser(new EnumParser<>(genes))
 					.serializer(new EnumSerializer<>(Gene.class)));
 		}
 		
@@ -1831,28 +1550,7 @@ public class BukkitClasses {
 			.usage(regainReasons.getAllNames())
 			.examples("")
 			.since("2.5")
-			.parser(new Parser<RegainReason>() {
-				@Override
-				@Nullable
-				public RegainReason parse(String s, ParseContext parseContext) {
-					return regainReasons.parse(s);
-				}
-				
-				@Override
-				public String toString(RegainReason o, int flags) {
-					return regainReasons.toString(o, flags);
-				}
-				
-				@Override
-				public String toVariableNameString(RegainReason o) {
-					return "regainreason:" + o.name();
-				}
-				
-				@Override
-				public String getVariableNamePattern() {
-					return "\\S+";
-				}
-			})
+			.parser(new EnumParser<>(regainReasons))
 			.serializer(new EnumSerializer<>(RegainReason.class)));
 		
 		if (Skript.classExists("org.bukkit.entity.Cat$Type")) {
@@ -1865,28 +1563,7 @@ public class BukkitClasses {
 					.since("2.4")
 					.requiredPlugins("Minecraft 1.14 or newer")
 					.documentationId("CatType")
-					.parser(new Parser<Cat.Type>() {
-						@Nullable
-						@Override
-						public Cat.Type parse(String expr, ParseContext context) {
-							return races.parse(expr);
-						}
-						
-						@Override
-						public String toString(Cat.Type race, int flags) {
-							return races.toString(race, flags);
-						}
-						
-						@Override
-						public String toVariableNameString(Cat.Type race) {
-							return race.name();
-						}
-						
-						@Override
-						public String getVariableNamePattern() {
-							return "\\S+";
-						}
-					})
+					.parser(new EnumParser<>(races))
 					.serializer(new EnumSerializer<>(Cat.Type.class)));
 		}
 		
@@ -1979,28 +1656,7 @@ public class BukkitClasses {
 				.defaultExpression(new EventValueExpression<>(Attribute.class))
 				.usage(attributes.getAllNames())
 				.since("2.5")
-				.parser(new Parser<Attribute>() {
-					@Override
-					@Nullable
-					public Attribute parse(String input, ParseContext context) {
-						return attributes.parse(input);
-					}
-					
-					@Override
-					public String toString(Attribute a, int flags) {
-						return attributes.toString(a, flags);
-					}
-					
-					@Override
-					public String toVariableNameString(Attribute a) {
-						return toString(a, 0);
-					}
-					
-					@Override
-					public String getVariableNamePattern() {
-						return "[\\sA-Za-z]+";
-					}
-				})
+				.parser(new EnumParser<>(attributes))
 				.serializer(new EnumSerializer<>(Attribute.class)));
 		
 		EnumUtils<TreeType> treeTypes = new EnumUtils<>(TreeType.class, null, "tree");
@@ -2014,34 +1670,8 @@ public class BukkitClasses {
 				"grow a mega redwood tree above the block")
 			.since("(unknown)")
 			.defaultExpression(new SimpleLiteral<>(TreeType.TREE, true))
-			.parser(new Parser<TreeType>() {
-				
-				@Override
-				public boolean canParse(ParseContext context) {
-					return true;
-				}
-				
-				@Override
-				@Nullable
-				public TreeType parse(final String s, final ParseContext context) {
-					return treeTypes.parse(s);
-				}
-				
-				@Override
-				public String toString(final TreeType o, final int flags) {
-					return treeTypes.toString(o, flags);
-				}
-				
-				@Override
-				public String toVariableNameString(final TreeType o) {
-					return "" + o.name().toLowerCase();
-				}
-				
-				@Override
-				public String getVariableNamePattern() {
-					return "[a-z ]+";
-				}
-			}).serializer(new EnumSerializer<>(TreeType.class)));
+			.parser(new EnumParser<>(treeTypes))
+			.serializer(new EnumSerializer<>(TreeType.class)));
 	}
 	
 }

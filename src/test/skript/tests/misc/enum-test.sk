@@ -1,0 +1,49 @@
+test "bukkit-classes-enums":
+
+	# == ATTRIBUTE TEST ==
+	set {_l} to location of spawn of world "world"
+	spawn a sheep at {_l}
+	set {_e} to last spawned entity
+	set generic movement speed attribute of {_e} to 0.5
+	assert generic movement speed attribute of {_e} = 0.5 with "'generic movement speed' attribute of sheep should have been '0.5' but it's %generic movement speed attribute of {_e}%"
+
+
+	# == BIOME TEST ==
+	set biome of block at {_l} to plains
+	assert biome of block at {_l} is plains with "biome should have been 'plains' but its '%biome of block at {_l}%'"
+
+	set biome of block at {_l} to modified jungle edge
+	assert biome of block at {_l} is modified jungle edge with "biome should have been 'modified jungle edge' but its '%biome of block at {_l}%'"
+
+	# == DIFFICULTY TEST ==
+	set difficulty of world "world" to normal
+	assert difficulty of world "world" is normal with "difficult of world should have been 'normal' but its '%difficulty of world ""world""%'"
+
+	# == ENCHANTMENT TEST ==
+	set {_i} to a diamond sword of sharpness 1
+	assert enchantments of {_i} contains sharpness 1 with "enchants of diamond sword should contain 'sharpness 1' but contains '%enchantments of {_i}%'"
+
+	# == GAMEMODE TEST ==
+	# since a player isn't online, we can't test after
+	set gamemode of {_p} to survival
+
+	# == TREE TYPE TEST ==
+	loop 5 times:
+		set {_x} to random integer between -400 and 400
+		set {_y} to random integer between -400 and 400
+		set {_z} to random integer between -400 and 400
+		set {_loc} to location({_x}, {_y}, {_z}, world "world")
+		if loop-number = 1:
+			grow a tall birch tree at {_loc}
+		else if loop-number = 2:
+			grow a cocoa tree at {_loc}
+		else if loop-number = 3:
+			grow a jungle tree at {_loc}
+		else if loop-number = 4:
+			grow a mega redwood tree at {_loc}
+		else:
+			grow a swamp tree at {_loc}
+
+
+	# == FINISH ==
+	delete all entities
