@@ -18,7 +18,7 @@
  */
 package ch.njol.skript.util;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -125,7 +125,8 @@ public final class EnumUtils<E extends Enum<E>> {
 	
 	public final String getAllNames() {
 		validate(false);
-		List<String> names = Arrays.asList(this.names);
+		List<String> names = new ArrayList<>();
+		Collections.addAll(names, this.names);
 		Collections.sort(names);
 		return StringUtils.join(names, ", ");
 	}
