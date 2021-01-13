@@ -1762,7 +1762,6 @@ public class BukkitClasses {
 						"See the <a href='effects.html#EffPlaySound'>play sound</a> and <a href='effects.html#EffStopSound'>stop sound</a> effects.")
 				.usage(soundCategories.getAllNames())
 				.since("2.4")
-				.requiredPlugins("Minecraft 1.11 or newer")
 				.parser(new Parser<SoundCategory>() {
 					@Override
 					@Nullable
@@ -1789,7 +1788,7 @@ public class BukkitClasses {
 				.serializer(new EnumSerializer<>(SoundCategory.class)));
 			
 		if (Skript.classExists("org.bukkit.entity.Panda$Gene")) { // added in 1.14
-			EnumUtils<Gene> genes = new EnumUtils<>(Gene.class, "genes");
+			EnumUtils<Gene> genes = new EnumUtils<>(Gene.class);
 			Classes.registerClass(new ClassInfo<>(Gene.class, "gene")
 					.user("(panda )?genes?")
 					.name("Gene")
@@ -1822,6 +1821,7 @@ public class BukkitClasses {
 					})
 					.serializer(new EnumSerializer<>(Gene.class)));
 		}
+		
 		EnumUtils<RegainReason> regainReasons = new EnumUtils<>(RegainReason.class, "heal reasons");
 		Classes.registerClass(new ClassInfo<>(RegainReason.class, "healreason")
 			.user("(regen|heal) (reason|cause)")

@@ -1435,16 +1435,6 @@ visual effects:
 		name: white ash @-
 		pattern: white ash
 
-# -- Panda Genes --
-genes:
-	normal: normal
-	lazy: lazy
-	worried: worried, worrisome
-	playful: playful, happy
-	brown: brown, brownish
-	weak: weak
-	aggressive: aggressive, savage, wild
-
 # -- Attribute Types --
 attribute types:
 	generic_armor: generic armor, armor
