@@ -38,7 +38,6 @@ public final class EnumUtils<E extends Enum<E>> {
 	private final Class<E> c;
 	@Nullable
 	private final String languageNode;
-	
 	private String[] names;
 	private final HashMap<String, E> parseMap = new HashMap<>();
 	
@@ -61,6 +60,23 @@ public final class EnumUtils<E extends Enum<E>> {
 		
 		for (E enumConstant : c.getEnumConstants()) {
 			String name = enumConstant.name().toLowerCase(Locale.ROOT).replace("_", " ");
+			parseMap.put(name, enumConstant);
+			names[enumConstant.ordinal()] = name;
+		}
+	}
+	
+	public EnumUtils(@NonNull Class<E> c, @Nullable String prefix, @Nullable String suffix) {
+		assert c.isEnum();
+		this.c = c;
+		this.languageNode = null;
+		this.names = new String[c.getEnumConstants().length];
+		
+		for (E enumConstant : c.getEnumConstants()) {
+			String name = enumConstant.name().toLowerCase(Locale.ROOT).replace("_", " ");
+			if (prefix != null)
+				name = prefix + " " + name;
+			if (suffix != null)
+				name = name + " " + suffix;
 			parseMap.put(name, enumConstant);
 			names[enumConstant.ordinal()] = name;
 		}
