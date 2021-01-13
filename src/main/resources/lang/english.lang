@@ -1109,13 +1109,6 @@ cat types:
 	jellie: jellie
 	all_black: all black
 
-# -- Game Modes --
-game modes:
-	survival: survival
-	creative: creative
-	adventure: adventure
-	spectator: spectator
-
 # -- Visual Effects --
 visual effects:
 	ender_signal:

@@ -1010,38 +1010,28 @@ public class BukkitClasses {
 						return ".+";
 					}
 				}));
+		
+		EnumUtils<GameMode> gamemodes = new EnumUtils<>(GameMode.class);
 		Classes.registerClass(new ClassInfo<>(GameMode.class, "gamemode")
 				.user("game ?modes?")
 				.name("Game Mode")
-				.description("The game modes survival, creative, adventure and spectator.")
-				.usage("creative/survival/adventure/spectator")
+				.description("The gamemode of a player.")
+				.usage(gamemodes.getAllNames())
 				.examples("player's gamemode is survival",
 						"set the player argument's game mode to creative")
 				.since("1.0")
 				.defaultExpression(new SimpleLiteral<>(GameMode.SURVIVAL, true))
 				.parser(new Parser<GameMode>() {
-					private final Message[] names = new Message[GameMode.values().length];
-					
-					{
-						int i = 0;
-						for (final GameMode m : GameMode.values()) {
-							names[i++] = new Message("game modes." + m.name());
-						}
-					}
 					
 					@Override
 					@Nullable
 					public GameMode parse(final String s, final ParseContext context) {
-						for (int i = 0; i < names.length; i++) {
-							if (s.equalsIgnoreCase(names[i].toString()))
-								return GameMode.values()[i];
-						}
-						return null;
+						return gamemodes.parse(s);
 					}
 					
 					@Override
 					public String toString(final GameMode m, final int flags) {
-						return names[m.ordinal()].toString();
+						return gamemodes.toString(m, flags);
 					}
 					
 					@Override
