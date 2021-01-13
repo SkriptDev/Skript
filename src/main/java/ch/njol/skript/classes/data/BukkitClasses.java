@@ -1533,7 +1533,7 @@ public class BukkitClasses {
 				.examples("set metadata value \"super cool\" of player to true")
 				.since("2.2-dev36"));
 		
-		EnumUtils<TeleportCause> teleportCauses = new EnumUtils<>(TeleportCause.class, "teleport causes");
+		EnumUtils<TeleportCause> teleportCauses = new EnumUtils<>(TeleportCause.class);
 		Classes.registerClass(new ClassInfo<>(TeleportCause.class, "teleportcause")
 				.user("teleport ?(cause|reason|type)s?")
 				.name("Teleport Cause")

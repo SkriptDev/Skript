@@ -1109,18 +1109,6 @@ cat types:
 	jellie: jellie
 	all_black: all black
 
-# -- Teleport Causes --
-teleport causes:
-	chorus_fruit: chorus, chorus fruit
-	command: command
-	end_gateway: gateway, end gateway, ender gateway
-	end_portal: end portal, ender portal
-	ender_pearl: ender pearl
-	nether_portal: nether portal
-	plugin: plugin
-	spectate: spectate, spectator
-	unknown: unknown
-
 # -- Game Modes --
 game modes:
 	survival: survival
