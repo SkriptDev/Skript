@@ -729,7 +729,7 @@ public class BukkitClasses {
 					}
 				}));
 		
-		final EnumUtils<InventoryType> invTypes = new EnumUtils<>(InventoryType.class, "inventory types");
+		final EnumUtils<InventoryType> invTypes = new EnumUtils<>(InventoryType.class, null, "inventory");
 		Classes.registerClass(new ClassInfo<>(InventoryType.class, "inventorytype")
 				.user("inventory ?types?")
 				.name("Inventory Type")
