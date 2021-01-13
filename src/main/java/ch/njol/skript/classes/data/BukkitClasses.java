@@ -89,9 +89,7 @@ import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.localization.Language;
-import ch.njol.skript.localization.Message;
 import ch.njol.skript.registrations.Classes;
-import ch.njol.skript.bukkitutil.BiomeUtils;
 import ch.njol.skript.bukkitutil.BlockUtils;
 import ch.njol.skript.util.EnchantmentType;
 import ch.njol.skript.util.EnumUtils;
@@ -1108,12 +1106,13 @@ public class BukkitClasses {
 				.since("2.0")
 				.changer(DefaultChangers.itemChanger));
 		
+		EnumUtils<Biome> biomes = new EnumUtils<>(Biome.class);
 		Classes.registerClass(new ClassInfo<>(Biome.class, "biome")
 				.user("biomes?")
 				.name("Biome")
 				.description("All possible biomes Minecraft uses to generate a world. Please remember biomes",
 					"will differ based on Minecraft versions.")
-				.usage(BiomeUtils.getAllNames())
+				.usage(biomes.getAllNames())
 				.examples("biome at the player is desert")
 				.since("1.4.4")
 				.after("damagecause")
@@ -1121,12 +1120,12 @@ public class BukkitClasses {
 					@Override
 					@Nullable
 					public Biome parse(final String s, final ParseContext context) {
-						return BiomeUtils.parse(s);
+						return biomes.parse(s);
 					}
 					
 					@Override
 					public String toString(final Biome b, final int flags) {
-						return BiomeUtils.toString(b, flags);
+						return biomes.toString(b, flags);
 					}
 					
 					@Override
