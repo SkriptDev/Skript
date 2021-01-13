@@ -93,7 +93,6 @@ import ch.njol.skript.localization.Message;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.bukkitutil.BiomeUtils;
 import ch.njol.skript.bukkitutil.BlockUtils;
-import ch.njol.skript.util.DamageCauseUtils;
 import ch.njol.skript.util.EnchantmentType;
 import ch.njol.skript.util.EnumUtils;
 import ch.njol.skript.util.InventoryActions;
@@ -1296,13 +1295,14 @@ public class BukkitClasses {
 				}));
 		
 		// REMIND make my own damage cause class (that e.g. stores the attacker entity, the projectile, or the attacking block)
+		EnumUtils<DamageCause> damageCauses = new EnumUtils<>(DamageCause.class);
 		Classes.registerClass(new ClassInfo<>(DamageCause.class, "damagecause")
 				.user("damage ?causes?")
 				.name("Damage Cause")
 				.description("The cause/type of a <a href='events.html#damage'>damage event</a>, e.g. lava, fall, fire, drowning, explosion, poison, etc.",
 						"Please note that support for this type is very rudimentary, e.g. lava, fire and burning, " +
 								"as well as projectile and attack are considered different types.")
-				.usage(DamageCauseUtils.getAllNames())
+				.usage(damageCauses.getAllNames())
 				.examples("")
 				.since("2.0")
 				.defaultExpression(new ExprDamageCause())
@@ -1311,12 +1311,12 @@ public class BukkitClasses {
 					@Override
 					@Nullable
 					public DamageCause parse(final String s, final ParseContext context) {
-						return DamageCauseUtils.parse(s);
+						return damageCauses.parse(s);
 					}
 					
 					@Override
 					public String toString(final DamageCause d, final int flags) {
-						return DamageCauseUtils.toString(d, flags);
+						return damageCauses.toString(d, flags);
 					}
 					
 					@Override

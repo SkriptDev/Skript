@@ -1109,37 +1109,6 @@ cat types:
 	jellie: jellie
 	all_black: all black
 
-# -- Damage Causes --
-damage causes:
-	contact: contact
-	entity_attack: attack, entity attack, an attack, an entity attack
-	entity_sweep_attack: sweep attack, sweeping
-	projectile: projectile, a projectile
-	suffocation: suffocation, suffocate
-	fall: fall, a fall
-	fire: fire, a fire
-	fire_tick: burning, burn
-	melting: melting, melt
-	lava: lava
-	drowning: drowning, drown
-	block_explosion: block explosion, a block explosion
-	entity_explosion: entity explosion, an entity explosion
-	void: void, the void
-	lightning: lightning, lightning strike, a lightning, a lightning strike
-	starvation: starvation
-	poison: poison
-	magic: potion, a potion
-	wither: wither, wither effect, a wither, wither potion effect
-	falling_block: falling block, a falling block
-	suicide: suicide
-	thorns: thorns
-	dragon_breath: dragon's breath, dragonfire
-	fly_into_wall: hitting wall while flying, flying into a wall
-	hot_floor: magma, hot floor
-	cramming: cramming
-	dryout: dryout
-	custom: unknown, custom, plugin, a plugin
-
 # -- Teleport Causes --
 teleport causes:
 	chorus_fruit: chorus, chorus fruit
@@ -1691,7 +1660,7 @@ types:
 	itemstack: item stack¦s @an
 	itementity: dropped item¦s @a # same as entities.dropped item.name
 	biome: biome¦s @a
-	potioneffecttype: potion¦s @a
+	potioneffecttype: potion type¦s @a
 	potioneffect: potion effect¦s @a
 	enchantment: enchantment¦s @an
 	damagecause: damage cause¦s @a
