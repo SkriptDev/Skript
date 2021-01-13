@@ -1565,7 +1565,7 @@ public class BukkitClasses {
 				})
 				.serializer(new EnumSerializer<>(TeleportCause.class)));
 		
-		EnumUtils<SpawnReason> spawnReasons = new EnumUtils<>(SpawnReason.class, "spawn reasons");
+		EnumUtils<SpawnReason> spawnReasons = new EnumUtils<>(SpawnReason.class);
 		Classes.registerClass(new ClassInfo<>(SpawnReason.class, "spawnreason")
 				.user("spawn(ing)? ?reasons?")
 				.name("Spawn Reason")
