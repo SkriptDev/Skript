@@ -1888,39 +1888,37 @@ public class BukkitClasses {
 					})
 					.serializer(new EnumSerializer<>(Cat.Type.class)));
 		}
-
-		if (Skript.classExists("org.bukkit.GameRule")) {
-			Classes.registerClass(new ClassInfo<>(GameRule.class, "gamerule")
-				.user("gamerules?")
-				.name("Gamerule")
-				.description("A gamerule")
-				.usage(Arrays.stream(GameRule.values()).map(GameRule::getName).collect(Collectors.joining(", ")))
-				.since("2.5")
-				.requiredPlugins("Minecraft 1.13 or newer")
-				.parser(new Parser<GameRule>() {
-					@Override
-					@Nullable
-					public GameRule parse(final String input, final ParseContext context) {
-						return GameRule.getByName(input);
-					}
-					
-					@Override
-					public String toString(GameRule o, int flags) {
-						return o.getName();
-					}
-					
-					@Override
-					public String toVariableNameString(GameRule o) {
-						return o.getName();
-					}
-					
-					@Override
-					public String getVariableNamePattern() {
-						return "\\S+";
-					}
-				})
-			);
-		}
+		
+		Classes.registerClass(new ClassInfo<>(GameRule.class, "gamerule")
+			.user("gamerules?")
+			.name("Gamerule")
+			.description("A gamerule")
+			.usage(Arrays.stream(GameRule.values()).map(GameRule::getName).collect(Collectors.joining(", ")))
+			.since("2.5")
+			.requiredPlugins("Minecraft 1.13 or newer")
+			.parser(new Parser<GameRule>() {
+				@Override
+				@Nullable
+				public GameRule parse(final String input, final ParseContext context) {
+					return GameRule.getByName(input);
+				}
+				
+				@Override
+				public String toString(GameRule o, int flags) {
+					return o.getName();
+				}
+				
+				@Override
+				public String toVariableNameString(GameRule o) {
+					return o.getName();
+				}
+				
+				@Override
+				public String getVariableNamePattern() {
+					return "\\S+";
+				}
+			})
+		);
 		
 // 		Temporarily disabled until bugs are fixed
 //		if (Skript.classExists("org.bukkit.persistence.PersistentDataHolder")) {
@@ -1940,38 +1938,37 @@ public class BukkitClasses {
 //					.requiredPlugins("1.14 or newer")
 //					.since("2.5"));
 //		}
+		
+		Classes.registerClass(new ClassInfo<>(EnchantmentOffer.class, "enchantmentoffer")
+			.user("enchant[ment][ ]offers?")
+			.name("Enchantment Offer")
+			.description("The enchantmentoffer in an enchant prepare event.")
+			.examples("on enchant prepare:",
+				"\tset enchant offer 1 to sharpness 1",
+				"\tset the cost of enchant offer 1 to 10 levels")
+			.since("2.5")
+			.parser(new Parser<EnchantmentOffer>() {
+				@Override
+				public boolean canParse(ParseContext context) {
+					return false;
+				}
 
-		if (Skript.classExists("org.bukkit.enchantments.EnchantmentOffer")) {
-			Classes.registerClass(new ClassInfo<>(EnchantmentOffer.class, "enchantmentoffer")
-				.user("enchant[ment][ ]offers?")
-				.name("Enchantment Offer")
-				.description("The enchantmentoffer in an enchant prepare event.")
-				.examples("on enchant prepare:",
-					"\tset enchant offer 1 to sharpness 1",
-					"\tset the cost of enchant offer 1 to 10 levels")
-				.since("2.5")
-				.parser(new Parser<EnchantmentOffer>() {
-					@Override
-					public boolean canParse(ParseContext context) {
-						return false;
-					}
+				@Override
+				public String toString(EnchantmentOffer eo, int flags) {
+					return EnchantmentType.toString(eo.getEnchantment(), flags) + " " + eo.getEnchantmentLevel();
+				}
 
-					@Override
-					public String toString(EnchantmentOffer eo, int flags) {
-						return EnchantmentType.toString(eo.getEnchantment(), flags) + " " + eo.getEnchantmentLevel();
-					}
-	
-					@Override
-					public String toVariableNameString(EnchantmentOffer eo) {
-						return "offer:" + EnchantmentType.toString(eo.getEnchantment()) + "=" + eo.getEnchantmentLevel();
-					}
-	
-					@Override
-					public String getVariableNamePattern() {
-						return ".+";
-					}
-				}));
-		}
+				@Override
+				public String toVariableNameString(EnchantmentOffer eo) {
+					return "offer:" + EnchantmentType.toString(eo.getEnchantment()) + "=" + eo.getEnchantmentLevel();
+				}
+
+				@Override
+				public String getVariableNamePattern() {
+					return ".+";
+				}
+			}));
+			
 		EnumUtils<Attribute> attributes = new EnumUtils<>(Attribute.class);
 		Classes.registerClass(new ClassInfo<>(Attribute.class, "attributetype")
 				.user("attribute ?types?")
