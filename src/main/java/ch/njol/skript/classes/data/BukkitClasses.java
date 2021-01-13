@@ -1972,7 +1972,7 @@ public class BukkitClasses {
 					}
 				}));
 		}
-		EnumUtils<Attribute> attributes = new EnumUtils<>(Attribute.class, "attribute types");
+		EnumUtils<Attribute> attributes = new EnumUtils<>(Attribute.class);
 		Classes.registerClass(new ClassInfo<>(Attribute.class, "attributetype")
 				.user("attribute ?types?")
 				.name("Attribute Type")
