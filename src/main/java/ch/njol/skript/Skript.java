@@ -1600,32 +1600,33 @@ public final class Skript extends JavaPlugin implements Listener {
 				logEx("You should report it at " + issuesUrl + ". Please copy paste this report there (or use paste service).");
 				logEx("This ensures that your issue is noticed and will be fixed as soon as possible.");
 			} else {
+				logEx();
 				logEx("It looks like you are using some plugin(s) that alter how Skript works (addons).");
 				if (stackPlugins.isEmpty()) {
 					logEx("Here is full list of them:");
-					StringBuilder pluginsMessage = new StringBuilder();
 					for (PluginDescriptionFile desc : pluginPackages.values()) {
+						StringBuilder pluginsMessage = new StringBuilder(" - ");
 						pluginsMessage.append(desc.getFullName());
 						String website = desc.getWebsite();
 						if (website != null && !website.isEmpty()) // Add website if found
 							pluginsMessage.append(" (").append(desc.getWebsite()).append(")");
 						
 						pluginsMessage.append(" ");
+						logEx(pluginsMessage.toString());
 					}
-					logEx(pluginsMessage.toString());
 					logEx("We could not identify which of those are specially related, so this might also be Skript issue.");
 				} else {
 					logEx("Following plugins are probably related to this error in some way:");
-					StringBuilder pluginsMessage = new StringBuilder();
 					for (PluginDescriptionFile desc : stackPlugins) {
+						StringBuilder pluginsMessage = new StringBuilder(" - ");
 						pluginsMessage.append(desc.getName());
 						String website = desc.getWebsite();
 						if (website != null && !website.isEmpty()) // Add website if found
 							pluginsMessage.append(" (").append(desc.getWebsite()).append(")");
 						
 						pluginsMessage.append(" ");
+						logEx(pluginsMessage.toString());
 					}
-					logEx(pluginsMessage.toString());
 				}
 				
 				logEx("You should try disabling those plugins one by one, trying to find which one causes it.");
@@ -1670,6 +1671,7 @@ public final class Skript extends JavaPlugin implements Listener {
 		logEx("  OS: " + System.getProperty("os.name") + " " + System.getProperty("os.arch") + " " + System.getProperty("os.version"));
 		logEx();
 		logEx("Server platform: " + serverPlatform.name + (serverPlatform.supported ? "" : " (unsupported)"));
+		logEx("Server Version: " + Bukkit.getVersion());
 		logEx();
 		logEx("Current node: " + SkriptLogger.getNode());
 		logEx("Current item: " + (item == null ? "null" : item.toString(null, true)));
