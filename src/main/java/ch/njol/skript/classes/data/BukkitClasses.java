@@ -1622,7 +1622,7 @@ public class BukkitClasses {
 					}));
 		}
 		
-		EnumUtils<FireworkEffect.Type> fireworktypes = new EnumUtils<>(FireworkEffect.Type.class, "firework types");
+		EnumUtils<FireworkEffect.Type> fireworktypes = new EnumUtils<>(FireworkEffect.Type.class);
 		Classes.registerClass(new ClassInfo<>(FireworkEffect.Type.class, "fireworktype")
 				.user("firework ?types?")
 				.name("Firework Type")

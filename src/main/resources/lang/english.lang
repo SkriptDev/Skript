@@ -1442,14 +1442,6 @@ difficulties:
 	hard: hard
 	peaceful: peaceful
 
-# -- Firework types --
-firework types:
-	ball_large: large ball, ball large, large
-	creeper: creeper, creeper face
-	ball: ball, small, small ball
-	star: star, star shaped
-	burst: burst
-
 # -- Resource Pack States --
 resource pack states:
 	accepted: accept, accepted
