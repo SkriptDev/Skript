@@ -1822,7 +1822,7 @@ public class BukkitClasses {
 					.serializer(new EnumSerializer<>(Gene.class)));
 		}
 		
-		EnumUtils<RegainReason> regainReasons = new EnumUtils<>(RegainReason.class, "heal reasons");
+		EnumUtils<RegainReason> regainReasons = new EnumUtils<>(RegainReason.class);
 		Classes.registerClass(new ClassInfo<>(RegainReason.class, "healreason")
 			.user("(regen|heal) (reason|cause)")
 			.name("Heal Reason")
@@ -1853,6 +1853,7 @@ public class BukkitClasses {
 				}
 			})
 			.serializer(new EnumSerializer<>(RegainReason.class)));
+		
 		if (Skript.classExists("org.bukkit.entity.Cat$Type")) {
 			EnumUtils<Cat.Type> races = new EnumUtils<>(Cat.Type.class, "cat types");
 			Classes.registerClass(new ClassInfo<>(Cat.Type.class, "cattype")
