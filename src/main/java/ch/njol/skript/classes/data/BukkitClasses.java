@@ -95,7 +95,6 @@ import ch.njol.skript.bukkitutil.BiomeUtils;
 import ch.njol.skript.bukkitutil.BlockUtils;
 import ch.njol.skript.util.EnchantmentType;
 import ch.njol.skript.util.EnumUtils;
-import ch.njol.skript.util.InventoryActions;
 import ch.njol.skript.bukkitutil.PotionEffectUtils;
 import ch.njol.skript.util.StringMode;
 import ch.njol.yggdrasil.Fields;
@@ -663,11 +662,12 @@ public class BukkitClasses {
 					}
 				}).changer(DefaultChangers.inventoryChanger));
 		
+		EnumUtils<InventoryAction> invActions = new EnumUtils<>(InventoryAction.class);
 		Classes.registerClass(new ClassInfo<>(InventoryAction.class, "inventoryaction")
 				.user("inventory ?actions?")
 				.name("Inventory Action")
 				.description("What player just did in inventory event. Note that when in creative game mode, most actions do not work correctly.")
-				.usage(InventoryActions.getAllNames())
+				.usage(invActions.getAllNames())
 				.examples("")
 				.since("2.2-dev16")
 				.defaultExpression(new EventValueExpression<>(InventoryAction.class))
@@ -675,12 +675,12 @@ public class BukkitClasses {
 					@Override
 					@Nullable
 					public InventoryAction parse(String s, ParseContext context) {
-						return InventoryActions.parse(s);
+						return invActions.parse(s);
 					}
 					
 					@Override
 					public String toString(InventoryAction o, int flags) {
-						return InventoryActions.toString(o, flags);
+						return invActions.toString(o, flags);
 					}
 					
 					@SuppressWarnings("null")
