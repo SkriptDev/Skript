@@ -18,12 +18,16 @@
  */
 package ch.njol.skript.util;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import ch.njol.skript.localization.Language;
-import ch.njol.skript.localization.LanguageChangeListener;
 import ch.njol.util.StringUtils;
 
 /**
@@ -32,26 +36,34 @@ import ch.njol.util.StringUtils;
 public final class EnumUtils<E extends Enum<E>> {
 	
 	private final Class<E> c;
+	@Nullable
 	private final String languageNode;
 	
 	private String[] names;
 	private final HashMap<String, E> parseMap = new HashMap<>();
 	
-	public EnumUtils(final Class<E> c, final String languageNode) {
-		assert c != null && c.isEnum() : c;
-		assert languageNode != null && !languageNode.isEmpty() && !languageNode.endsWith(".") : languageNode;
+	public EnumUtils(@NonNull final Class<E> c, @NonNull final String languageNode) {
+		assert c.isEnum();
+		assert !languageNode.isEmpty() && !languageNode.endsWith(".") : languageNode;
 		
 		this.c = c;
 		this.languageNode = languageNode;
+		this.names = new String[c.getEnumConstants().length];
 		
-		names = new String[c.getEnumConstants().length];
+		Language.addListener(() -> validate(true));
+	}
+	
+	public EnumUtils(@NonNull Class<E> c) {
+		assert c.isEnum();
+		this.c = c;
+		this.languageNode = null;
+		this.names = new String[c.getEnumConstants().length];
 		
-		Language.addListener(new LanguageChangeListener() {
-			@Override
-			public void onLanguageChange() {
-				validate(true);
-			}
-		});
+		for (E enumConstant : c.getEnumConstants()) {
+			String name = enumConstant.name().toLowerCase(Locale.ROOT).replace("_", " ");
+			parseMap.put(name, enumConstant);
+			names[enumConstant.ordinal()] = name;
+		}
 	}
 	
 	/**
@@ -69,10 +81,16 @@ public final class EnumUtils<E extends Enum<E>> {
 		if (update) {
 			parseMap.clear();
 			for (final E e : c.getEnumConstants()) {
-				final String[] ls = Language.getList(languageNode + "." + e.name());
-				names[e.ordinal()] = ls[0];
-				for (final String l : ls)
-					parseMap.put(l.toLowerCase(), e);
+				if (languageNode != null) {
+					final String[] ls = Language.getList(languageNode + "." + e.name());
+					names[e.ordinal()] = ls[0];
+					for (final String l : ls)
+						parseMap.put(l.toLowerCase(), e);
+				} else {
+					String name = e.name().toLowerCase(Locale.ROOT).replace("_", " ");
+					parseMap.put(name, e);
+					names[e.ordinal()] = name;
+				}
 			}
 		}
 	}
@@ -80,10 +98,10 @@ public final class EnumUtils<E extends Enum<E>> {
 	@Nullable
 	public final E parse(final String s) {
 		validate(false);
-		return parseMap.get(s.toLowerCase());
+		return parseMap.get(s.toLowerCase(Locale.ROOT));
 	}
 	
-	@SuppressWarnings("null")
+	@SuppressWarnings({"null", "unused"})
 	public final String toString(final E e, final int flags) {
 		validate(false);
 		return names[e.ordinal()];
@@ -91,6 +109,8 @@ public final class EnumUtils<E extends Enum<E>> {
 	
 	public final String getAllNames() {
 		validate(false);
+		List<String> names = Arrays.asList(this.names);
+		Collections.sort(names);
 		return StringUtils.join(names, ", ");
 	}
 	
