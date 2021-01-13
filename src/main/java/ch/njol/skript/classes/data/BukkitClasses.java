@@ -1855,7 +1855,7 @@ public class BukkitClasses {
 			.serializer(new EnumSerializer<>(RegainReason.class)));
 		
 		if (Skript.classExists("org.bukkit.entity.Cat$Type")) {
-			EnumUtils<Cat.Type> races = new EnumUtils<>(Cat.Type.class, "cat types");
+			EnumUtils<Cat.Type> races = new EnumUtils<>(Cat.Type.class);
 			Classes.registerClass(new ClassInfo<>(Cat.Type.class, "cattype")
 					.user("cat ?(type|race)s?")
 					.name("Cat Type")

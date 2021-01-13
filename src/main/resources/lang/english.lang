@@ -1083,20 +1083,6 @@ entities:
 		name: piglin brute¦s
 		pattern: <age> piglin brute(|1¦s)|(4¦)piglin brute (kid(|1¦s)|child(|1¦ren))
 
-# -- Cat Types --
-cat types:
-	tabby: tabby
-	black: black
-	red: red
-	siamese: siamese
-	british_shorthair: british shorthair
-	calico: calico
-	persian: persian
-	ragdoll: ragdoll
-	white: white
-	jellie: jellie
-	all_black: all black
-
 # -- Visual Effects --
 visual effects:
 	ender_signal:
