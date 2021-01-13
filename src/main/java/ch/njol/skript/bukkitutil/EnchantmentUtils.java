@@ -19,9 +19,11 @@
 package ch.njol.skript.bukkitutil;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -32,26 +34,36 @@ import ch.njol.util.StringUtils;
  */
 public class EnchantmentUtils {
 	
+	private static final Map<String,Enchantment> ENCHANT_MAP = new HashMap<>();
+	private static final Map<Enchantment,String> KEY_MAP = new HashMap<>();
+	private static final Map<Enchantment,String> NAME_MAP = new HashMap<>();
+	
+	static {
+		for (Enchantment enchantment : Enchantment.values()) {
+			String key = enchantment.getKey().getKey();
+			ENCHANT_MAP.put(key, enchantment);
+			KEY_MAP.put(enchantment, key);
+			NAME_MAP.put(enchantment, key.replace("_", " "));
+		}
+	}
+	
 	public static String getKey(Enchantment ench) {
-		return ench.getKey().getKey();
+		return KEY_MAP.get(ench);
 	}
 	
 	@Nullable
 	public static Enchantment getByKey(String key) {
-		return Enchantment.getByKey(NamespacedKey.minecraft(key));
+		return ENCHANT_MAP.get(key);
 	}
 	
 	public static String getNames() {
-		List<String> enchants = new ArrayList<>();
-		for (Enchantment enchantment : Enchantment.values()) {
-			String key = getName(enchantment);
-			enchants.add(key);
-		}
+		List<String> enchants = new ArrayList<>(NAME_MAP.values());
+		Collections.sort(enchants);
 		return StringUtils.join(enchants, ", ");
 	}
 	
 	public static String getName(Enchantment enchantment) {
-		return getKey(enchantment).replace("_", " ");
+		return NAME_MAP.get(enchantment);
 	}
 	
 }
