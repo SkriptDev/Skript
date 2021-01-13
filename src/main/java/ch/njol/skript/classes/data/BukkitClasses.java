@@ -695,7 +695,7 @@ public class BukkitClasses {
 					}
 				}));
 		
-		final EnumUtils<ClickType> invClicks = new EnumUtils<>(ClickType.class, "click types");
+		final EnumUtils<ClickType> invClicks = new EnumUtils<>(ClickType.class);
 		Classes.registerClass(new ClassInfo<>(ClickType.class, "clicktype")
 				.user("click ?types?")
 				.name("Click Type")
