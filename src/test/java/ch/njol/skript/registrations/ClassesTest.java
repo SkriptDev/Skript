@@ -48,7 +48,6 @@ import org.objenesis.ObjenesisHelper;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.data.BukkitClasses;
-import ch.njol.skript.classes.data.BukkitEventValues;
 import ch.njol.skript.classes.data.JavaClasses;
 import ch.njol.skript.classes.data.SkriptClasses;
 import ch.njol.skript.entity.CreeperData;
@@ -57,6 +56,11 @@ import ch.njol.skript.entity.HorseData;
 import ch.njol.skript.entity.SimpleEntityData;
 import ch.njol.skript.entity.WolfData;
 import ch.njol.skript.entity.XpOrbData;
+import ch.njol.skript.events.eventvalues.BlockEventValues;
+import ch.njol.skript.events.eventvalues.EntityEventValues;
+import ch.njol.skript.events.eventvalues.InventoryEventValues;
+import ch.njol.skript.events.eventvalues.PlayerEventValues;
+import ch.njol.skript.events.eventvalues.WorldEventValues;
 import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.util.Date;
 import ch.njol.skript.util.Direction;
@@ -114,7 +118,11 @@ public class ClassesTest {
 		Skript.getAddonInstance().loadClasses("ch.njol.skript", "entity");
 		new JavaClasses();
 		new BukkitClasses();
-		new BukkitEventValues();
+		new BlockEventValues();
+		new EntityEventValues();
+		new InventoryEventValues();
+		new PlayerEventValues();
+		new WorldEventValues();
 		new SkriptClasses();
 		
 		final Field r = Skript.class.getDeclaredField("acceptRegistrations");

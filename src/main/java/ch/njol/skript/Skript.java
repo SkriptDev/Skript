@@ -79,7 +79,6 @@ import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.classes.Comparator;
 import ch.njol.skript.classes.Converter;
 import ch.njol.skript.classes.data.BukkitClasses;
-import ch.njol.skript.classes.data.BukkitEventValues;
 import ch.njol.skript.classes.data.DefaultComparators;
 import ch.njol.skript.classes.data.DefaultConverters;
 import ch.njol.skript.classes.data.DefaultFunctions;
@@ -88,6 +87,11 @@ import ch.njol.skript.classes.data.SkriptClasses;
 import ch.njol.skript.command.Commands;
 import ch.njol.skript.doc.Documentation;
 import ch.njol.skript.events.EvtSkript;
+import ch.njol.skript.events.eventvalues.BlockEventValues;
+import ch.njol.skript.events.eventvalues.EntityEventValues;
+import ch.njol.skript.events.eventvalues.InventoryEventValues;
+import ch.njol.skript.events.eventvalues.PlayerEventValues;
+import ch.njol.skript.events.eventvalues.WorldEventValues;
 import ch.njol.skript.hooks.Hook;
 import ch.njol.skript.lang.Condition;
 import ch.njol.skript.lang.Effect;
@@ -425,7 +429,11 @@ public final class Skript extends JavaPlugin implements Listener {
 		
 		// Load Bukkit stuff. It is done after platform check, because something might be missing!
 		new BukkitClasses();
-		new BukkitEventValues();
+		new BlockEventValues();
+		new EntityEventValues();
+		new InventoryEventValues();
+		new PlayerEventValues();
+		new WorldEventValues();
 		
 		new DefaultComparators();
 		new DefaultConverters();
