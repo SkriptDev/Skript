@@ -1754,42 +1754,41 @@ public class BukkitClasses {
 				})
 				.serializer(new EnumSerializer<>(Status.class)));
 		
-		if (Skript.classExists("org.bukkit.SoundCategory")) {
-			EnumUtils<SoundCategory> soundCategories = new EnumUtils<>(SoundCategory.class, "sound categories");
-			Classes.registerClass(new ClassInfo<>(SoundCategory.class, "soundcategory")
-					.user("sound ?categor(y|ies)")
-					.name("Sound Category")
-					.description("The category of a sound, they are used for sound options of Minecraft. " +
-							"See the <a href='effects.html#EffPlaySound'>play sound</a> and <a href='effects.html#EffStopSound'>stop sound</a> effects.")
-					.usage(soundCategories.getAllNames())
-					.since("2.4")
-					.requiredPlugins("Minecraft 1.11 or newer")
-					.parser(new Parser<SoundCategory>() {
-						@Override
-						@Nullable
-						public SoundCategory parse(final String s, final ParseContext context) {
-							return soundCategories.parse(s);
-						}
-						
-						@Override
-						public String toString(SoundCategory state, int flags) {
-							return soundCategories.toString(state, flags);
-						}
-						
-						@SuppressWarnings("null")
-						@Override
-						public String toVariableNameString(SoundCategory category) {
-							return category.name();
-						}
-						
-						@Override
-						public String getVariableNamePattern() {
-							return "\\S+";
-						}
-					})
-					.serializer(new EnumSerializer<>(SoundCategory.class)));
-		}
-		if (Skript.classExists("org.bukkit.entity.Panda$Gene")) {
+		EnumUtils<SoundCategory> soundCategories = new EnumUtils<>(SoundCategory.class, null, "category");
+		Classes.registerClass(new ClassInfo<>(SoundCategory.class, "soundcategory")
+				.user("sound ?categor(y|ies)")
+				.name("Sound Category")
+				.description("The category of a sound, they are used for sound options of Minecraft. " +
+						"See the <a href='effects.html#EffPlaySound'>play sound</a> and <a href='effects.html#EffStopSound'>stop sound</a> effects.")
+				.usage(soundCategories.getAllNames())
+				.since("2.4")
+				.requiredPlugins("Minecraft 1.11 or newer")
+				.parser(new Parser<SoundCategory>() {
+					@Override
+					@Nullable
+					public SoundCategory parse(final String s, final ParseContext context) {
+						return soundCategories.parse(s);
+					}
+					
+					@Override
+					public String toString(SoundCategory state, int flags) {
+						return soundCategories.toString(state, flags);
+					}
+					
+					@SuppressWarnings("null")
+					@Override
+					public String toVariableNameString(SoundCategory category) {
+						return category.name();
+					}
+					
+					@Override
+					public String getVariableNamePattern() {
+						return "\\S+";
+					}
+				})
+				.serializer(new EnumSerializer<>(SoundCategory.class)));
+			
+		if (Skript.classExists("org.bukkit.entity.Panda$Gene")) { // added in 1.14
 			EnumUtils<Gene> genes = new EnumUtils<>(Gene.class, "genes");
 			Classes.registerClass(new ClassInfo<>(Gene.class, "gene")
 					.user("(panda )?genes?")

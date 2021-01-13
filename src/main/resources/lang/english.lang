@@ -1435,19 +1435,6 @@ visual effects:
 		name: white ash @-
 		pattern: white ash
 
-# -- Sound Categories --
-sound categories:
-	ambient: ambient category, environment category
-	blocks: block category, blocks category
-	hostile: hostile category, hostile creature category, hostile creatures category, hostile mob category, hostile mobs category
-	master: master category, master volume category
-	music: music category
-	neutral: neutral category, friendly creature category, friendly creatures category, friendly mob category, friendly mobs category
-	players: player category, players category
-	records: record category, records category, jukebox category, jukeboxes category, noteblock category, noteblocks category, note block category, note blocks category
-	voice: voice category, speech category
-	weather: weather category
-
 # -- Panda Genes --
 genes:
 	normal: normal
