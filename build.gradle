@@ -65,6 +65,7 @@ allprojects {
 	
 	sourceCompatibility = 1.8
 	compileJava {
+		options.headerOutputDirectory.convention(null)
 		options.fork = true
 		options.encoding = 'UTF-8'
 		options.compilerArgs = ['-properties', '.settings/org.eclipse.jdt.core.prefs', '-encoding', 'UTF-8',
@@ -103,11 +104,6 @@ processResources {
 		"release-source": "",
 		"release-download": "null"
 	]
-}
-
-task jar(overwrite: true, type: ShadowJar) {
-	archiveName System.getenv('SKRIPT_JAR_NAME') == null ? 'Skript.jar' : System.getenv("SKRIPT_JAR_NAME")
-	from sourceSets.main.output
 }
 
 task build(overwrite: true, type: ShadowJar) {
