@@ -1,7 +1,8 @@
 {
 	"name": "paper-1.15.2",
 	"resources": [
-		{"source": "server.properties.generic", "target": "server.properties"}
+		{"source": "server.properties.generic", "target": "server.properties"},
+		{"source": "config.sk.generic", "target": "plugins/Skript/config.sk"}
 	],
 	"downloads": [
 		{"source": "https://papermc.io/api/v1/paper/1.15.2/latest/download", "target": "paperclip.jar"}
