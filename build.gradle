@@ -265,6 +265,7 @@ task githubResources(type: ProcessResources) {
 task githubRelease(type: ShadowJar) {
 	from sourceSets.main.output
 	dependsOn githubResources
+	dependsOn build
 	archiveName = 'Skript-github.jar'
 	
 	manifest {
@@ -344,6 +345,7 @@ task nightlyResources(type: ProcessResources) {
 task nightlyRelease(type: ShadowJar) {
 	from sourceSets.main.output
 	dependsOn nightlyResources
+	dependsOn build
 	dependsOn licenseMain
 	archiveName = 'Skript-nightly.jar'
 	
