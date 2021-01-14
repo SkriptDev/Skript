@@ -19,6 +19,7 @@
 package ch.njol.skript.bukkitutil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -44,9 +45,9 @@ import ch.njol.util.StringUtils;
 public abstract class PotionEffectUtils {
 	
 	// Bukkit does not have the minecraft namespaces for potion effect types
+	// and some Bukkit names do not match the Minecraft namespaces
 	// so we create a small class to manage these
 	enum PotionEffectTypes {
-		SPEED(PotionEffectType.SPEED, "speed"),
 		SLOWNESS(PotionEffectType.SLOW, "slowness"),
 		HASTE(PotionEffectType.FAST_DIGGING, "haste"),
 		MINING_FATIGUE(PotionEffectType.SLOW_DIGGING, "mining_fatigue"),
@@ -55,34 +56,9 @@ public abstract class PotionEffectUtils {
 		INSTANT_DAMAGE(PotionEffectType.HARM, "instant_damage"),
 		JUMP_BOOST(PotionEffectType.JUMP, "jump_boost"),
 		NAUSEA(PotionEffectType.CONFUSION, "nausea"),
-		REGENERATION(PotionEffectType.REGENERATION, "regeneration"),
-		RESISTANCE(PotionEffectType.DAMAGE_RESISTANCE, "resistance"),
-		FIRE_RESISTANCE(PotionEffectType.FIRE_RESISTANCE, "fire_resistance"),
-		WATER_BREATHING(PotionEffectType.WATER_BREATHING, "water_breathing"),
-		INVISIBILITY(PotionEffectType.INVISIBILITY, "invisibility"),
-		BLINDNESS(PotionEffectType.BLINDNESS, "blindness"),
-		NIGHT_VISION(PotionEffectType.NIGHT_VISION, "night_vision"),
-		HUNGER(PotionEffectType.HUNGER, "hunger"),
-		WEAKNESS(PotionEffectType.WEAKNESS, "weakness"),
-		POISON(PotionEffectType.POISON, "poison"),
-		WITHER(PotionEffectType.WITHER, "wither"),
-		HEALTH_BOOST(PotionEffectType.HEALTH_BOOST, "health_boost"),
-		ABSORPTION(PotionEffectType.ABSORPTION, "absorption"),
-		SATURATION(PotionEffectType.SATURATION, "saturation"),
-		GLOWING(PotionEffectType.GLOWING, "glowing"),
-		LEVITATION(PotionEffectType.LEVITATION, "levitation"),
-		LUCK(PotionEffectType.LUCK, "luck"),
-		UNLUCK(PotionEffectType.UNLUCK, "unluck"),
-		// 1.13
-		SLOW_FALLING(PotionEffectType.SLOW_FALLING, "slow_falling"),
-		CONDUIT_POWER(PotionEffectType.CONDUIT_POWER, "conduit_power"),
-		DOLPHINS_GRACE(PotionEffectType.DOLPHINS_GRACE, "dolphins_grace"),
-		// 1.14
-		BAD_OMEN("BAD_OMEN", "bad_omen"),
-		HERO_OF_THE_VILLAGE("HERO_OF_THE_VILLAGE", "hero_of_the_village");
+		RESISTANCE(PotionEffectType.DAMAGE_RESISTANCE, "resistance");
 		
-		@Nullable
-		private PotionEffectType bukkit = null;
+		private final PotionEffectType bukkit;
 		private final String minecraft;
 		private static final Map<String, PotionEffectType> BY_NAME = new HashMap<>();
 		private static final Map<PotionEffectType, String> BY_TYPE = new HashMap<>();
@@ -92,40 +68,32 @@ public abstract class PotionEffectUtils {
 			this.minecraft = minecraft;
 		}
 		
-		PotionEffectTypes(String bukkit, String minecraft) {
-			for (PotionEffectType value : PotionEffectType.values()) {
-				if (value.toString().equalsIgnoreCase(bukkit)) {
-					this.bukkit = value;
-				}
-			}
-			this.minecraft = minecraft;
-		}
-		
 		static {
+			// Register potion types which Bukkit has a different name than Minecraft
 			for (PotionEffectTypes p : values()) {
-				if (p.bukkit != null) {
-					BY_NAME.put(p.minecraft, p.bukkit);
-					BY_TYPE.put(p.bukkit, p.minecraft);
-				}
+				String name = p.minecraft.replace("_", " ");
+				BY_NAME.put(name, p.bukkit);
+				BY_TYPE.put(p.bukkit, name);
 			}
+			// Register potion types which Bukkit has the same name as Minecraft
 			for (PotionEffectType value : PotionEffectType.values()) {
-				if (!BY_NAME.containsValue(value)) {
-					Skript.debug("Missing PotionEffectType for '" + value + "' please let dev know.");
+				if (!BY_TYPE.containsKey(value)) {
+					String name = value.getName().toLowerCase(Locale.ROOT).replace("_", " ");
+					BY_NAME.put(name, value);
+					BY_TYPE.put(value, name);
 				}
 			}
 		}
 		
 		public static String getNames() {
-			List<String> names = new ArrayList<>();
-			for (PotionEffectTypes value : PotionEffectTypes.values()) {
-				names.add(value.minecraft.replace("_", " "));
-			}
+			List<String> names = new ArrayList<>(BY_NAME.keySet());
+			Collections.sort(names);
 			return StringUtils.join(names, ", ");
 		}
 		
 		@Nullable
-		public static PotionEffectType getByName(String name) {
-			String n = name.toLowerCase(Locale.ROOT).replace(" ", "_");
+		public static PotionEffectType parse(String name) {
+			String n = name.toLowerCase(Locale.ROOT);
 			if (BY_NAME.containsKey(n)) {
 				return BY_NAME.get(n);
 			}
@@ -133,7 +101,7 @@ public abstract class PotionEffectUtils {
 		}
 		
 		@Nullable
-		public static String getByType(PotionEffectType potionEffectType) {
+		public static String getName(PotionEffectType potionEffectType) {
 			if (BY_TYPE.containsKey(potionEffectType)) {
 				return BY_TYPE.get(potionEffectType);
 			}
@@ -147,12 +115,12 @@ public abstract class PotionEffectUtils {
 	
 	@Nullable
 	public static PotionEffectType parseType(final String s) {
-		return PotionEffectTypes.getByName(s);
+		return PotionEffectTypes.parse(s);
 	}
 	
 	@SuppressWarnings({"null", "ConstantConditions"})
 	public static String toString(final PotionEffectType t) {
-		return PotionEffectTypes.getByType(t);
+		return PotionEffectTypes.getName(t);
 	}
 	
 	// REMIND flags?
