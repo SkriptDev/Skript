@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.eclipse.jdt.annotation.Nullable;
 
 import ch.njol.skript.Skript;
@@ -180,7 +181,13 @@ public abstract class SkriptLogger {
 			}
 		}
 		entry.logged();
-		LOGGER.log(entry.getLevel(), Skript.SKRIPT_PREFIX + entry.getMessage());
+		ChatColor color = ChatColor.RESET;
+		Level level = entry.getLevel();
+		if (level == Level.SEVERE)
+			color = ChatColor.RED;
+		else if (level == Level.WARNING)
+			color = ChatColor.YELLOW;
+		LOGGER.log(entry.getLevel(), Skript.SKRIPT_PREFIX + color + entry.getMessage());
 	}
 	
 	public static void logAll(final Collection<LogEntry> entries) {
