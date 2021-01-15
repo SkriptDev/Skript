@@ -77,7 +77,7 @@ public class AABB implements Iterable<Block> {
 	public AABB(final Chunk c) {
 		world = c.getWorld();
 		lowerBound = c.getBlock(0, 0, 0).getLocation().toVector();
-		upperBound = lowerBound.clone().add(new Vector(16, world.getMaxHeight(), 16));
+		upperBound = lowerBound.clone().add(new Vector(15, world.getMaxHeight(), 15));
 	}
 	
 	public boolean contains(final Location l) {
