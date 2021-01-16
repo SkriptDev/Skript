@@ -4,5 +4,13 @@
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Skript" target="1.8" />
+      <module name="Skript.main" target="1.8" />
+      <module name="Skript.skript-worldguard6" target="1.8" />
+      <module name="Skript.skript-worldguard6.main" target="1.8" />
+      <module name="Skript.skript-worldguard6.test" target="1.8" />
+      <module name="Skript.test" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
