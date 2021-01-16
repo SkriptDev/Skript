@@ -1549,7 +1549,7 @@ public final class Skript extends JavaPlugin implements Listener {
 			checkedPlugins = true; // No need to do this next time
 		}
 		
-		String issuesUrl = "https://github.com/SkriptLang/Skript/issues";
+		String issuesUrl = "https://github.com/SkriptDev/Skript/issues";
 		
 		logEx();
 		logEx("[Skript] Severe Error:");
@@ -1579,9 +1579,9 @@ public final class Skript extends JavaPlugin implements Listener {
 			logEx("");
 			logEx("Just testing things? Good. Please report this bug, so that we can fix it before a stable release.");
 			logEx("Issue tracker: " + issuesUrl);
-		} else if (!isRunningMinecraft(1, 9)) {
+		} else if (!isRunningMinecraft(1, 13, 2)) {
 			logEx("You are running an outdated Minecraft version not supported by Skript.");
-			logEx("Please update to Minecraft 1.9.4 or later or fix this yourself and send us a pull request.");
+			logEx("Please update to Minecraft 1.13.2 or later or fix this yourself and send us a pull request.");
 			logEx("Alternatively, use an older Skript version; do note that those are also unsupported by us.");
 			logEx("");
 			logEx("Again, we do not support Minecraft versions this old.");

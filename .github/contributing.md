@@ -20,7 +20,7 @@ Issues are usually used to report bugs and request improvements or new features.
 
 Script writers should **not** use issue tracker to ask why their code is broken,
 *unless* they think it might be a bug. Correct places for getting scripting advise
-are SkUnity forums and Discord (see README again).
+are skUnity forums and Discord (see README again).
 
 Don't be scared to report real bugs, though. We won't be angry if we receive
 invalid reports; it is just that you're unlikely to get help with those here.
@@ -32,8 +32,7 @@ can ensure that it will be correctly categorized as a bug and hopefully, fixed.
 First, please make sure you have **latest** Skript version available. If there
 are no stable (no pre-release tag) versions, this means latest dev build.
 If you can find non-prerelease in downloads page of this repository, you may
-also use that one. Do **not** use 2.2, 2.1 or older, since while they are
-technically stable, they tend to not work reliably with Minecraft 1.9+.
+also use that one.
 
 Second, test without addons. No, seriously; unless you're an addon developer,
 test without plugins that hook to Skript before reporting anything. We can't
@@ -77,7 +76,7 @@ time to [learn](https://help.github.com/categories/bootcamp/).
 
 ### When Programming
 We recommend using an IDE; you can find some set up instructions in README.
-Please also follow our [code conventions](https://github.com/SkriptLang/Skript/blob/master/.github/code-conventions.md).
+Please also follow our [code conventions](https://github.com/SkriptDev/Skript/code-conventions.md).
 
 ### After Programming
 Test your changes. Actually, test more than your changes: if you think that you
@@ -101,4 +100,4 @@ by core team members. In some cases, this might be as simple as running the
 automated tests.
 
 In exceptional situations, pull requests may be merged regardless of review
-status by @bensku.
+status by @ShaneBeee.
