@@ -66,6 +66,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Merchant;
 import org.bukkit.metadata.Metadatable;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -643,12 +644,14 @@ public class BukkitClasses {
 					
 					@Override
 					public String toString(final Inventory i, final int flags) {
-						return "inventory of " + Classes.toString(i.getHolder());
+						return String.format("Inventory(type='%s', holder='%s')",
+							Classes.toString(i.getType()), Classes.toString(i.getHolder()));
 					}
 					
 					@Override
 					public String getDebugMessage(final Inventory i) {
-						return "inventory of " + Classes.getDebugMessage(i.getHolder());
+						return String.format("Inventory(type='%s', holder='%s')",
+							Classes.getDebugMessage(i.getType()), Classes.getDebugMessage(i.getHolder()));
 					}
 					
 					@Override
@@ -695,6 +698,42 @@ public class BukkitClasses {
 				.since("2.2-dev32")
 				.defaultExpression(new EventValueExpression<>(InventoryType.class))
 				.parser(new EnumParser<>(invTypes)));
+		
+		Classes.registerClass(new ClassInfo<>(Merchant.class, "merchant")
+				.usage("merchant( inventory)?")
+				.name("Merchant Inventory")
+				.description("Represents a villager trading inventory.",
+					"These differ from regular inventories as they can not have slots set.")
+				.usage("open merchant inventory named \"Mr Trader\" to player")
+				.since("INSERT VERSION")
+				.parser(new Parser<Merchant>() {
+					
+					@Nullable
+					@Override
+					public Merchant parse(String s, ParseContext context) {
+						return null;
+					}
+					
+					@Override
+					public boolean canParse(ParseContext context) {
+						return false;
+					}
+					
+					@Override
+					public String toString(Merchant o, int flags) {
+						return "merchant inventory";
+					}
+					
+					@Override
+					public String toVariableNameString(Merchant o) {
+						return "merchant inventory";
+					}
+					
+					@Override
+					public String getVariableNamePattern() {
+						return "\\S";
+					}
+				}));
 		
 		Classes.registerClass(new ClassInfo<>(Player.class, "player")
 				.user("players?")

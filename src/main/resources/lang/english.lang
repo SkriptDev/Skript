@@ -1408,6 +1408,7 @@ types:
 	attributetype: attribute type¦s @a
 	enchantmentoffer: enchantment offer¦s @a
 	treetype: tree type¦s @a
+	merchant: merchant¦s @a
 
 	# Skript
 	weathertype: weather type¦s @a

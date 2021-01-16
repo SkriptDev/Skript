@@ -41,11 +41,11 @@ import org.eclipse.jdt.annotation.Nullable;
 @Since("2.2-dev34")
 public class ExprChestInventory extends SimpleExpression<Inventory> {
 
-    static {
-        Skript.registerExpression(ExprChestInventory.class, Inventory.class, ExpressionType.COMBINED,
-        		"[a [new]] chest inventory (named|with name) %string% [with %-number% row[s]]",
-        		"[a [new]] chest inventory with %number% row[s] [(named|with name) %-string%]");
-    }
+//    static {
+//        Skript.registerExpression(ExprChestInventory.class, Inventory.class, ExpressionType.COMBINED,
+//        		"[a [new]] chest inventory (named|with name) %string% [with %-number% row[s]]",
+//        		"[a [new]] chest inventory with %number% row[s] [(named|with name) %-string%]");
+//    }
 
     @Nullable
     private Expression<Number> rows;
