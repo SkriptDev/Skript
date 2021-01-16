@@ -1,5 +1,5 @@
 test "replace items":
-	set {_inv} to chest inventory with 3 rows
+	set {_inv} to custom chest inventory with 3 rows
 	set slot 2 of {_inv} to 54 dirt
 	set slot 3 of {_inv} to 30 bone
 	set slot 5 of {_inv} to (45 dirt) named "test"
@@ -42,4 +42,3 @@ test "replace strings":
 	assert {_text::7} is "My name is BOBBY and this is my friend bob!" with "replace first pattern 2 (case sensitivity enabled) (%{_text::8}%) failed"
 	assert {_text::8} is "My name is bob and this is my friend bob!" with "replace first pattern 1 (case sensitivity enabled) (%{_text::7}%) failed"
 
-	
