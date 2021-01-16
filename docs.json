@@ -433,6 +433,18 @@
   "examples" : ""
 },
 {
+  "id" : "merchant",
+  "name" : "Merchant Inventory",
+  "patterns" : [
+    "open merchant inventory named &quot;Mr Trader&quot; to player",
+
+    "pattern_end"
+  ],
+  "since" : "INSERT VERSION",
+  "description" : "Represents a villager trading inventory.\\nThese differ from regular inventories as they can not have slots set.",
+  "examples" : ""
+},
+{
   "id" : "metadataholder",
   "name" : "Metadata Holder",
   "patterns" : [
@@ -2254,15 +2266,14 @@ but for this to work, the message needs to be sent from a player.",
   "id" : "EffOpenInventory",
   "name" : "Open/Close Inventory",
   "patterns" : [
-    "[(open|show) (((crafting [table]|workbench)|chest|anvil|hopper|dropper|dispenser) (view|window|inventory)]|%<a href='classes.html#inventory'>inventory</a>%) (to|for) %<a href='classes.html#player'>players</a>%",
+    "open %<a href='classes.html#inventory'>inventory</a>/<a href='classes.html#merchant'>merchant</a>% (to|for) %<a href='classes.html#player'>players</a>%",
 "close [the] inventory [view] (to|of|for) %<a href='classes.html#player'>players</a>%",
 "close %<a href='classes.html#player'>players</a>%'[s] inventory [view]",
 
     "pattern_end"
   ],
-  "since" : "2.0, 2.1.1 (closing), 2.2-Fixes-V10 (anvil), 2.4 (hopper, dropper, dispenser",
-  "description" : "Opens an inventory to a player. The player can then access and modify the inventory as if it was a chest that he just opened.
-Please note that currently 'show' and 'open' have the same effect, but 'show' will eventually show an unmodifiable view of the inventory in the future.",
+  "since" : "2.0, 2.1.1 (closing), INSERT VERSION (merchant)",
+  "description" : "Opens an inventory to a player. The player can then access and modify the inventory as if it was a chest that he just opened.",
   "examples" : "show the victim's inventory to the player\\nopen the player's inventory for the player"
 },
 {
@@ -4262,6 +4273,18 @@ but it is possible that the tree will just grow anyways, possibly replacing ever
   "examples" : "on area cloud effect:\\n    loop affected entities:\\n        if loop-value is a player:\\n            send \"WARNING: you've step on an area effect cloud!\" to loop-value"
 },
 {
+  "id" : "ExprAllGroups",
+  "name" : "All Groups",
+  "patterns" : [
+    "all groups",
+
+    "pattern_end"
+  ],
+  "since" : "2.2-dev35",
+  "description" : "All the groups a player can have. This expression requires Vault and a compatible permissions plugin to be installed.",
+  "examples" : "command /group <text>:\\n    trigger:\\n        if argument is \"list\":\\n            send \"%all groups%\""
+},
+{
   "id" : "ExprPermissions",
   "name" : "All Permissions",
   "patterns" : [
@@ -4840,17 +4863,19 @@ You can use the specific type of the entity that's involved in the event, e.g. i
   "examples" : "cursor slot of player is dirt\\nset cursor slot of player to 64 diamonds"
 },
 {
-  "id" : "ExprChestInventory",
-  "name" : "Custom Chest Inventory",
+  "id" : "ExprCustomInventory",
+  "name" : "Custom Inventory",
   "patterns" : [
-    "[a [new]] chest inventory (named|with name) %<a href='classes.html#string'>text</a>% [with %<a href='classes.html#number'>number</a>% row[s]]",
-"[a [new]] chest inventory with %<a href='classes.html#number'>number</a>% row[s] [(named|with name) %<a href='classes.html#string'>text</a>%]",
+    "[a] custom %<a href='classes.html#inventorytype'>inventory type</a>% [with size %<a href='classes.html#number'>number</a>%] [(named|with name[s]) %<a href='classes.html#string'>text</a>%] [with holder %inventoryholder%]",
+"[a] custom %<a href='classes.html#inventorytype'>inventory type</a>% [with %<a href='classes.html#number'>number</a>% rows] [(named|with name[s]) %<a href='classes.html#string'>text</a>%] [with holder %inventoryholder%]",
 
     "pattern_end"
   ],
-  "since" : "2.2-dev34",
-  "description" : "Returns a chest inventory with the given amount of rows and the name. Use the <a href=effects.html#EffOpenInventory>open inventory</a> effect to open it.",
-  "examples" : "open chest inventory with 1 row named \"test\" to player\\nset {_inventory} to chest inventory with 1 row"
+  "since" : "INSERT VERSION",
+  "description" : "Create a custom inventory that can be modified and opened to the player.
+NOTE: Inventories are not serialized, and will not save as variables once the server stops.
+Also, slots of a merchant inventory can't be set, these requires merchant recipes.",
+  "examples" : "set {_i} to custom chest inventory with size 4 named \"Ma Chest\"\\nset slot 1 of {_i} to a diamond sword\\nopen {_i} to player\\nopen a custom barrel inventory to player\\nopen a custom hopper inventory named \"Señor Hoppie\" to player"
 },
 {
   "id" : "ExprCustomModelData",
@@ -5474,6 +5499,19 @@ Remember to use '<a href='#ExprBlock'>block</a>' and not 'furnace', as 'furnace'
   "since" : "2.2-dev21",
   "description" : "If entity is affected by gravity or not, i.e. if it has Minecraft 1.10+ NoGravity flag.",
   "examples" : "set gravity of player off"
+},
+{
+  "id" : "ExprGroup",
+  "name" : "Group",
+  "patterns" : [
+    "[the] group[(s)] of %<a href='classes.html#offlineplayer'>offline players</a>%",
+"%<a href='classes.html#offlineplayer'>offline players</a>%'[s] group[(s)]",
+
+    "pattern_end"
+  ],
+  "since" : "2.2-dev35",
+  "description" : "The primary group or all groups of a player. This expression requires Vault and a compatible permissions plugin to be installed.",
+  "examples" : "on join:\\n    broadcast \"%group of player%\" # this is the player's primary group\\n    broadcast \"%groups of player%\" # this is all of the player's groups"
 },
 {
   "id" : "ExprHash",
@@ -6340,15 +6378,17 @@ Please note that the location of an entity is at it's feet, use <a href='#ExprEy
 },
 {
   "id" : "ExprNamed",
-  "name" : "Named Item/Inventory",
+  "name" : "Named Item",
   "patterns" : [
-    "%<a href='classes.html#itemtype'>item type</a>/<a href='classes.html#inventorytype'>inventory type</a>% (named|with name[s]) %<a href='classes.html#string'>text</a>%",
+    "%<a href='classes.html#itemtype'>item type</a>% (named|with name[s]) %<a href='classes.html#string'>text</a>%",
 
     "pattern_end"
   ],
-  "since" : "2.0, 2.2-dev34 (inventories)",
-  "description" : "Directly names an item/inventory, useful for defining a named item/inventory in a script. If you want to (re)name existing items/inventories you can either use this expression or use <code>set <a href='#ExprName'>name of &lt;item/inventory&gt;</a> to &lt;text&gt;</code>.",
-  "examples" : "give a diamond sword of sharpness 100 named \"<gold>Excalibur\" to the player\\nset tool of player to the player's tool named \"<gold>Wand\"\\nset the name of the player's tool to \"<gold>Wand\"\\nopen hopper inventory named \"Magic Hopper\" to player"
+  "since" : "2.0",
+  "description" : "Directly names an item, useful for defining a named item in a script.
+If you want to (re)name existing items you can either use this expression or
+use <code>set <a href='#ExprName'>name of &lt;item&gt;</a> to &lt;text&gt;</code>.",
+  "examples" : "give a diamond sword of sharpness 100 named \"<gold>Excalibur\" to the player\\nset tool of player to the player's tool named \"<gold>Wand\"\\nset the name of the player's tool to \"<gold>Wand\""
 },
 {
   "id" : "LitNewLine",
@@ -6599,6 +6639,19 @@ You can clear all potion effects of an entity/itemtype and add/remove a potion e
 Do note you will not be able to clear the base potion effects of a potion item. In that case, just set the item to a water bottle.
 When adding a potion effect type (rather than a potion effect), it will default to 15 seconds with tier 1.",
   "examples" : "set {_p::*} to active potion effects of player\\nclear all the potion effects of player\\nclear all the potion effects of player's tool\\nadd potion effects of player to potion effects of player's tool\\nadd speed to potion effects of target entity\\nremove speed and night vision from potion effects of player"
+},
+{
+  "id" : "ExprPrefixSuffix",
+  "name" : "Prefix/Suffix",
+  "patterns" : [
+    "[the] [chat] (prefix|suffix) of %<a href='classes.html#player'>players</a>%",
+"%<a href='classes.html#player'>players</a>%'[s] [chat] (prefix|suffix)",
+
+    "pattern_end"
+  ],
+  "since" : "2.0",
+  "description" : "The prefix or suffix as defined in the server's chat plugin.",
+  "examples" : "on chat:\\n    cancel event\\n    broadcast \"%player's prefix%%player's display name%%player's suffix%: %message%\" to the player's world\\nset the player's prefix to \"[<red>Admin<reset>] \""
 },
 {
   "id" : "ExprProjectileBounceState",
