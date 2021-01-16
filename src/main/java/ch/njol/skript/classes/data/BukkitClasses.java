@@ -700,7 +700,7 @@ public class BukkitClasses {
 				.parser(new EnumParser<>(invTypes)));
 		
 		Classes.registerClass(new ClassInfo<>(Merchant.class, "merchant")
-				.usage("merchant( inventory)?")
+				.user("merchant( inventory)?")
 				.name("Merchant Inventory")
 				.description("Represents a villager trading inventory.",
 					"These differ from regular inventories as they can not have slots set.")
