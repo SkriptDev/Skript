@@ -84,7 +84,7 @@ might have broken something unrelated, better to test that too. Nothing is more
 annoying than breaking existing features.
 
 After manually testing, try to write some automated
-[test scripts](https://github.com/SkriptLang/Skript/blob/master/src/test/skript/README.md)
+[test scripts](https://github.com/SkriptDev/Skript/blob/master/src/test/skript/README.md)
 if possible. Remember that not everything can be tested this way, though.
 
 When you are ready to submit a pull request, please follow the template. Don't

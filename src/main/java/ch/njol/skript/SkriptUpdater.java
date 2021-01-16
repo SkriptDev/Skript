@@ -144,7 +144,7 @@ public class SkriptUpdater extends Updater {
 							if (issue.length() > 0) {
 								// TODO get issue tracker URL from manifest or something
 								processed = processed.replace("#" + issue,
-										"<aqua><u><link:https://github.com/SkriptLang/Skript/issues/"
+										"<aqua><u><link:https://github.com/SkriptDev/Skript/issues/"
 										+ issue + ">#" + issue + "<r>");
 							}
 						}
