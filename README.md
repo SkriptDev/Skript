@@ -1,33 +1,35 @@
-# Skript [![Build Status](https://travis-ci.org/SkriptLang/Skript.svg?branch=master)](https://travis-ci.org/SkriptLang/Skript)
+# Skript 
 Skript is a plugin for Paper/Spigot, which allows server owners and other people
 to modify their servers without learning Java. It can also be useful if you
 *do* know Java; some tasks are quicker to do with Skript, and so it can be used
 for prototyping etc.
 
-This Github fork of Skript is based on Mirreski's improvements which was built
+This Github fork of Skript is based on bensku's ([SkriptLang](https://github.com/SkriptLang/Skript)) improvements which was built
 on Njol's original Skript.
 
 ## Requirements
-Skript requires **Spigot** to work. You heard it right, Bukkit does *not* work.
+Skript requires **Spigot** to work. You heard it right, CraftBukkit server do *not* work.
 **Paper**, which is a fork of Spigot, is recommended; it is required for some
 parts of Skript to be available.
 
 Skript supports only the **latest** patch versions of Minecraft 1.13+.
-For example, this means that 1.16.4 is supported, but 1.16.3 is *not*.
+For example, this means that 1.16.5 is supported, but 1.16.3 is *not*.
 Testing with all old patch versions is not feasible for us.
 
-Minecraft 1.12.2 and earlier are not, and will not be supported. New Minecraft
+Minecraft 1.12.2 and earlier are not, and will not be supported by SkriptDev.    
+If you would like Skript for 1.9.4 - 1.12.2, please considering using the [SkriptLang Fork](https://github.com/SkriptLang/Skript)   
+New Minecraft
 versions will be supported as soon as possible.
 
 ## Download
-You can find the downloads for each version with their release notes in the [releases page](https://github.com/SkriptLang/Skript/releases).
+You can find the downloads for each version with their release notes in the [releases page](https://github.com/SkriptDev/Skript/releases).
 
 ## Documentation
-Documentation is available [here](https://skriptlang.github.io/Skript) for the
+Documentation is available [here](https://skriptdev.github.io/Skript) for the
 latest version of Skript.
 
 ## Reporting Issues
-Please see our [contribution guidelines](https://github.com/SkriptLang/Skript/blob/master/.github/contributing.md)
+Please see our [contribution guidelines](https://github.com/SkriptDev/Skript/blob/master/.github/contributing.md)
 before reporting issues.
 
 ## A Note About Add-ons
@@ -44,7 +46,7 @@ and package Skript for you:
 gradlew clean build # on Windows
 ```
 
-You can get source code from the [releases page](https://github.com/SkriptLang/Skript/releases).
+You can get source code from the [releases page](https://github.com/SkriptDev/Skript/releases).
 You may also clone this repository, but that code may or may not be stable.
 
 ### Compiling Modules
@@ -69,7 +71,8 @@ server, but our build script can fetch it for you. Running tests is easy:
 
 <code>quickTest</code> runs the test suite on newest supported server.
 <code>skriptTest</code> additionally runs the tests on oldest supported
-server, and on 1.12 (pre-flattening). <code>skriptTestFull</code> runs
+server, and on 1.12 (pre-flattening). 
+<code>skriptTestFull</code> runs
 tests on **ALL** supported versions, some of which do not work on Java 9+.
 
 By running tests, you agree to Mojang's End User License Agreement.
@@ -98,9 +101,9 @@ Available flavors are github and spigot. Please do not abuse flavors by
 compiling your own test builds as releases.
 
 ## Contributing
-Please review our [contribution guidelines](https://github.com/SkriptLang/Skript/blob/master/.github/contributing.md).
+Please review our [contribution guidelines](https://github.com/SkriptDev/Skript/blob/master/.github/contributing.md).
 In addition to that, if you are contributing Java code, check our
-[coding conventions](https://github.com/SkriptLang/Skript/blob/master/code-conventions.md).
+[coding conventions](https://github.com/SkriptDev/Skript/blob/master/code-conventions.md).
 
 ## Maven Repository
 If you use Skript as (soft) dependency for your plugin, and use maven or Gradle,
@@ -146,7 +149,7 @@ Or, if you use Maven:
 Then you will also need to add Skript as a dependency.
 ```gradle
 dependencies {
-    implementation 'com.github.SkriptLang:Skript:[versionTag]'
+    implementation 'com.github.SkriptDev:Skript:[versionTag]'
 }
 ```
 
@@ -157,7 +160,7 @@ An example of the version tag would be ```dev37c```.
 Or, if you use Maven:
 ```
 <dependency>
-    <groupId>com.github.SkriptLang</groupId>
+    <groupId>com.github.SkriptDev</groupId>
     <artifactId>Skript</artifactId>
     <version>[versionTag]</version>
 </dependency>
@@ -168,13 +171,14 @@ Or, if you use Maven:
 * [Add-on releases at skUnity](https://forums.skunity.com/forums/addon-releases)
 * [Skript Chat Discord invite](https://discord.gg/0lx4QhQvwelCZbEX)
 * [Skript Hub](https://skripthub.net)
+* [SkriptLang's Skript](https://github.com/SkriptLang/Skript)
 * [Original Skript at Bukkit](https://dev.bukkit.org/bukkit-plugins/skript) (inactive)
 
-Note that these resources are not maintained by Skript's developers. Don't
+Note that these resources are not maintained by SkriptDev's developers. Don't
 contact us about any problems you might have with them.
 
 ## Developers
-You can find all contributors [here](https://github.com/SkriptLang/Skript/graphs/contributors).
+You can find all contributors [here](https://github.com/SkriptDev/Skript/graphs/contributors).
 
 All code is owned by its writer, licensed for others under GPLv3 (see LICENSE)
 unless otherwise specified.
