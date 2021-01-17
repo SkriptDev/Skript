@@ -195,7 +195,7 @@ public class BukkitClasses {
 		Classes.registerClass(new ClassInfo<>(Block.class, "block")
 				.user("blocks?")
 				.name("Block")
-				.description("A block in a <a href='#world'>world</a>. It has a <a href='#location'>location</a> and a <a href='#itemstack'>type</a>, " +
+				.description("A block in a <a href='#world'>world</a>. It has a <a href='#location'>location</a> and a <a href='#itemtype'>type</a>, " +
 						"and can also have a <a href='#direction'>direction</a> (mostly a <a href='expressions.html#ExprFacing'>facing</a>), an <a href='#inventory'>inventory</a>, or other special properties.")
 				.usage("")
 				.examples("")
@@ -217,7 +217,7 @@ public class BukkitClasses {
 					public String toString(final Block b, final int flags) {
 						String type = ItemType.toString(b, 0);
 						String loc = Classes.toString(b.getLocation());
-						return String.format("Block '%s' at %s", type, loc);
+						return String.format("Block(type='%s', loc='%s')", type, loc);
 					}
 					
 					@Override
