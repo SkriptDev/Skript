@@ -32,8 +32,8 @@ import com.google.gson.Gson;
 
 import ch.njol.skript.bukkitutil.BukkitUnsafe;
 import ch.njol.skript.bukkitutil.ItemUtils;
-import ch.njol.skript.bukkitutil.block.BlockCompat;
-import ch.njol.skript.bukkitutil.block.BlockValues;
+import ch.njol.skript.bukkitutil.BlockCompat;
+import ch.njol.skript.bukkitutil.BlockCompat.BlockValues;
 import ch.njol.skript.entity.EntityData;
 
 /**

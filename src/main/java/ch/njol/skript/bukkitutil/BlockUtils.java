@@ -27,9 +27,8 @@ import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.Nullable;
 
 import ch.njol.skript.aliases.ItemData;
-import ch.njol.skript.bukkitutil.block.BlockCompat;
-import ch.njol.skript.bukkitutil.block.BlockSetter;
-import ch.njol.skript.bukkitutil.block.BlockValues;
+import ch.njol.skript.bukkitutil.BlockCompat.BlockSetter;
+import ch.njol.skript.bukkitutil.BlockCompat.BlockValues;
 
 /**
  * Util class to manage {@link Block Blocks}

@@ -16,7 +16,7 @@
  *
  * Copyright Peter Güttinger, SkriptLang team and contributors
  */
-package ch.njol.skript.bukkitutil.block;
+package ch.njol.skript.bukkitutil;
 
 import java.util.Map;
 
@@ -42,30 +42,38 @@ import ch.njol.skript.aliases.MatchQuality;
 /**
  * 1.13+ block compat.
  */
-public class NewBlockCompat implements BlockCompat {
-
-	private static class NewBlockValues extends BlockValues {
+public class BlockCompat {
+	
+	/**
+	 * Instance of BlockCompat for current Minecraft version.
+	 */
+	public static final BlockCompat INSTANCE = new BlockCompat();
+	
+	public static final BlockSetter SETTER = INSTANCE.getSetter();
+	
+	private BlockCompat() {}
+	
+	public static class BlockValues {
 
 		Material type;
 		BlockData data;
 		boolean isDefault;
 		
-		public NewBlockValues(Material type, BlockData data, boolean isDefault) {
+		public BlockValues(Material type, BlockData data, boolean isDefault) {
 			this.type = type;
 			this.data = data;
 			this.isDefault = isDefault;
 		}
 		
-		@Override
 		public boolean isDefault() {
 			return isDefault;
 		}
 
 		@Override
 		public boolean equals(@Nullable Object other) {
-			if (!(other instanceof NewBlockValues))
+			if (!(other instanceof BlockValues))
 				return false;
-			NewBlockValues n = (NewBlockValues) other;
+			BlockValues n = (BlockValues) other;
 			return (data.matches(n.data) || n.data.matches(data)) && type.equals(n.type);
 		}
 
@@ -83,17 +91,12 @@ public class NewBlockCompat implements BlockCompat {
 		public String toString() {
 			return data.toString() + (isDefault ? " (default)" : "");
 		}
-
-		@Override
+		
 		public MatchQuality match(BlockValues other) {
-			if (!(other instanceof NewBlockValues)) {
-				throw new IllegalArgumentException("wrong block compat");
-			}
-			NewBlockValues n = (NewBlockValues) other;
-			if (type == n.type) {
-				if (data.equals(n.data)) { // Check for exact item match
+			if (type == other.type) {
+				if (data.equals(other.data)) { // Check for exact item match
 					return MatchQuality.EXACT;
-				} else if (data.matches(n.data)) { // What about explicitly defined states only?
+				} else if (data.matches(other.data)) { // What about explicitly defined states only?
 					return MatchQuality.SAME_ITEM;
 				} else { // Just same material and different block states
 					return MatchQuality.SAME_MATERIAL;
@@ -105,20 +108,50 @@ public class NewBlockCompat implements BlockCompat {
 		
 	}
 	
-	private static class NewBlockSetter implements BlockSetter {
+	public static class BlockSetter {
+		
+		/**
+		 * Attempts to automatically correct rotation and direction of the block
+		 * when setting it. Note that this will NOT overwrite any existing data
+		 * supplied in block values.
+		 */
+		public static int ROTATE = 1;
+		
+		/**
+		 * Overrides rotation and direction that might have been specified in block
+		 * values when {@link #ROTATE} is also set.
+		 */
+		public static int ROTATE_FORCE = 1 << 1;
+		
+		/**
+		 * Changes type of the block if that is needed to get the correct rotation.
+		 */
+		public static int ROTATE_FIX_TYPE = 1 << 2;
+		
+		/**
+		 * Takes rotation or direction of the block (depending on the block)
+		 * and attempts to place other parts of it according to those. For example,
+		 * placing beds and doors should be simple enough with this flag.
+		 */
+		public static int MULTIPART = 1 << 3;
+		
+		/**
+		 * When placing the block, apply physics.
+		 */
+		public static int APPLY_PHYSICS = 1 << 4;
 		
 		private boolean typesLoaded = false;
 
 		/**
 		 * Cached BlockFace values.
 		 */
-		private BlockFace[] faces = BlockFace.values();
+		private final BlockFace[] faces = BlockFace.values();
 		
 		@SuppressWarnings("null") // Late initialization with loadTypes() to avoid circular dependencies
-		public NewBlockSetter() {}
-
-		@Override
+		private BlockSetter() {}
+		
 		public void setBlock(Block block, Material type, @Nullable BlockValues values, int flags) {
+			
 			if (!typesLoaded)
 				loadTypes();
 			
@@ -127,9 +160,9 @@ public class NewBlockCompat implements BlockCompat {
 			boolean rotateFixType = (flags | ROTATE_FIX_TYPE) != 0;
 			boolean multipart = (flags | MULTIPART) != 0;
 			boolean applyPhysics = (flags | APPLY_PHYSICS) != 0;
-			NewBlockValues ourValues = null;
+			BlockValues ourValues = null;
 			if (values != null)
-				ourValues = (NewBlockValues) values;
+				ourValues = values;
 			
 			Class<?> dataType = type.data;
 			
@@ -273,57 +306,50 @@ public class NewBlockCompat implements BlockCompat {
 			return null; // Can't place torch here legally
 		}
 		
-		@Override
 		public void sendBlockChange(Player player, Location location, Material type, @Nullable BlockValues values) {
-			BlockData blockData = values != null ? ((NewBlockValues) values).data : type.createBlockData();
+			BlockData blockData = values != null ? ((BlockValues) values).data : type.createBlockData();
 			player.sendBlockChange(location, blockData);
 		}
 		
 	}
 	
-	private NewBlockSetter setter = new NewBlockSetter();
+	private final BlockSetter setter = new BlockSetter();
 	
 	@Nullable
-	@Override
 	public BlockValues getBlockValues(BlockState block) {
 		// If block doesn't have useful data, data field of type is MaterialData
 		if (block.getType().isBlock())
-			return new NewBlockValues(block.getType(), block.getBlockData(), false);
+			return new BlockValues(block.getType(), block.getBlockData(), false);
 		return null;
 	}
 	
-	@Override
 	@Nullable
 	public BlockValues getBlockValues(ItemStack stack) {
 		Material type = stack.getType();
 		if (type.isBlock()) { // Block has data
 			// Create default block data for the type
-			return new NewBlockValues(type, Bukkit.createBlockData(type), true);
+			return new BlockValues(type, Bukkit.createBlockData(type), true);
 		}
 		return null;
 	}
 	
-	@Override
 	public BlockSetter getSetter() {
 		return setter;
 	}
-
-	@Override
+	
 	public BlockState fallingBlockToState(FallingBlock entity) {
 		BlockState state = entity.getWorld().getBlockAt(0, 0, 0).getState();
 		state.setBlockData(entity.getBlockData());
 		return state;
 	}
-
-	@Override
+	
 	@Nullable
 	public BlockValues createBlockValues(Material type, Map<String, String> states, @Nullable ItemStack item, int itemFlags) {
 		// Ignore item; on 1.13+ block data never applies to items
 		if (states.isEmpty()) {
 			if (type.isBlock()) { // Still need default block values
 				BlockData data =  Bukkit.createBlockData(type, "[]");
-				assert data != null;
-				return new NewBlockValues(type, data, true);
+				return new BlockValues(type, data, true);
 			} else { // Items cannot have block data
 				return null;
 			}
@@ -342,21 +368,18 @@ public class NewBlockCompat implements BlockCompat {
 		
 		try {
 			BlockData data =  Bukkit.createBlockData(type, combined.toString());
-			assert data != null;
-			return new NewBlockValues(type, data, false);
+			return new BlockValues(type, data, false);
 		} catch (IllegalArgumentException e) {
 			Skript.error("Parsing block state " + combined + " failed!");
 			e.printStackTrace();
 			return null;
 		}
 	}
-
-	@Override
+	
 	public boolean isEmpty(Material type) {
 		return type == Material.AIR || type == Material.CAVE_AIR || type == Material.VOID_AIR;
 	}
-
-	@Override
+	
 	public boolean isLiquid(Material type) {
 		return type == Material.WATER || type == Material.LAVA;
 	}

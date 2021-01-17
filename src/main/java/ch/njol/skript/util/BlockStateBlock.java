@@ -46,7 +46,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import com.destroystokyo.paper.block.BlockSoundGroup;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.bukkitutil.block.BlockCompat;
+import ch.njol.skript.bukkitutil.BlockCompat;
 
 /**
  * A block that gets all data from a BlockState, and either reflects changes on the BlockState or delays them to the real block by 1 tick depending on which constructor is used.

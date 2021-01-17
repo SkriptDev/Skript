@@ -45,7 +45,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import com.destroystokyo.paper.block.BlockSoundGroup;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.bukkitutil.block.BlockCompat;
+import ch.njol.skript.bukkitutil.BlockCompat;
 
 /**
  * A block that gets all data from the world, but either delays
