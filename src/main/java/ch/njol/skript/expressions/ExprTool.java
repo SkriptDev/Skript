@@ -1,18 +1,18 @@
 /**
- *   This file is part of Skript.
+ * This file is part of Skript.
  *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * Skript is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * Skript is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with Skript.  If not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright Peter Güttinger, SkriptLang team and contributors
  */
@@ -51,21 +51,26 @@ import ch.njol.util.Kleenean;
  * @author Peter Güttinger
  */
 @Name("Tool")
-@Description("The item a player is holding.")
-@Examples({"player is holding a pickaxe",
-		"# is the same as",
-		"player's tool is a pickaxe",
-		"player's off hand tool is shield #Only for Minecraft 1.9"})
+@Description("The item an entity is holding in their main or off hand.")
+@Examples({"player's tool is a pickaxe",
+	"player's off hand tool is a shield",
+	"set tool of all player's to diamond sword",
+	"set offhand tool of target entity to a bow"})
 @Since("1.0")
 public class ExprTool extends PropertyExpression<LivingEntity, Slot> {
 	static {
-		Skript.registerExpression(ExprTool.class, Slot.class, ExpressionType.PROPERTY, "[the] (tool|held item|weapon) [of %livingentities%]", "%livingentities%'[s] (tool|held item|weapon)");
+		Skript.registerExpression(ExprTool.class, Slot.class, ExpressionType.PROPERTY,
+			"[the] (0¦(tool|held item|weapon)|1¦(off[ ]hand (tool|item)|shield[ item])) [of %livingentities%]",
+			"%livingentities%'[s] (0¦(tool|held item|weapon)|1¦(off[ ]hand (tool|item)|shield[ item]))");
 	}
+	
+	private boolean offHand;
 	
 	@SuppressWarnings({"unchecked", "null"})
 	@Override
 	public boolean init(final Expression<?>[] exprs, final int matchedPattern, final Kleenean isDelayed, final ParseResult parser) {
 		setExpr((Expression<Player>) exprs[0]);
+		offHand = parser.mark == 1;
 		return true;
 	}
 	
@@ -75,16 +80,16 @@ public class ExprTool extends PropertyExpression<LivingEntity, Slot> {
 		return get(source, new Getter<Slot, LivingEntity>() {
 			@Override
 			@Nullable
-			public Slot get(final LivingEntity p) {
+			public Slot get(final LivingEntity ent) {
 				if (!delayed) {
-					if (e instanceof PlayerItemHeldEvent && ((PlayerItemHeldEvent) e).getPlayer() == p) {
+					if (e instanceof PlayerItemHeldEvent && ((PlayerItemHeldEvent) e).getPlayer() == ent) {
 						final PlayerInventory i = ((PlayerItemHeldEvent) e).getPlayer().getInventory();
 						assert i != null;
 						return new InventorySlot(i, getTime() >= 0 ? ((PlayerItemHeldEvent) e).getNewSlot() : ((PlayerItemHeldEvent) e).getPreviousSlot());
-					} else if (e instanceof PlayerBucketEvent && ((PlayerBucketEvent) e).getPlayer() == p) {
+					} else if (e instanceof PlayerBucketEvent && ((PlayerBucketEvent) e).getPlayer() == ent) {
 						final PlayerInventory i = ((PlayerBucketEvent) e).getPlayer().getInventory();
 						assert i != null;
-						return new InventorySlot(i, ((PlayerBucketEvent) e).getPlayer().getInventory().getHeldItemSlot()) {
+						return new InventorySlot(i, offHand ? 40 : ((PlayerBucketEvent) e).getPlayer().getInventory().getHeldItemSlot()) {
 							@Override
 							@Nullable
 							public ItemStack getItem() {
@@ -102,13 +107,16 @@ public class ExprTool extends PropertyExpression<LivingEntity, Slot> {
 						};
 					}
 				}
-				final EntityEquipment e = p.getEquipment();
-				if (e == null)
+				final EntityEquipment eq = ent.getEquipment();
+				if (eq == null)
 					return null;
-				return new EquipmentSlot(e, EquipmentSlot.EquipSlot.TOOL) {
+				return new EquipmentSlot(eq, offHand ? EquipmentSlot.EquipSlot.OFF_HAND : EquipmentSlot.EquipSlot.TOOL) {
 					@Override
 					public String toString(@Nullable Event event, boolean debug) {
-						return (getTime() == 1 ? "future " : getTime() == -1 ? "former " : "") + Classes.toString(getItem());
+						String time = getTime() == 1 ? "future " : getTime() == -1 ? "former " : "";
+						String hand = offHand ? "off hand" : "";
+						String item = Classes.toString(getItem());
+						return String.format("%s %s tool of %s", time, hand, item);
 					}
 				};
 			}
@@ -122,9 +130,9 @@ public class ExprTool extends PropertyExpression<LivingEntity, Slot> {
 	
 	@Override
 	public String toString(final @Nullable Event e, final boolean debug) {
-		if (e == null)
-			return "the " + (getTime() == 1 ? "future " : getTime() == -1 ? "former " : "") + "tool of " + getExpr().toString(e, debug);
-		return Classes.getDebugMessage(getSingle(e));
+		String time = getTime() == 1 ? "future " : getTime() == -1 ? "former " : "";
+		String hand = offHand ? "off hand" : "";
+		return String.format("%s %s tool of %s", time, hand, getExpr().toString(e, debug));
 	}
 	
 	@SuppressWarnings("unchecked")
