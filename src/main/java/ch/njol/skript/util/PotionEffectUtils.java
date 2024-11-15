@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.ThrownPotion;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SuspiciousStewMeta;
@@ -37,7 +38,6 @@ import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.Nullable;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.localization.Language;
 import ch.njol.skript.localization.LanguageChangeListener;
 
@@ -281,25 +281,25 @@ public abstract class PotionEffectUtils {
 	/**
 	 * Clear all {@link PotionEffect PotionEffects} from an ItemType
 	 *
-	 * @param itemType Item to remove effects from
+	 * @param itemStack Item to remove effects from
 	 */
-	public static void clearAllEffects(ItemType itemType) {
-		ItemMeta meta = itemType.getItemMeta();
+	public static void clearAllEffects(ItemStack itemStack) {
+		ItemMeta meta = itemStack.getItemMeta();
 		if (meta instanceof PotionMeta)
 			((PotionMeta) meta).clearCustomEffects();
 		else if (HAS_SUSPICIOUS_META && meta instanceof SuspiciousStewMeta)
 			((SuspiciousStewMeta) meta).clearCustomEffects();
-		itemType.setItemMeta(meta);
+		itemStack.setItemMeta(meta);
 	}
 	
 	/**
 	 * Add PotionEffects to an ItemTye
 	 *
-	 * @param itemType Item to add effects to
+	 * @param itemStack Item to add effects to
 	 * @param effects {@link PotionEffect} or {@link PotionEffectType} to add
 	 */
-	public static void addEffects(ItemType itemType, Object[] effects) {
-		ItemMeta meta = itemType.getItemMeta();
+	public static void addEffects(ItemStack itemStack, Object[] effects) {
+		ItemMeta meta = itemStack.getItemMeta();
 		for (Object object : effects) {
 			PotionEffect effect;
 			if (object instanceof PotionEffect)
@@ -314,17 +314,17 @@ public abstract class PotionEffectUtils {
 			else if (HAS_SUSPICIOUS_META && meta instanceof SuspiciousStewMeta)
 				((SuspiciousStewMeta) meta).addCustomEffect(effect, false);
 		}
-		itemType.setItemMeta(meta);
+		itemStack.setItemMeta(meta);
 	}
 	
 	/**
 	 * Remove a PotionEffect from an ItemType
 	 *
-	 * @param itemType Item to remove effects from
+	 * @param itemStack Item to remove effects from
 	 * @param effects {@link PotionEffect} or {@link PotionEffectType} to remove
 	 */
-	public static void removeEffects(ItemType itemType, Object[] effects) {
-		ItemMeta meta = itemType.getItemMeta();
+	public static void removeEffects(ItemStack itemStack, Object[] effects) {
+		ItemMeta meta = itemStack.getItemMeta();
 		
 		for (Object object : effects) {
 			PotionEffectType effectType;
@@ -340,7 +340,7 @@ public abstract class PotionEffectUtils {
 			else if (HAS_SUSPICIOUS_META && meta instanceof SuspiciousStewMeta)
 				((SuspiciousStewMeta) meta).removeCustomEffect(effectType);
 		}
-		itemType.setItemMeta(meta);
+		itemStack.setItemMeta(meta);
 	}
 
 	private static final boolean HAS_POTION_TYPE_METHOD = Skript.methodExists(PotionMeta.class, "hasBasePotionType");
@@ -350,12 +350,12 @@ public abstract class PotionEffectUtils {
 	 *
 	 * This will also include the base potion as well
 	 *
-	 * @param itemType Item to get potions from
+	 * @param itemStack Item to get potions from
 	 * @return List of PotionEffects on the item
 	 */
-	public static List<PotionEffect> getEffects(ItemType itemType) {
+	public static List<PotionEffect> getEffects(ItemStack itemStack) {
 		List<PotionEffect> effects = new ArrayList<>();
-		ItemMeta meta = itemType.getItemMeta();
+		ItemMeta meta = itemStack.getItemMeta();
 		if (meta instanceof PotionMeta) {
 			PotionMeta potionMeta = ((PotionMeta) meta);
 			if (potionMeta.hasCustomEffects())

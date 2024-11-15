@@ -1,25 +1,6 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -28,11 +9,11 @@ import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
-
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.event.Event;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
@@ -46,8 +27,8 @@ public class EffGlowingText extends Effect {
 	static {
 		if (Skript.methodExists(Sign.class, "setGlowingText", boolean.class)) {
 			Skript.registerEffect(EffGlowingText.class,
-					"make %blocks/itemtypes% have glowing text",
-					"make %blocks/itemtypes% have (normal|non[-| ]glowing) text"
+				"make %blocks/itemstacks% have glowing text",
+				"make %blocks/itemstacks% have (normal|non[-| ]glowing) text"
 			);
 		}
 	}
@@ -73,9 +54,8 @@ public class EffGlowingText extends Effect {
 					((Sign) state).setGlowingText(glowing);
 					state.update();
 				}
-			} else if (obj instanceof ItemType) {
-				ItemType item = (ItemType) obj;
-				ItemMeta meta = item.getItemMeta();
+			} else if (obj instanceof ItemStack itemStack) {
+				ItemMeta meta = itemStack.getItemMeta();
 				if (!(meta instanceof BlockStateMeta))
 					return;
 				BlockStateMeta blockMeta = (BlockStateMeta) meta;
@@ -85,7 +65,7 @@ public class EffGlowingText extends Effect {
 				((Sign) state).setGlowingText(glowing);
 				state.update();
 				blockMeta.setBlockState(state);
-				item.setItemMeta(meta);
+				itemStack.setItemMeta(meta);
 			}
 		}
 	}

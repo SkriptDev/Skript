@@ -1,25 +1,24 @@
 /**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * This file is part of Skript.
+ * <p>
+ * Skript is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * Skript is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU General Public License
+ * along with Skript.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>
  * Copyright Peter Güttinger, SkriptLang team and contributors
  */
 package ch.njol.skript.bukkitutil;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.util.slot.Slot;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -116,60 +115,20 @@ public class ItemUtils {
 	}
 
 	/**
-	 * Gets damage/durability of an item, or 0 if it does not have damage.
-	 * @param itemType Item.
-	 * @return Damage.
-	 */
-	public static int getDamage(ItemType itemType) {
-		ItemMeta meta = itemType.getItemMeta();
-		if (meta instanceof Damageable)
-			return ((Damageable) meta).getDamage();
-		return 0; // Non damageable item
-	}
-
-	/** Gets the max damage/durability of an item
-	 * <p>NOTE: Will account for custom damageable items in MC 1.20.5+</p>
-	 * @param itemType Item to grab durability from
-	 * @return Max amount of damage this item can take
-	 */
-	public static int getMaxDamage(ItemType itemType) {
-		ItemMeta meta = itemType.getItemMeta();
-		if (HAS_MAX_DAMAGE && meta instanceof Damageable && ((Damageable) meta).hasMaxDamage())
-			return ((Damageable) meta).getMaxDamage();
-		return itemType.getMaterial().getMaxDurability();
-	}
-
-	/**
-	 * Sets damage/durability of an item if possible.
-	 * @param itemType Item to modify.
-	 * @param damage New damage. Note that on some Minecraft versions,
-	 * this might be truncated to short.
-	 */
-	public static void setDamage(ItemType itemType, int damage) {
-		ItemMeta meta = itemType.getItemMeta();
-		if (meta instanceof Damageable) {
-			((Damageable) meta).setDamage(damage);
-			itemType.setItemMeta(meta);
-		}
-	}
-
-	/**
 	 * Sets the owner of a player head.
 	 * @param skull player head item to modify
 	 * @param player owner of the head
 	 */
-	public static void setHeadOwner(ItemType skull, OfflinePlayer player) {
+	public static void setHeadOwner(ItemStack skull, OfflinePlayer player) {
 		ItemMeta meta = skull.getItemMeta();
-		if (!(meta instanceof SkullMeta))
+		if (!(meta instanceof SkullMeta skullMeta))
 			return;
-
-		SkullMeta skullMeta = (SkullMeta) meta;
 
 		if (player.getName() != null) {
 			skullMeta.setOwningPlayer(player);
 		} else if (CAN_CREATE_PLAYER_PROFILE) {
 			//noinspection deprecation
-			skullMeta.setOwnerProfile(Bukkit.createPlayerProfile(player.getUniqueId(), ""));
+			skullMeta.setOwnerProfile(Bukkit.createPlayerProfile(player.getUniqueId(), player.getName()));
 		} else {
 			skullMeta.setOwningPlayer(null);
 		}
@@ -214,15 +173,13 @@ public class ItemUtils {
 	 */
 	@Nullable
 	public static ItemStack asItemStack(Object object) {
-		if (object instanceof ItemType)
-			return ((ItemType) object).getRandom();
-		else if (object instanceof Slot)
+		if (object instanceof Slot)
 			return ((Slot) object).getItem();
 		else if (object instanceof ItemStack)
 			return ((ItemStack) object);
 		return null;
 	}
-	
+
 	/**
 	 * Tests whether two item stacks are of the same type, i.e. it ignores the amounts.
 	 *
@@ -255,6 +212,7 @@ public class ItemUtils {
 
 	// TreeType -> Sapling (Material) conversion for EvtGrow
 	private static final HashMap<TreeType, Material> TREE_TO_SAPLING_MAP = new HashMap<>();
+
 	static {
 		// Populate TREE_TO_SAPLING_MAP
 		// oak

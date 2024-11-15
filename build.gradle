@@ -48,26 +48,10 @@ checkstyle {
 	sourceSets = [] // disables checkstyle after build task
 }
 
-task checkAliases {
-	description 'Checks for the existence of the aliases.'
-	doLast {
-		def aliasFolder = project.file('skript-aliases')
-		if (!aliasFolder.exists() || aliasFolder.listFiles().length == 0) {
-			throw new InvalidUserDataException('Aliases are missing from \'skript-aliases\' folder. Consider fetching submodules with \'git submodule update --init\'.')
-		}
-	}
-}
-
 task testJar(type: ShadowJar) {
 	dependsOn(compileTestJava)
 	archiveFileName = 'Skript-JUnit.jar'
 	from sourceSets.test.output, sourceSets.main.output, project.configurations.testShadow
-}
-
-task jar(overwrite: true, type: ShadowJar) {
-	dependsOn checkAliases
-	archiveFileName = jarName ? 'Skript-' + project.version + '.jar' : jarName
-	from sourceSets.main.output
 }
 
 task build(overwrite: true, type: ShadowJar) {
@@ -104,9 +88,6 @@ tasks.withType(ShadowJar) {
 			'Automatic-Module-Name': 'ch.njol.skript',
 			'Sealed': 'true'
 		)
-	}
-	from 'skript-aliases', {
-		into 'aliases-english' // Change this if we get aliases in other languages
 	}
 }
 
@@ -242,7 +223,7 @@ def java11 = 11
 
 def latestEnv = 'java21/paper-1.21.3.json'
 def latestJava = java21
-def oldestJava = java11
+def oldestJava = java17
 
 def latestJUnitEnv = latestEnv
 def latestJUnitJava = latestJava

@@ -18,26 +18,26 @@
  */
 package ch.njol.skript.conditions;
 
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.conditions.base.PropertyCondition;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
+import org.bukkit.Material;
 
 @Name("Is Edible")
-@Description("Checks whether an item is edible.")
-@Examples({"steak is edible", "player's tool is edible"})
+@Description("Checks whether a material is edible.")
+@Examples({"steak is edible", "player's tool is edible"}) //todo fix docs
 @Since("2.2-dev36")
-public class CondIsEdible extends PropertyCondition<ItemType> {
+public class CondIsEdible extends PropertyCondition<Material> {
 
 	static {
-		PropertyCondition.register(CondIsEdible.class, "edible", "itemtypes");
+		PropertyCondition.register(CondIsEdible.class, "edible", "materials");
 	}
 
 	@Override
-	public boolean check(ItemType i) {
-		return i.getMaterial().isEdible();
+	public boolean check(Material material) {
+		return material.isEdible();
 	}
 
 	@Override

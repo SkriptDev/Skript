@@ -19,7 +19,6 @@
 package ch.njol.skript.util.visual;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.bukkitutil.ItemUtils;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.SyntaxElementInfo;
@@ -151,10 +150,11 @@ public class VisualEffects {
 				}
 				if (raw == null)
 					return Bukkit.createBlockData(Material.AIR);
-				if (raw instanceof ItemType) {
-					ItemType type = (ItemType) raw;
-					ItemStack random = type.getRandom();
-					return Bukkit.createBlockData(random != null ? random.getType() : type.getMaterial());
+				if (raw instanceof ItemStack itemStack) {
+					if (!itemStack.getType().isBlock()) {
+						return Bukkit.createBlockData(Material.AIR);
+					}
+					return itemStack.getType().createBlockData();
 				}
 				return raw;
 			};
@@ -200,8 +200,6 @@ public class VisualEffects {
 
 			final BiFunction<Object, Location, Object> itemStackSupplier = (raw, location) -> {
 				ItemStack itemStack = null;
-				if (raw instanceof ItemType)
-					itemStack = ((ItemType) raw).getRandom();
 				if (itemStack == null || ItemUtils.isAir(itemStack.getType())) // item crack air is not allowed
 					itemStack = new ItemStack(Material.IRON_SWORD);
 				if (IS_ITEM_CRACK_MATERIAL)

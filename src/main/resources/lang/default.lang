@@ -543,7 +543,7 @@ entities:
 		pattern: egg(|1¦s)
 	enderman:
 		name: ender¦man¦men @an
-		pattern: enderm(a|1¦e)n [(carrying|holding) %-itemtype%]
+		pattern: enderm(a|1¦e)n [(carrying|holding) %-itemstack%]
 		format: %1$s holding %2$s
 	ender crystal:
 		name: ender crystal¦s @an
@@ -822,16 +822,16 @@ entities:
 		pattern: firework(|1¦s) [rocket(|1¦s)]
 	falling block:
 		name: falling block¦s
-		pattern: falling (block(|1¦s)|(2¦)%-itemtype%)
+		pattern: falling (block(|1¦s)|(2¦)%-material%)
 		adjective: falling
 		not a block error: Falling blocks must be blocks, not items
 	thrown potion:
 		name: thrown potion¦s
-		pattern: thrown (potion(|1¦s)|(2¦)%-itemtypes%)
+		pattern: thrown (potion(|1¦s)|(2¦)%-material%)
 		adjective: thrown
 	dropped item:
 		name: dropped item¦s
-		pattern: dropped (item(|1¦s)|(2¦)%-itemtypes%)|item entit(y|1¦ies)
+		pattern: dropped (item(|1¦s)|(2¦)%-materials%)|item entit(y|1¦ies)
 		adjective: dropped
 	horse:
 		name: horse¦s
@@ -1471,17 +1471,17 @@ visual effects:
 
 		block: # added in 1.20.5
 			name: block @-
-			pattern: (%-blockdata/itemtype% break[ing]|[sprinting] dust of %-blockdata/itemtype%)
+			pattern: (%-blockdata/material% break[ing]|[sprinting] dust of %-blockdata/material%)
 		block_crack: # for versions below 1.20.5
 			name: block break @-
-			pattern: %blockdata/itemtype% break[ing]
+			pattern: %blockdata/material% break[ing]
 		block_dust: # for versions below 1.20.5
 			name: block dust @-
 			pattern: [sprinting] dust of %blockdata/itemtype%
 
 		block_marker: # added in 1.18
 			name: block marker @a
-			pattern: (barrierbm:barrier [particle]|lightbm:light [particle]|%-blockdata/itemtype% block marker)
+			pattern: (barrierbm:barrier [particle]|lightbm:light [particle]|%-blockdata/material% block marker)
 		barrier:
 			name: barrier @a
 			pattern: barrier [particle]
@@ -1591,7 +1591,7 @@ visual effects:
 
 		dust_pillar: # added in 1.20.5 (for 1.21)
 			name: dust pillar @a
-			pattern: %blockdata/itemtype% dust pillar
+			pattern: %blockdata/material% dust pillar
 
 		dust_plume: # added in 1.20.3
 			name: dust plume @a
@@ -1673,7 +1673,7 @@ visual effects:
 
 		falling_dust:
 			name: falling dust @-
-			pattern: falling dust of %blockdata/itemtype%
+			pattern: falling dust of %blockdata/material%
 
 		falling_honey: # added in 1.15
 			name: falling honey @-
@@ -1765,10 +1765,10 @@ visual effects:
 
 		item: # added in 1.20.5
 			name: item @-
-			pattern: %itemtype% item (break|crack)[ing]
+			pattern: %itemstack% item (break|crack)[ing]
 		item_crack: # for versions below 1.20.5
 			name: item crack @-
-			pattern: %itemtype% item (break|crack)[ing]
+			pattern: %itemstack% item (break|crack)[ing]
 
 		item_cobweb: # added in 1.20.5 (for 1.21)
 			name: cobweb @-
@@ -2398,7 +2398,6 @@ types:
 	weathertype: weather type¦s @a
 	entitytype: entity type¦s @an
 	entitydata: entity type¦s @an
-	itemtype: item type¦s @an
 	time: time¦s @a
 	timespan: time span¦s @a
 	timeperiod: time period¦s @a

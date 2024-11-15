@@ -34,7 +34,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.bukkitutil.PlayerUtils;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.util.Experience;
@@ -53,13 +52,13 @@ public class DefaultChangers {
 		public Class<? extends Object>[] acceptChange(final ChangeMode mode) {
 			switch (mode) {
 				case ADD:
-					return CollectionUtils.array(ItemType[].class, Inventory.class, Experience[].class);
+					return CollectionUtils.array(ItemStack[].class, Inventory.class, Experience[].class);
 				case DELETE:
 					return CollectionUtils.array();
 				case REMOVE:
-					return CollectionUtils.array(PotionEffectType[].class, ItemType[].class, Inventory.class);
+					return CollectionUtils.array(PotionEffectType[].class, ItemStack[].class, Inventory.class);
 				case REMOVE_ALL:
-					return CollectionUtils.array(PotionEffectType[].class, ItemType[].class);
+					return CollectionUtils.array(PotionEffectType[].class, ItemStack[].class);
 				case SET:
 				case RESET: // REMIND reset entity? (unshear, remove held item, reset weapon/armour, ...)
 					return null;
@@ -101,15 +100,16 @@ public class DefaultChangers {
 										inventory.remove(itemStack);
 									}
 								}
-							} else if (d instanceof ItemType) {
+							} else if (d instanceof ItemStack) {
 								hasItem = true;
 								final PlayerInventory invi = p.getInventory();
-								if (mode == ChangeMode.ADD)
-									((ItemType) d).addTo(invi);
-								else if (mode == ChangeMode.REMOVE)
-									((ItemType) d).removeFrom(invi);
-								else
-									((ItemType) d).removeAll(invi);
+								// TODO figure this one out for ItemStack
+//								if (mode == ChangeMode.ADD)
+//									((ItemType) d).addTo(invi);
+//								else if (mode == ChangeMode.REMOVE)
+//									((ItemType) d).removeFrom(invi);
+//								else
+//									((ItemType) d).removeAll(invi);
 							}
 						}
 					}
@@ -176,7 +176,7 @@ public class DefaultChangers {
 		}
 	};
 	
-	public final static Changer<Inventory> inventoryChanger = new Changer<Inventory>() {
+	public final static Changer<Inventory> inventoryChanger = new Changer<>() {
 		
 		private Material[] cachedMaterials = Material.values();
 		
@@ -186,10 +186,10 @@ public class DefaultChangers {
 			if (mode == ChangeMode.RESET)
 				return null;
 			if (mode == ChangeMode.REMOVE_ALL)
-				return CollectionUtils.array(ItemType[].class);
+				return CollectionUtils.array(ItemStack[].class);
 			if (mode == ChangeMode.SET)
-				return CollectionUtils.array(ItemType[].class, Inventory.class);
-			return CollectionUtils.array(ItemType[].class, Inventory[].class);
+				return CollectionUtils.array(ItemStack[].class, Inventory.class);
+			return CollectionUtils.array(ItemStack[].class, Inventory[].class);
 		}
 		
 		@Override
@@ -218,20 +218,21 @@ public class DefaultChangers {
 											invi.addItem(i);
 									}
 								} else {
-									((ItemType) d).addTo(invi);
+									//((ItemType) d).addTo(invi);
 								}
 							}
 						} else {
 							for (final Object d : delta) {
-								if (d instanceof ItemStack) {
-									new ItemType((ItemStack) d).addTo(invi); // Can't imagine why would be ItemStack, but just in case...
-								} else if (d instanceof ItemType) {
-									((ItemType) d).addTo(invi);
-								} else if (d instanceof Block) {
-									new ItemType((Block) d).addTo(invi);
-								} else {
-									Skript.error("Can't " + d.toString() + " to an inventory!");
-								}
+								// TODO figure out itemstack
+//								if (d instanceof ItemStack) {
+//									new ItemType((ItemStack) d).addTo(invi); // Can't imagine why would be ItemStack, but just in case...
+//								} else if (d instanceof ItemType) {
+//									((ItemType) d).addTo(invi);
+//								} else if (d instanceof Block) {
+//									new ItemType((Block) d).addTo(invi);
+//								} else {
+//									Skript.error("Can't " + d.toString() + " to an inventory!");
+//								}
 							}
 						}
 						
@@ -243,14 +244,14 @@ public class DefaultChangers {
 							// Potential fast path: remove all items -> clear inventory
 							boolean equal = true;
 							for (int i = 0; i < delta.length; i++) {
-								if (!(delta[i] instanceof ItemType)) {
-									equal = false;
-									break; // Not an item, take slow path
-								}
-								if (((ItemType) delta[i]).getMaterial() != cachedMaterials[i]) {
-									equal = false;
-									break;
-								}
+//								if (!(delta[i] instanceof ItemType)) {
+//									equal = false;
+//									break; // Not an item, take slow path
+//								}
+//								if (((ItemType) delta[i]).getMaterial() != cachedMaterials[i]) {
+//									equal = false;
+//									break;
+//								}
 							}
 							if (equal) { // Take fast path, break out before slow one
 								invi.clear();
@@ -267,10 +268,10 @@ public class DefaultChangers {
 										invi.removeItem(itemStack);
 								}
 							} else {
-								if (mode == ChangeMode.REMOVE)
-									((ItemType) d).removeFrom(invi);
-								else
-									((ItemType) d).removeAll(invi);
+//								if (mode == ChangeMode.REMOVE)
+//									((ItemType) d).removeFrom(invi);
+//								else
+//									((ItemType) d).removeAll(invi);
 							}
 						}
 						break;
@@ -292,8 +293,8 @@ public class DefaultChangers {
 			if (mode == ChangeMode.RESET)
 				return null; // REMIND regenerate?
 			if (mode == ChangeMode.SET)
-				return CollectionUtils.array(ItemType.class, BlockData.class);
-			return CollectionUtils.array(ItemType[].class, Inventory[].class);
+				return CollectionUtils.array(ItemStack.class, BlockData.class);
+			return CollectionUtils.array(ItemStack[].class, Inventory[].class);
 		}
 		
 		@Override
@@ -304,8 +305,8 @@ public class DefaultChangers {
 					case SET:
 						assert delta != null;
 						Object object = delta[0];
-						if (object instanceof ItemType) {
-							((ItemType) object).getBlock().setBlock(block, true);
+						if (object instanceof ItemStack itemStack && itemStack.getType().isBlock()) {
+							block.setType(itemStack.getType());
 						} else if (object instanceof BlockData) {
 							block.setBlockData(((BlockData) object));
 						}
@@ -329,7 +330,7 @@ public class DefaultChangers {
 											invi.addItem(i);
 									}
 								} else {
-									((ItemType) obj).addTo(invi);
+//									((ItemType) obj).addTo(invi);
 								}
 							}
 						} else {
@@ -337,10 +338,10 @@ public class DefaultChangers {
 								if (obj instanceof Inventory) {
 									invi.removeItem(((Inventory) obj).getContents());
 								} else {
-									if (mode == ChangeMode.REMOVE)
-										((ItemType) obj).removeFrom(invi);
-									else
-										((ItemType) obj).removeAll(invi);
+//									if (mode == ChangeMode.REMOVE)
+//										((ItemType) obj).removeFrom(invi);
+//									else
+//										((ItemType) obj).removeAll(invi);
 								}
 							}
 						}

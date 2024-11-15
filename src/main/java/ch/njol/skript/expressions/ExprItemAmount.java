@@ -1,24 +1,5 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.expressions;
 
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.classes.Changer.ChangeMode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -38,14 +19,12 @@ import org.jetbrains.annotations.Nullable;
 public class ExprItemAmount extends SimplePropertyExpression<Object, Long> {
 
 	static {
-		register(ExprItemAmount.class, Long.class, "item[[ ]stack] (amount|size|number)", "slots/itemtypes/itemstacks");
+		register(ExprItemAmount.class, Long.class, "item[[ ]stack] (amount|size|number)", "slots/itemstacks");
 	}
 
 	@Override
 	public Long convert(final Object item) {
-		if (item instanceof ItemType) {
-			return (long) ((ItemType) item).getAmount();
-		} else if (item instanceof Slot) {
+		if (item instanceof Slot) {
 			return (long) ((Slot) item).getAmount();
 		} else {
 			return (long) ((ItemStack) item).getAmount();
@@ -55,15 +34,11 @@ public class ExprItemAmount extends SimplePropertyExpression<Object, Long> {
 	@Override
 	@Nullable
 	public Class<?>[] acceptChange(ChangeMode mode) {
-		switch (mode) {
-			case SET:
-			case ADD:
-			case RESET:
-			case DELETE:
-			case REMOVE:
-				return CollectionUtils.array(Long.class);
-		}
-		return null;
+		return switch (mode) {
+			case SET, ADD, RESET, DELETE, REMOVE ->
+				CollectionUtils.array(Long.class);
+			default -> null;
+		};
 	}
 
 	@Override
@@ -75,10 +50,7 @@ public class ExprItemAmount extends SimplePropertyExpression<Object, Long> {
 				// fall through
 			case ADD:
 				for (Object obj : getExpr().getArray(event))
-					if (obj instanceof ItemType) {
-						ItemType item = ((ItemType) obj);
-						item.setAmount(item.getAmount() + amount);
-					} else if (obj instanceof Slot) {
+					if (obj instanceof Slot) {
 						Slot slot = ((Slot) obj);
 						slot.setAmount(slot.getAmount() + amount);
 					} else {
@@ -92,9 +64,7 @@ public class ExprItemAmount extends SimplePropertyExpression<Object, Long> {
 				// fall through
 			case SET:
 				for (Object obj : getExpr().getArray(event))
-					if (obj instanceof ItemType) {
-						((ItemType) obj).setAmount(amount);
-					} else if (obj instanceof Slot) {
+					if (obj instanceof Slot) {
 						((Slot) obj).setAmount(amount);
 					} else {
 						((ItemStack) obj).setAmount(amount);

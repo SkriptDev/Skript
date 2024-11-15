@@ -18,7 +18,6 @@
  */
 package ch.njol.skript.classes.data;
 
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.command.Commands;
 import ch.njol.skript.entity.EntityData;
 import ch.njol.skript.entity.EntityType;
@@ -114,9 +113,6 @@ public class DefaultConverters {
 				return ((InventoryHolder) e).getInventory();
 			return null;
 		}, Commands.CONVERTER_NO_COMMAND_ARGUMENTS);
-		
-		// Block - ItemType
-		Converters.registerConverter(Block.class, ItemType.class, ItemType::new, Converter.NO_LEFT_CHAINING | Commands.CONVERTER_NO_COMMAND_ARGUMENTS);
 
 		// Block - Location
 		Converters.registerConverter(Block.class, Location.class, BlockUtils::getLocation, Commands.CONVERTER_NO_COMMAND_ARGUMENTS);
@@ -129,20 +125,10 @@ public class DefaultConverters {
 
 		// EntityData - EntityType
 		Converters.registerConverter(EntityData.class, EntityType.class, data -> new EntityType(data, -1));
-		
-		// ItemType - ItemStack
-		Converters.registerConverter(ItemType.class, ItemStack.class, ItemType::getRandom);
-		Converters.registerConverter(ItemStack.class, ItemType.class, ItemType::new);
-		
+
 		// Experience - XpOrbData
 		Converters.registerConverter(Experience.class, XpOrbData.class, e -> new XpOrbData(e.getXP()));
 		Converters.registerConverter(XpOrbData.class, Experience.class, e -> new Experience(e.getExperience()));
-		
-		// Slot - ItemType
-		Converters.registerConverter(Slot.class, ItemType.class, s -> {
-			ItemStack i = s.getItem();
-			return new ItemType(i != null ? i : new ItemStack(Material.AIR, 1));
-		});
 		
 		// Block - InventoryHolder
 		Converters.registerConverter(Block.class, InventoryHolder.class, b -> {

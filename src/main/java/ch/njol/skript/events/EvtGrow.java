@@ -1,25 +1,6 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.events;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.bukkitutil.ItemUtils;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.LiteralList;
@@ -47,32 +28,32 @@ public class EvtGrow extends SkriptEvent {
 
 	// Of (involves x in any way), From (x -> something), Into (something -> x), From_Into (x -> y)
 	private static final int OF = 0, FROM = 1, INTO = 2, FROM_INTO = 3;
-	
+
 	static {
 		Skript.registerEvent("Grow", EvtGrow.class, CollectionUtils.array(StructureGrowEvent.class, BlockGrowEvent.class),
-				"grow[th] [of (1:%-structuretypes%|2:%-itemtypes/blockdatas%)]",
-				"grow[th] from %itemtypes/blockdatas%",
-				"grow[th] [in]to (1:%structuretypes%|2:%itemtypes/blockdatas%)",
-				"grow[th] from %itemtypes/blockdatas% [in]to (1:%structuretypes%|2:%itemtypes/blockdatas%)"
-				)
-				.description(
-					"Called when a tree, giant mushroom or plant grows to next stage.",
-					"\"of\" matches any grow event, \"from\" matches only the old state, \"into\" matches only the new state," +
+				"grow[th] [of (1:%-structuretypes%|2:%-materials/blockdatas%)]",
+				"grow[th] from %materials/blockdatas%",
+				"grow[th] [in]to (1:%structuretypes%|2:%materials/blockdatas%)",
+				"grow[th] from %materials/blockdatas% [in]to (1:%structuretypes%|2:%materials/blockdatas%)"
+			)
+			.description(
+				"Called when a tree, giant mushroom or plant grows to next stage.",
+				"\"of\" matches any grow event, \"from\" matches only the old state, \"into\" matches only the new state," +
 					"and \"from into\" requires matching both the old and new states.",
-					"Using \"and\" lists in this event is equivalent to using \"or\" lists. The event will trigger if any one of the elements is what grew.")
-				.examples(
-					"on grow:",
-					"on grow of tree:",
-					"on grow of wheat[age=7]:",
-					"on grow from a sapling:",
-					"on grow into tree:",
-					"on grow from a sapling into tree:",
-					"on grow of wheat, carrots, or potatoes:",
-					"on grow into tree, giant mushroom, cactus:",
-					"on grow from wheat[age=0] to wheat[age=1] or wheat[age=2]:")
-				.since("1.0, 2.2-dev20 (plants), 2.8.0 (from, into, blockdata)");
+				"Using \"and\" lists in this event is equivalent to using \"or\" lists. The event will trigger if any one of the elements is what grew.")
+			.examples(
+				"on grow:",
+				"on grow of tree:",
+				"on grow of wheat[age=7]:",
+				"on grow from a sapling:",
+				"on grow into tree:",
+				"on grow from a sapling into tree:",
+				"on grow of wheat, carrots, or potatoes:",
+				"on grow into tree, giant mushroom, cactus:",
+				"on grow from wheat[age=0] to wheat[age=1] or wheat[age=2]:")
+			.since("1.0, 2.2-dev20 (plants), 2.8.0 (from, into, blockdata)");
 	}
-	
+
 	@Nullable
 	private Literal<Object> toTypes;
 	@Nullable
@@ -83,7 +64,7 @@ public class EvtGrow extends SkriptEvent {
 
 	// Restriction on the type of action, OF, FROM, INTO, or FROM_INTO
 	private int actionRestriction;
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Literal<?>[] args, int matchedPattern, ParseResult parseResult) {
@@ -122,7 +103,7 @@ public class EvtGrow extends SkriptEvent {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public boolean check(Event event) {
 		// Exit early if we need fromTypes, but don't have it
@@ -163,8 +144,8 @@ public class EvtGrow extends SkriptEvent {
 		if (event instanceof StructureGrowEvent) {
 			Material sapling = ItemUtils.getTreeSapling(((StructureGrowEvent) event).getSpecies());
 			return types.check(event, type -> {
-				if (type instanceof ItemType) {
-					return ((ItemType) type).isOfType(sapling);
+				if (type instanceof Material material) {
+					return material == sapling;
 				} else if (type instanceof BlockData) {
 					return ((BlockData) type).getMaterial() == sapling;
 				}
@@ -173,8 +154,8 @@ public class EvtGrow extends SkriptEvent {
 		} else if (event instanceof BlockGrowEvent) {
 			BlockState oldState = ((BlockGrowEvent) event).getBlock().getState();
 			return types.check(event, type -> {
-				if (type instanceof ItemType) {
-					return ((ItemType) type).isOfType(oldState.getBlockData());
+				if (type instanceof Material material) {
+					return material == oldState.getType();
 				} else if (type instanceof BlockData) {
 					return ((BlockData) type).matches(oldState.getBlockData());
 				}
@@ -200,8 +181,8 @@ public class EvtGrow extends SkriptEvent {
 		} else if (event instanceof BlockGrowEvent) {
 			BlockState newState = ((BlockGrowEvent) event).getNewState();
 			return types.check(event, type -> {
-				if (type instanceof ItemType) {
-					return ((ItemType) type).isOfType(newState.getBlockData());
+				if (type instanceof Material material) {
+					return material == newState.getType();
 				} else if (type instanceof BlockData) {
 					return ((BlockData) type).matches(newState.getBlockData());
 				}
@@ -216,17 +197,14 @@ public class EvtGrow extends SkriptEvent {
 		if (fromTypes == null && toTypes == null)
 			return "grow";
 
-		switch (actionRestriction) {
-			case OF:
-				return "grow of " + fromTypes.toString(event, debug);
-			case FROM:
-				return "grow from " + fromTypes.toString(event, debug);
-			case INTO:
-				return "grow into " + toTypes.toString(event, debug);
-			case FROM_INTO:
-				return "grow from " + fromTypes.toString(event, debug) + " into " + toTypes.toString(event, debug);
-		}
-		return "grow";
+		return switch (actionRestriction) {
+			case OF -> "grow of " + fromTypes.toString(event, debug);
+			case FROM -> "grow from " + fromTypes.toString(event, debug);
+			case INTO -> "grow into " + toTypes.toString(event, debug);
+			case FROM_INTO ->
+				"grow from " + fromTypes.toString(event, debug) + " into " + toTypes.toString(event, debug);
+			default -> "grow";
+		};
 	}
-	
+
 }

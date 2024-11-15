@@ -20,8 +20,6 @@ package ch.njol.skript.classes.data;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptConfig;
-import ch.njol.skript.aliases.Aliases;
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.bukkitutil.BukkitUtils;
 import ch.njol.skript.bukkitutil.EnchantmentUtils;
 import ch.njol.skript.bukkitutil.ItemUtils;
@@ -52,6 +50,7 @@ import org.bukkit.GameMode;
 import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Registry;
 import org.bukkit.SoundCategory;
@@ -934,46 +933,47 @@ public class BukkitClasses {
 					.filter(Material::isItem)
 					.map(ItemStack::new)
 					.iterator())
-				.parser(new Parser<ItemStack>() {
-					@Override
-					@Nullable
-					public ItemStack parse(final String s, final ParseContext context) {
-						ItemType t = Aliases.parseItemType(s);
-						if (t == null)
-							return null;
-						t = t.getItem();
-						if (t.numTypes() != 1) {
-							Skript.error("'" + s + "' represents multiple materials");
-							return null;
-						}
-						
-						final ItemStack i = t.getRandom();
-						if (i == null) {
-							Skript.error("'" + s + "' cannot represent an item");
-							return null;
-						}
-						return i;
-					}
-					
-					@Override
-					public String toString(final ItemStack i, final int flags) {
-						return ItemType.toString(i, flags);
-					}
-					
-					@Override
-					public String toVariableNameString(final ItemStack i) {
-						final StringBuilder b = new StringBuilder("item:");
-						b.append(i.getType().name());
-						b.append(":" + ItemUtils.getDamage(i));
-						b.append("*" + i.getAmount());
-						
-						for (Entry<Enchantment, Integer> entry : i.getEnchantments().entrySet())
-							b.append("#" + EnchantmentUtils.getKey(entry.getKey()))
-									.append(":" + entry.getValue());
-
-						return b.toString();
-					}
-				})
+			// TODO should itemstack have a parser?!?!
+//				.parser(new Parser<ItemStack>() {
+//					@Override
+//					@Nullable
+//					public ItemStack parse(final String s, final ParseContext context) {
+//						ItemType t = Aliases.parseItemType(s);
+//						if (t == null)
+//							return null;
+//						t = t.getItem();
+//						if (t.numTypes() != 1) {
+//							Skript.error("'" + s + "' represents multiple materials");
+//							return null;
+//						}
+//
+//						final ItemStack i = t.getRandom();
+//						if (i == null) {
+//							Skript.error("'" + s + "' cannot represent an item");
+//							return null;
+//						}
+//						return i;
+//					}
+//
+//					@Override
+//					public String toString(final ItemStack i, final int flags) {
+//						return ItemType.toString(i, flags);
+//					}
+//
+//					@Override
+//					public String toVariableNameString(final ItemStack i) {
+//						final StringBuilder b = new StringBuilder("item:");
+//						b.append(i.getType().name());
+//						b.append(":" + ItemUtils.getDamage(i));
+//						b.append("*" + i.getAmount());
+//
+//						for (Entry<Enchantment, Integer> entry : i.getEnchantments().entrySet())
+//							b.append("#" + EnchantmentUtils.getKey(entry.getKey()))
+//									.append(":" + entry.getValue());
+//
+//						return b.toString();
+//					}
+//				})
 				.cloner(ItemStack::clone)
 				.serializer(new ConfigurationSerializer<>()));
 		
@@ -1242,41 +1242,10 @@ public class BukkitClasses {
 				.examples("")
 				.since("1.4.6")
 				.before("enchantmenttype"));
-		
-		Material[] allMaterials = Material.values();
-		Classes.registerClass(new ClassInfo<>(Material.class, "material")
-				.name(ClassInfo.NO_DOC)
-				.since("aliases-rework")
-				.serializer(new Serializer<Material>() {
-					@Override
-					public Fields serialize(Material o) {
-						Fields f = new Fields();
-						f.putObject("i", o.ordinal());
-						return f;
-					}
-					
-					@Override
-					public void deserialize(Material o, Fields f) {
-						assert false;
-					}
-					
-					@Override
-					public Material deserialize(Fields f) throws StreamCorruptedException {
-						Material mat = allMaterials[(int) f.getPrimitive("i")];
-						assert mat != null; // Hope server owner didn't mod too much...
-						return mat;
-					}
-					
-					@Override
-					public boolean mustSyncDeserialization() {
-						return false;
-					}
-					
-					@Override
-					protected boolean canBeInstantiated() {
-						return false; // It is an enum, come on
-					}
-				}));
+
+		Classes.registerClass(new RegistryClassInfo<>(Material.class, Registry.MATERIAL, "material", "material")
+				.user("materials?")
+				.name("Material"));
 		
 		Classes.registerClass(new ClassInfo<>(Metadatable.class, "metadataholder")
 				.user("metadata ?holders?")

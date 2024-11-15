@@ -1,6 +1,5 @@
 package ch.njol.skript;
 
-import ch.njol.skript.aliases.Aliases;
 import ch.njol.skript.bukkitutil.BurgerHelper;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.classes.data.BukkitClasses;
@@ -497,20 +496,6 @@ public final class Skript extends JavaPlugin implements Listener {
 			assert console != null;
 			assert updater != null;
 			updater.updateCheck(console);
-		}
-
-		try {
-			Aliases.load(); // Loaded before anything that might use them
-		} catch (StackOverflowError e) {
-			if (using32BitJava()) {
-				Skript.error("");
-				Skript.error("There was a StackOverflowError that occured while loading aliases.");
-				Skript.error("As you are currently using 32-bit Java, please update to 64-bit Java to resolve the error.");
-				Skript.error("Please report this issue to our GitHub only if updating to 64-bit Java does not fix the issue.");
-				Skript.error("");
-			} else {
-				throw e; // Uh oh, this shouldn't happen. Re-throw the error.
-			}
 		}
 
 		// If loading can continue (platform ok), check for potentially thrown error

@@ -19,9 +19,6 @@
 package ch.njol.skript.util;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.aliases.Aliases;
-import ch.njol.skript.aliases.ItemData;
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.bukkitutil.block.BlockCompat;
 import ch.njol.skript.bukkitutil.block.BlockSetter;
 import ch.njol.skript.bukkitutil.block.BlockValues;
@@ -57,10 +54,6 @@ public class BlockUtils {
 		BlockCompat.SETTER.setBlock(block, type, blockValues, flags);
 
 		return true;
-	}
-	
-	public static boolean set(Block block, ItemData type, boolean applyPhysics) {
-		return set(block, type.getType(), type.getBlockValues(), applyPhysics);
 	}
 	
 	public static void sendBlockChange(Player player, Location location, Material type, @Nullable BlockValues blockValues) {
@@ -111,20 +104,7 @@ public class BlockUtils {
 		try {
 			return Bukkit.createBlockData(data.startsWith("minecraft:") ? data : "minecraft:" + data);
 		} catch (IllegalArgumentException ignored) {
-			try {
-				// we use the original dataString param here as we want the alias before modifications
-				String alias = dataString.substring(0, dataString.lastIndexOf("["));
-				data = data.substring(data.lastIndexOf("["));
-				ItemType type = Aliases.parseItemType(alias);
-				if (type == null)
-					return null;
-				return Bukkit.createBlockData(type.getMaterial(), data);
-			} catch (StringIndexOutOfBoundsException alsoIgnored) {
-				return null;
-			} catch (IllegalArgumentException alsoIgnored) {
-				Skript.error("Block data '" + errorData + "' is not valid for this material");
-				return null;
-			}
+			return null;
 		}
 	}
 
@@ -139,7 +119,7 @@ public class BlockUtils {
 	 */
 	@Nullable
 	public static String blockToString(Block block, int flags) {
-		String type = ItemType.toString(block, flags);
+		String type = block.getType().getKey().getKey();
 		Location location = getLocation(block);
 		if (location == null)
 			return null;

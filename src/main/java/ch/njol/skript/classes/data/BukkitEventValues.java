@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Set;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.aliases.Aliases;
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.bukkitutil.InventoryUtils;
 import ch.njol.skript.command.CommandEvent;
 import ch.njol.skript.events.bukkit.ScriptEvent;
@@ -178,7 +176,6 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.Nullable;
@@ -853,13 +850,6 @@ public final class BukkitEventValues {
 			@Nullable
 			public Item get(final EntityPickupItemEvent e) {
 				return e.getItem();
-			}
-		}, 0);
-		EventValues.registerEventValue(EntityPickupItemEvent.class, ItemType.class, new Getter<ItemType, EntityPickupItemEvent>() {
-			@Override
-			@Nullable
-			public ItemType get(final EntityPickupItemEvent e) {
-				return new ItemType(e.getItem().getItemStack());
 			}
 		}, 0);
 		// PlayerItemConsumeEvent
@@ -1744,12 +1734,6 @@ public final class BukkitEventValues {
 				@Override
 				public Timespan get(PlayerStopUsingItemEvent event) {
 					return Timespan.fromTicks(event.getTicksHeldFor());
-				}
-			}, EventValues.TIME_NOW);
-			EventValues.registerEventValue(PlayerStopUsingItemEvent.class, ItemType.class, new Getter<ItemType, PlayerStopUsingItemEvent>() {
-				@Override
-				public ItemType get(PlayerStopUsingItemEvent event) {
-					return new ItemType(event.getItem());
 				}
 			}, EventValues.TIME_NOW);
 		}

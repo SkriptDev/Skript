@@ -29,9 +29,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.aliases.Aliases;
-import ch.njol.skript.aliases.ItemData;
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.bukkitutil.EnchantmentUtils;
 import ch.njol.skript.bukkitutil.ItemUtils;
 import ch.njol.skript.classes.Changer;
@@ -184,69 +181,6 @@ public class SkriptClasses {
 
 				})
 				.serializer(new EnumSerializer<>(WeatherType.class)));
-		
-		Classes.registerClass(new ClassInfo<>(ItemType.class, "itemtype")
-				.user("item ?types?", "materials?")
-				.name("Item Type")
-				.description("An item type is an alias, e.g. 'a pickaxe', 'all plants', etc., and can result in different items when added to an inventory, " +
-						"and unlike <a href='#itemstack'>items</a> they are well suited for checking whether an inventory contains a certain item or whether a certain item is of a certain type.",
-						"An item type can also have one or more <a href='#enchantmenttype'>enchantments</a> with or without a specific level defined, " +
-								"and can optionally start with 'all' or 'every' to make this item type represent <i>all</i> types that the alias represents, including data ranges.")
-				.usage("[&lt;number&gt; [of]] [all/every] &lt;alias&gt; [of &lt;enchantment&gt; [&lt;level&gt;] [,/and &lt;more enchantments...&gt;]]")
-				.examples("give 4 torches to the player",
-						"add all slabs to the inventory of the block",
-						"player's tool is a diamond sword of sharpness",
-						"remove a pickaxes of fortune 4 from {stored items::*}",
-						"set {_item} to 10 of every upside-down stair",
-						"block is dirt or farmland")
-				.since("1.0")
-				.before("itemstack", "entitydata", "entitytype")
-				.after("number", "integer", "long", "time")
-				.supplier(() -> Arrays.stream(Material.values())
-					.map(ItemType::new)
-					.iterator())
-				.parser(new Parser<ItemType>() {
-					@Override
-					@Nullable
-					public ItemType parse(final String s, final ParseContext context) {
-						return Aliases.parseItemType(s);
-					}
-
-					@Override
-					public String toString(final ItemType t, final int flags) {
-						return t.toString(flags);
-					}
-
-					@Override
-					public String getDebugMessage(final ItemType t) {
-						return t.getDebugMessage();
-					}
-
-					@Override
-					public String toVariableNameString(final ItemType t) {
-						final StringBuilder b = new StringBuilder("itemtype:");
-						b.append(t.getInternalAmount());
-						b.append("," + t.isAll());
-						// TODO this is missing information
-						for (final ItemData d : t.getTypes()) {
-							b.append("," + d.getType());
-						}
-						final EnchantmentType[] enchs = t.getEnchantmentTypes();
-						if (enchs != null) {
-							b.append("|");
-							for (final EnchantmentType ench : enchs) {
-								Enchantment e = ench.getType();
-								if (e == null)
-									continue;
-								b.append("#" + EnchantmentUtils.getKey(e));
-								b.append(":" + ench.getLevel());
-							}
-						}
-						return "" + b.toString();
-					}
-				})
-				.cloner(ItemType::clone)
-				.serializer(new YggdrasilSerializer<>()));
 
 		Classes.registerClass(new ClassInfo<>(Time.class, "time")
 				.user("times?")
@@ -438,8 +372,8 @@ public class SkriptClasses {
 						if (mode == ChangeMode.RESET)
 							return null;
 						if (mode == ChangeMode.SET)
-							return new Class[] {ItemType[].class, ItemStack[].class};
-						return new Class[] {ItemType.class, ItemStack.class};
+							return new Class[] { ItemStack[].class};
+						return new Class[] {ItemStack.class};
 					}
 
 					@Override
@@ -447,14 +381,14 @@ public class SkriptClasses {
 						if (mode == ChangeMode.SET) {
 							if (deltas != null) {
 								if (deltas.length == 1) {
-									final Object delta = deltas[0];
+									ItemStack itemStack = deltas[0] instanceof ItemStack ? (ItemStack) deltas[0] : null;
 									for (final Slot slot : slots) {
-										slot.setItem(delta instanceof ItemStack ? (ItemStack) delta : ((ItemType) delta).getItem().getRandom());
+										slot.setItem(itemStack);
 									}
 								} else if (deltas.length == slots.length) {
 									for (int i = 0; i < slots.length; i++) {
-										final Object delta = deltas[i];
-										slots[i].setItem(delta instanceof ItemStack ? (ItemStack) delta : ((ItemType) delta).getItem().getRandom());
+										ItemStack itemStack = deltas[i] instanceof ItemStack ? (ItemStack) deltas[i] : null;
+										slots[i].setItem(itemStack);
 									}
 								}
 							}
@@ -475,8 +409,6 @@ public class SkriptClasses {
 												slot.setItem((ItemStack) delta);
 											}
 										}
-									} else {
-										slot.setItem(((ItemType) delta).getItem().addTo(slot.getItem()));
 									}
 									break;
 								case REMOVE:
@@ -493,12 +425,6 @@ public class SkriptClasses {
 												slot.setItem(i);
 											}
 										}
-									} else {
-										if (mode == ChangeMode.REMOVE)
-											slot.setItem(((ItemType) delta).removeFrom(slot.getItem()));
-										else
-											// REMOVE_ALL
-											slot.setItem(((ItemType) delta).removeAll(slot.getItem()));
 									}
 									break;
 								case DELETE:
@@ -510,7 +436,7 @@ public class SkriptClasses {
 						}
 					}
 				})
-				.parser(new Parser<Slot>() {
+				.parser(new Parser<>() {
 					@Override
 					public boolean canParse(final ParseContext context) {
 						return false;
@@ -518,10 +444,11 @@ public class SkriptClasses {
 
 					@Override
 					public String toString(Slot o, int flags) {
+						// TODO this may not be right
 						ItemStack i = o.getItem();
 						if (i == null)
-							return new ItemType(Material.AIR).toString(flags);
-						return ItemType.toString(i, flags);
+							return Material.AIR.getKey().toString();
+						return i.getType().getKey().toString();
 					}
 
 					@Override
