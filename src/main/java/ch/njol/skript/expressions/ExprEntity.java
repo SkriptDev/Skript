@@ -5,17 +5,19 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.entity.EntityData;
 import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
+import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.log.RetainingLogHandler;
 import ch.njol.skript.log.SkriptLogger;
+import ch.njol.skript.registrations.Classes;
 import ch.njol.util.Kleenean;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,29 +34,36 @@ import org.jetbrains.annotations.Nullable;
 @Since("1.0")
 public class ExprEntity extends SimpleExpression<Entity> {
 	static {
-		Skript.registerExpression(ExprEntity.class, Entity.class, ExpressionType.PATTERN_MATCHES_EVERYTHING, "[the] [event-]<.+>");
+		Skript.registerExpression(ExprEntity.class, Entity.class, ExpressionType.PATTERN_MATCHES_EVERYTHING,
+			"[the] [event-]<.+>");
 	}
 
 	@SuppressWarnings("null")
-	private EntityData<?> type;
+	private EntityType type;
 
 	@SuppressWarnings("null")
 	private EventValueExpression<Entity> entity;
 
 	@Override
 	public boolean init(final Expression<?>[] exprs, final int matchedPattern, final Kleenean isDelayed, final ParseResult parseResult) {
+		String pattern = parseResult.regexes.get(0).group();
+		if (pattern.equalsIgnoreCase("entity")) {
+			entity = new EventValueExpression<>(Entity.class);
+			return entity.init();
+		}
 		final RetainingLogHandler log = SkriptLogger.startRetainingLog();
 		try {
-			final EntityData<?> type = EntityData.parseWithoutIndefiniteArticle("" + parseResult.regexes.get(0).group());
+
+			final EntityType type = Classes.parse(pattern, EntityType.class, ParseContext.DEFAULT);
 			log.clear();
 			log.printLog();
-			if (type == null || type.isPlural().isTrue())
+			if (type == null)
 				return false;
 			this.type = type;
 		} finally {
 			log.stop();
 		}
-		entity = new EventValueExpression<>(type.getType());
+		entity = new EventValueExpression<>(type.getEntityClass());
 		return entity.init();
 	}
 
@@ -65,14 +74,15 @@ public class ExprEntity extends SimpleExpression<Entity> {
 
 	@Override
 	public Class<? extends Entity> getReturnType() {
-		return type.getType();
+		if (type == null) return Entity.class;
+		return type.getEntityClass();
 	}
 
 	@Override
 	@Nullable
 	protected Entity[] get(final Event e) {
 		final Entity[] es = entity.getArray(e);
-		if (es.length == 0 || type.isInstance(es[0]))
+		if (es.length == 0 || type == null || type == (es[0]).getType())
 			return es;
 		return null;
 	}
@@ -82,7 +92,7 @@ public class ExprEntity extends SimpleExpression<Entity> {
 	@Nullable
 	public <R> Expression<? extends R> getConvertedExpression(Class<R>... to) {
 		for (Class<R> t : to) {
-			if (t.equals(EntityData.class)) {
+			if (t.equals(EntityType.class)) {
 				return new SimpleLiteral<>((R) type, false);
 			}
 		}

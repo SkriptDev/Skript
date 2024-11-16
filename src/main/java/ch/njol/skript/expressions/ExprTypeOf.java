@@ -4,18 +4,17 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.entity.EntityData;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
-import ch.njol.skript.lang.util.ConvertedExpression;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
-import org.skriptlang.skript.lang.converter.Converters;
 
 @Name("Type of")
 @Description({
@@ -33,7 +32,7 @@ public class ExprTypeOf extends SimplePropertyExpression<Object, Object> {
 	static {
 		// TODO this one needs some love
 		register(ExprTypeOf.class, Object.class, "type",
-			"entitydatas/itemstacks/inventories/potioneffects/blocks/blockdatas");
+			"entities/itemstacks/inventories/potioneffects/blocks/blockdatas");
 	}
 
 	@Override
@@ -44,8 +43,8 @@ public class ExprTypeOf extends SimplePropertyExpression<Object, Object> {
 	@Override
 	@Nullable
 	public Object convert(Object o) {
-		if (o instanceof EntityData) {
-			return ((EntityData<?>) o).getSuperType();
+		if (o instanceof Entity entity) {
+			return entity.getType();
 		} else if (o instanceof Inventory) {
 			return ((Inventory) o).getType();
 		} else if (o instanceof PotionEffect) {
@@ -64,19 +63,11 @@ public class ExprTypeOf extends SimplePropertyExpression<Object, Object> {
 	@Override
 	public Class<?> getReturnType() {
 		Class<?> returnType = getExpr().getReturnType();
-		return EntityData.class.isAssignableFrom(returnType) ? EntityData.class
+		return Entity.class.isAssignableFrom(returnType) ? EntityType.class
 			: PotionEffectType.class.isAssignableFrom(returnType) ? PotionEffectType.class
 			: ItemStack.class.isAssignableFrom(returnType) ? Material.class
 			: Block.class.isAssignableFrom(returnType) ? Material.class
 			: BlockData.class.isAssignableFrom(returnType) ? Material.class : Object.class;
-	}
-
-	@Override
-	@Nullable
-	protected <R> ConvertedExpression<Object, ? extends R> getConvertedExpr(final Class<R>... to) {
-		if (!Converters.converterExists(EntityData.class, to) && !Converters.converterExists(Material.class, to))
-			return null;
-		return super.getConvertedExpr(to);
 	}
 
 }

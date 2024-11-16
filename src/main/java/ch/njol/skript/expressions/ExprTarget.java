@@ -1,29 +1,25 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.expressions;
 
-import java.util.function.Predicate;
-
+import ch.njol.skript.Skript;
+import ch.njol.skript.SkriptConfig;
+import ch.njol.skript.classes.Changer.ChangeMode;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
+import ch.njol.skript.effects.Delay;
+import ch.njol.skript.expressions.base.PropertyExpression;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.ExpressionType;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
+import ch.njol.skript.registrations.EventValues;
+import ch.njol.util.Kleenean;
+import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -34,22 +30,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 import org.jetbrains.annotations.Nullable;
 
-import ch.njol.skript.Skript;
-import ch.njol.skript.SkriptConfig;
-import ch.njol.skript.classes.Changer.ChangeMode;
-import ch.njol.skript.doc.Description;
-import ch.njol.skript.doc.Examples;
-import ch.njol.skript.doc.Name;
-import ch.njol.skript.doc.Since;
-import ch.njol.skript.effects.Delay;
-import ch.njol.skript.entity.EntityData;
-import ch.njol.skript.expressions.base.PropertyExpression;
-import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ExpressionType;
-import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.registrations.EventValues;
-import ch.njol.util.Kleenean;
-import ch.njol.util.coll.CollectionUtils;
+import java.util.function.Predicate;
 
 @Name("Target")
 @Description({
@@ -60,8 +41,8 @@ import ch.njol.util.coll.CollectionUtils;
 })
 @Examples({
 	"on entity target:",
-		"\tif entity's target is a player:",
-			"\t\tsend \"You're being followed by an %entity%!\" to target of entity",
+	"\tif entity's target is a player:",
+	"\t\tsend \"You're being followed by an %entity%!\" to target of entity",
 	"",
 	"reset target of entity # Makes the entity target-less",
 	"delete targeted entity of player # for players it will delete the target",
@@ -72,8 +53,8 @@ public class ExprTarget extends PropertyExpression<LivingEntity, Entity> {
 
 	static {
 		Skript.registerExpression(ExprTarget.class, Entity.class, ExpressionType.PROPERTY,
-				"[the] target[[ed] %-*entitydata%] [of %livingentities%] [blocks:ignoring blocks] [[with|at] ray[ ]size %-number%]", // TODO add a where filter when extendable https://github.com/SkriptLang/Skript/issues/4856
-				"%livingentities%'[s] target[[ed] %-*entitydata%] [blocks:ignoring blocks] [[with|at] ray[ ]size %-number%]"
+			"[the] target[[ed] %-*entitytype%] [of %livingentities%] [blocks:ignoring blocks] [[with|at] ray[ ]size %-number%]", // TODO add a where filter when extendable https://github.com/SkriptLang/Skript/issues/4856
+			"%livingentities%'[s] target[[ed] %-*entitytype%] [blocks:ignoring blocks] [[with|at] ray[ ]size %-number%]"
 		);
 	}
 
@@ -84,12 +65,12 @@ public class ExprTarget extends PropertyExpression<LivingEntity, Entity> {
 	private Expression<Number> raysize;
 
 	@Nullable
-	private EntityData<?> type;
+	private EntityType type;
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parser) {
-		type = exprs[matchedPattern] == null ? null : (EntityData<?>) exprs[matchedPattern].getSingle(null);
+		type = exprs[matchedPattern] == null ? null : (EntityType) exprs[matchedPattern].getSingle(null);
 		setExpr((Expression<? extends LivingEntity>) exprs[1 - matchedPattern]);
 		targetBlockDistance = SkriptConfig.maxTargetBlockDistance.value();
 		if (targetBlockDistance < 0)
@@ -105,7 +86,7 @@ public class ExprTarget extends PropertyExpression<LivingEntity, Entity> {
 		return get(source, entity -> {
 			if (event instanceof EntityTargetEvent && entity.equals(((EntityTargetEvent) event).getEntity()) && !Delay.isDelayed(event)) {
 				Entity target = ((EntityTargetEvent) event).getTarget();
-				if (target == null || type != null && !type.isInstance(target))
+				if (target == null || type != null && type != target.getType())
 					return null;
 				return target;
 			}
@@ -162,7 +143,7 @@ public class ExprTarget extends PropertyExpression<LivingEntity, Entity> {
 
 	@Override
 	public Class<? extends Entity> getReturnType() {
-		return type != null ? type.getType() : Entity.class;
+		return type != null ? type.getEntityClass() : Entity.class;
 	}
 
 	@Override
@@ -174,34 +155,34 @@ public class ExprTarget extends PropertyExpression<LivingEntity, Entity> {
 	 * Gets an entity's target.
 	 *
 	 * @param origin The entity to get the target of.
-	 * @param type The exact EntityData to find. Can be null for any entity.
+	 * @param type   The exact EntityData to find. Can be null for any entity.
 	 * @return The entity's target.
-	 * @deprecated Use {@link #getTarget(LivingEntity, EntityData, double)} to include raysize.
+	 * @deprecated Use {@link #getTarget(LivingEntity, EntityType, double)} to include raysize.
 	 */
 	@Deprecated
 	@ScheduledForRemoval
-	public static <T extends Entity> T getTarget(LivingEntity origin, @Nullable EntityData<T> type) {
+	public static <T extends Entity> T getTarget(LivingEntity origin, @Nullable EntityType type) {
 		return getTarget(origin, type, 0.0D);
 	}
 
 	/**
 	 * Gets an entity's target entity.
 	 *
-	 * @param origin The entity to get the target of.
-	 * @param type The exact EntityData to find. Can be null for any entity.
+	 * @param origin  The entity to get the target of.
+	 * @param type    The exact EntityData to find. Can be null for any entity.
 	 * @param raysize The size of the ray for the raytrace.
 	 * @return The entity's target.
 	 */
 	@Nullable
 	@SuppressWarnings("unchecked")
-	public static <T extends Entity> T getTarget(LivingEntity origin, @Nullable EntityData<T> type, double raysize) {
+	public static <T extends Entity> T getTarget(LivingEntity origin, @Nullable EntityType type, double raysize) {
 		if (origin instanceof Mob)
-			return ((Mob) origin).getTarget() == null || type != null && !type.isInstance(((Mob) origin).getTarget()) ? null : (T) ((Mob) origin).getTarget();
+			return ((Mob) origin).getTarget() == null || type != null && type != (((Mob) origin).getTarget()).getType() ? null : (T) ((Mob) origin).getTarget();
 
 		Predicate<Entity> predicate = entity -> {
 			if (entity.equals(origin))
 				return false;
-			if (type != null && !type.isInstance(entity))
+			if (type != null && type != entity.getType())
 				return false;
 			//noinspection RedundantIfStatement
 			if (entity instanceof Player && ((Player) entity).getGameMode() == GameMode.SPECTATOR)

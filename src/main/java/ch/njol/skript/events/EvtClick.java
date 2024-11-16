@@ -2,7 +2,6 @@ package ch.njol.skript.events;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.bukkitutil.ClickEventTracker;
-import ch.njol.skript.entity.EntityData;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -12,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
@@ -41,8 +41,8 @@ public class EvtClick extends SkriptEvent {
 			PlayerInteractEvent.class, PlayerInteractEntityEvent.class, PlayerInteractAtEntityEvent.class
 		);
 		Skript.registerEvent("Click", EvtClick.class, eventTypes,
-				"[(" + RIGHT + ":right|" + LEFT + ":left)(| |-)][mouse(| |-)]click[ing] [on %-entitydata/material%] [(with|using|holding) %-material%]",
-				"[(" + RIGHT + ":right|" + LEFT + ":left)(| |-)][mouse(| |-)]click[ing] (with|using|holding) %material% on %entitydata/material%")
+				"[(" + RIGHT + ":right|" + LEFT + ":left)(| |-)][mouse(| |-)]click[ing] [on %-entitytype/material%] [(with|using|holding) %-material%]",
+				"[(" + RIGHT + ":right|" + LEFT + ":left)(| |-)][mouse(| |-)]click[ing] (with|using|holding) %material% on %entitytype/material%")
 			.description("Called when a user clicks on a block, an entity or air with or without an item in their hand.",
 				"Please note that rightclick events with an empty hand while not looking at a block are not sent to the server, so there's no way to detect them.",
 				"Also note that a leftclick on an entity is an attack and thus not covered by the 'click' event, but the 'damage' event.")
@@ -77,16 +77,16 @@ public class EvtClick extends SkriptEvent {
 		click = parseResult.mark == 0 ? ANY : parseResult.mark;
 		type = args[matchedPattern];
 		if (type != null && !Material.class.isAssignableFrom(type.getReturnType())) {
-			Literal<EntityData<?>> entitydata = (Literal<EntityData<?>>) type;
+			Literal<EntityType> entitydata = (Literal<EntityType>) type;
 			if (click == LEFT) {
-				if (Vehicle.class.isAssignableFrom(entitydata.getSingle().getType())) {
+				if (Vehicle.class.isAssignableFrom(entitydata.getSingle().getEntityClass())) {
 					Skript.error("A leftclick on an entity is an attack and thus not covered by the 'click' event, but the 'vehicle damage' event.");
 				} else {
 					Skript.error("A leftclick on an entity is an attack and thus not covered by the 'click' event, but the 'damage' event.");
 				}
 				return false;
 			} else if (click == ANY) {
-				if (Vehicle.class.isAssignableFrom(entitydata.getSingle().getType())) {
+				if (Vehicle.class.isAssignableFrom(entitydata.getSingle().getEntityClass())) {
 					Skript.error("A leftclick on an entity is an attack and thus not covered by the 'click' event, but the 'vehicle damage' event. " +
 						"Change this event to a rightclick to fix this warning message.");
 				} else {

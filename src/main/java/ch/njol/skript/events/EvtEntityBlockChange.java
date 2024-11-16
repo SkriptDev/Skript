@@ -1,32 +1,14 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.events;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.bukkitutil.ItemUtils;
-import ch.njol.skript.entity.EntityData;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Checker;
 
 import org.bukkit.entity.Enderman;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Silverfish;
@@ -71,7 +53,7 @@ public class EvtEntityBlockChange extends SkriptEvent {
 		FALLING_BLOCK_LANDING("falling block land[ing]", event -> event.getEntity() instanceof FallingBlock && !ItemUtils.isAir(event.getTo())),
 
 		// Covers all possible entity block changes.
-		GENERIC("(entity|%*-entitydatas%) chang(e|ing) block[s]");
+		GENERIC("(entity|%*-entitytypes%) chang(e|ing) block[s]");
 
 		@Nullable
 		private final Checker<EntityChangeBlockEvent> checker;
@@ -96,7 +78,7 @@ public class EvtEntityBlockChange extends SkriptEvent {
 	}
 
 	@Nullable
-	private Literal<EntityData<?>> datas;
+	private Literal<EntityType> entityTypes;
 	private ChangeEvent event;
 
 	@Override
@@ -104,7 +86,7 @@ public class EvtEntityBlockChange extends SkriptEvent {
 	public boolean init(Literal<?>[] args, int matchedPattern, ParseResult parseResult) {
 		event = ChangeEvent.values()[matchedPattern];
 		if (event == ChangeEvent.GENERIC)
-			datas = (Literal<EntityData<?>>) args[0];
+			entityTypes = (Literal<EntityType>) args[0];
 		return true;
 	}
 
@@ -112,7 +94,7 @@ public class EvtEntityBlockChange extends SkriptEvent {
 	public boolean check(Event event) {
 		if (!(event instanceof EntityChangeBlockEvent))
 			return false;
-		if (datas != null && !datas.check(event, data -> data.isInstance(((EntityChangeBlockEvent) event).getEntity())))
+		if (entityTypes != null && !entityTypes.check(event, data -> data == (((EntityChangeBlockEvent) event).getEntity().getType())))
 			return false;
 		if (this.event.checker == null)
 			return true;

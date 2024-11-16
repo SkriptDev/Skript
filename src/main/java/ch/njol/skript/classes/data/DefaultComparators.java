@@ -1,27 +1,8 @@
-/**
- * This file is part of Skript.
- * <p>
- * Skript is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * Skript is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * <p>
- * You should have received a copy of the GNU General Public License
- * along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- * <p>
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.classes.data;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.classes.ClassInfo;
-import ch.njol.skript.entity.EntityData;
 import ch.njol.skript.util.BlockUtils;
 import ch.njol.skript.util.Date;
 import ch.njol.skript.util.EnchantmentType;
@@ -160,31 +141,6 @@ public class DefaultComparators {
 			@Override
 			public Relation compare(Block b1, Block b2) {
 				return Relation.get(BlockUtils.extractBlock(b1).equals(BlockUtils.extractBlock(b2)));
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-		});
-
-		// Entity - EntityData
-		Comparators.registerComparator(Entity.class, EntityData.class, new Comparator<Entity, EntityData>() {
-			@Override
-			public Relation compare(Entity e, EntityData t) {
-				return Relation.get(t.isInstance(e));
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-		});
-		// EntityData - EntityData
-		Comparators.registerComparator(EntityData.class, EntityData.class, new Comparator<EntityData, EntityData>() {
-			@Override
-			public Relation compare(EntityData t1, EntityData t2) {
-				return Relation.get(t2.isSupertypeOf(t1));
 			}
 
 			@Override
@@ -331,31 +287,6 @@ public class DefaultComparators {
 			@Override
 			public Relation compare(Object o, ClassInfo c) {
 				return Relation.get(c.getC().isInstance(o) || o instanceof ClassInfo && c.getC().isAssignableFrom(((ClassInfo<?>) o).getC()));
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-		});
-
-		// DamageCause - EntityData
-		Comparators.registerComparator(DamageCause.class, EntityData.class, new Comparator<DamageCause, EntityData>() {
-			@Override
-			public Relation compare(DamageCause dc, EntityData e) {
-				switch (dc) {
-					case ENTITY_ATTACK:
-						return Relation.get(EntityData.fromClass(Entity.class).isSupertypeOf(e));
-					case PROJECTILE:
-						return Relation.get(EntityData.fromClass(Projectile.class).isSupertypeOf(e));
-					case WITHER:
-						return Relation.get(EntityData.fromClass(Wither.class).isSupertypeOf(e));
-					case FALLING_BLOCK:
-						return Relation.get(EntityData.fromClass(FallingBlock.class).isSupertypeOf(e));
-					//$CASES-OMITTED$
-					default:
-						return Relation.NOT_EQUAL;
-				}
 			}
 
 			@Override

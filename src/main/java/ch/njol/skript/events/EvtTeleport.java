@@ -1,30 +1,12 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.events;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.entity.EntityType;
 import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -33,7 +15,8 @@ import org.jetbrains.annotations.Nullable;
 public class EvtTeleport extends SkriptEvent {
 
 	static {
-		Skript.registerEvent("Teleport", EvtTeleport.class, CollectionUtils.array(EntityTeleportEvent.class, PlayerTeleportEvent.class), "[%entitytypes%] teleport[ing]")
+		Skript.registerEvent("Teleport", EvtTeleport.class, CollectionUtils.array(EntityTeleportEvent.class, PlayerTeleportEvent.class),
+				"[%entitytypes%] teleport[ing]")
 			.description(
 				"This event can be used to listen to teleports from non-players or player entities respectively.",
 				"When teleporting entities, the event may also be called due to a result of natural causes, such as an enderman or shulker teleporting, or wolves teleporting to players.",
@@ -48,13 +31,13 @@ public class EvtTeleport extends SkriptEvent {
 
 	@Nullable
 	private Literal<EntityType> entitiesLiteral;
-	private EntityType @Nullable [] entities;
+	private EntityType @Nullable [] entityTypes;
 
 	@Override
 	public boolean init(Literal<?>[] args, int matchedPattern, ParseResult parseResult) {
 		if (args[0] != null) {
 			entitiesLiteral = ((Literal<EntityType>) args[0]); // evaluate only once
-			entities = entitiesLiteral.getAll();
+			entityTypes = entitiesLiteral.getAll();
 		}
 		return true;
 	}
@@ -74,9 +57,9 @@ public class EvtTeleport extends SkriptEvent {
 	}
 
 	private boolean checkEntity(Entity entity) {
-		if (entities != null) {
-			for (EntityType entType : entities) {
-				if (entType.isInstance(entity))
+		if (entityTypes != null) {
+			for (EntityType entityType : entityTypes) {
+				if (entityType == entity.getType())
 					return true;
 			}
 			return false;

@@ -5,7 +5,6 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.entity.EntityType;
 import ch.njol.skript.expressions.base.PropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
@@ -25,7 +24,7 @@ public class ExprXOf extends PropertyExpression<Object, Object> {
 
 	static {
 		Skript.registerExpression(ExprXOf.class, Object.class, ExpressionType.PATTERN_MATCHES_EVERYTHING,
-			"%number% of %itemstacks/entitytype%");
+			"%number% of %itemstacks%");
 	}
 
 	@SuppressWarnings("NotNullFieldNotInitialized")
@@ -51,11 +50,8 @@ public class ExprXOf extends PropertyExpression<Object, Object> {
 				ItemStack is = ((ItemStack) o).clone();
 				is.setAmount(a.intValue());
 				return is;
-			} else {
-				EntityType t = ((EntityType) o).clone();
-				t.amount = a.intValue();
-				return t;
 			}
+			return null;
 		});
 	}
 

@@ -6,7 +6,6 @@ import ch.njol.skript.doc.Events;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.entity.EntityData;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.Literal;
@@ -18,6 +17,7 @@ import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.Event;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.inventory.ClickType;
@@ -29,8 +29,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import java.lang.reflect.Array;
 
 @Name("Clicked Block/Entity/Inventory/Slot")
 @Description("The clicked block, entity, inventory, inventory slot, inventory click type or inventory action.")
@@ -45,7 +43,7 @@ public class ExprClicked extends SimpleExpression<Object> {
 
 	private static enum ClickableType {
 		ENCHANT_BUTTON(1, Number.class, "clicked enchantment button", "clicked [enchant[ment]] (button|option)"),
-		BLOCK_AND_ITEMS(2, Block.class, "clicked block/itemstack/entity", "clicked (block|%-*itemstack/entitydata%)"),
+		BLOCK_AND_ITEMS(2, Block.class, "clicked block/itemstack/entity", "clicked (block|entity|%-*itemstack/entitytype%)"),
 		SLOT(3, Slot.class, "clicked slot", "clicked slot"),
 		INVENTORY(4, Inventory.class, "clicked inventory", "clicked inventory"),
 		TYPE(5, ClickType.class, "click type", "click (type|action)"),
@@ -100,7 +98,7 @@ public class ExprClicked extends SimpleExpression<Object> {
 	}
 
 	@Nullable
-	private EntityData<?> entityType;
+	private EntityType entityType;
 	@Nullable
 	private ItemStack itemStack; // null results in any itemtype
 	private ClickableType clickable = ClickableType.BLOCK_AND_ITEMS;
@@ -111,8 +109,8 @@ public class ExprClicked extends SimpleExpression<Object> {
 		switch (clickable) {
 			case BLOCK_AND_ITEMS:
 				Object type = exprs[0] == null ? null : ((Literal<?>) exprs[0]).getSingle();
-				if (type instanceof EntityData) {
-					entityType = (EntityData<?>) type;
+				if (type instanceof EntityType et) {
+					entityType = et;
 					if (!getParser().isCurrentEvent(PlayerInteractEntityEvent.class) && !getParser().isCurrentEvent(PlayerInteractAtEntityEvent.class)) {
 						Skript.error("The expression 'clicked entity' may only be used in a click event");
 						return false;
@@ -151,7 +149,7 @@ public class ExprClicked extends SimpleExpression<Object> {
 
 	@Override
 	public Class<? extends Object> getReturnType() {
-		return (clickable != ClickableType.BLOCK_AND_ITEMS) ? clickable.getClickableClass() : entityType != null ? entityType.getType() : Block.class;
+		return (clickable != ClickableType.BLOCK_AND_ITEMS) ? clickable.getClickableClass() : entityType != null ? Entity.class : Block.class;
 	}
 
 	@Override
@@ -179,11 +177,9 @@ public class ExprClicked extends SimpleExpression<Object> {
 					Entity entity = ((PlayerInteractEntityEvent) e).getRightClicked();
 
 					assert entityType != null;
-					if (entityType.isInstance(entity)) {
+					if (entityType == entity.getType()) {
 						assert entityType != null;
-						Entity[] one = (Entity[]) Array.newInstance(entityType.getType(), 1);
-						one[0] = entity;
-						return one;
+						return new Entity[]{entity};
 					}
 					return null;
 				}

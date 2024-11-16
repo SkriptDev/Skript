@@ -1,32 +1,12 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.bukkitutil.EntityUtils;
 import ch.njol.skript.classes.Changer.ChangeMode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Events;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.entity.EntityData;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -42,16 +22,15 @@ import org.jetbrains.annotations.Nullable;
 @Description("The type of the entity that will be hatched in a Player Egg Throw event.")
 @Examples({
 	"on player egg throw:",
-		"\tset the hatching entity type to a primed tnt"
+	"\tset the hatching entity type to a primed tnt"
 })
 @Events("Egg Throw")
 @Since("2.7")
-public class ExprHatchingType extends SimpleExpression<EntityData<?>> {
+public class ExprHatchingType extends SimpleExpression<EntityType> {
 
 	static {
-		//noinspection unchecked
-		Skript.registerExpression(ExprHatchingType.class, (Class<EntityData<?>>) (Class<?>) EntityData.class, ExpressionType.SIMPLE,
-				"[the] hatching entity [type]"
+		Skript.registerExpression(ExprHatchingType.class, EntityType.class, ExpressionType.SIMPLE,
+			"[the] hatching entity [type]"
 		);
 	}
 
@@ -66,17 +45,17 @@ public class ExprHatchingType extends SimpleExpression<EntityData<?>> {
 
 	@Override
 	@Nullable
-	protected EntityData<?>[] get(Event event) {
-		if (!(event instanceof PlayerEggThrowEvent))
-			return new EntityData[0];
-		return new EntityData[]{EntityUtils.toSkriptEntityData(((PlayerEggThrowEvent) event).getHatchingType())};
+	protected EntityType[] get(Event event) {
+		if (!(event instanceof PlayerEggThrowEvent playerEggThrowEvent))
+			return null;
+		return new EntityType[]{playerEggThrowEvent.getHatchingType()};
 	}
 
 	@Override
 	@Nullable
 	public Class<?>[] acceptChange(ChangeMode mode) {
 		if (mode == ChangeMode.SET || mode == ChangeMode.RESET)
-			return CollectionUtils.array(EntityData.class);
+			return CollectionUtils.array(EntityType.class);
 		return null;
 	}
 
@@ -85,7 +64,7 @@ public class ExprHatchingType extends SimpleExpression<EntityData<?>> {
 		if (!(event instanceof PlayerEggThrowEvent))
 			return;
 		//noinspection ConstantConditions
-		EntityType entityType = delta != null ? EntityUtils.toBukkitEntityType((EntityData<?>) delta[0]) : EntityType.CHICKEN;
+		EntityType entityType = delta != null ? (EntityType) delta[0] : EntityType.CHICKEN;
 		if (!entityType.isSpawnable())
 			return;
 		((PlayerEggThrowEvent) event).setHatchingType(entityType);
@@ -97,9 +76,9 @@ public class ExprHatchingType extends SimpleExpression<EntityData<?>> {
 	}
 
 	@Override
-	public Class<? extends EntityData<?>> getReturnType() {
+	public Class<? extends EntityType> getReturnType() {
 		//noinspection unchecked
-		return (Class<EntityData<?>>) (Class<?>) EntityData.class;
+		return EntityType.class;
 	}
 
 	@Override
