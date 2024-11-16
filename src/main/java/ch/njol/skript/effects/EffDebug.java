@@ -6,6 +6,7 @@ import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.registrations.Classes;
+import ch.njol.skript.util.LiteralUtils;
 import ch.njol.util.Kleenean;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -27,7 +28,7 @@ public class EffDebug extends Effect {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
-		this.objects = exprs[0];
+		this.objects = LiteralUtils.defendExpression(exprs[0]);
 		this.receiver = (Expression<CommandSender>) exprs[1];
 		return true;
 	}
