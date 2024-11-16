@@ -535,12 +535,12 @@ public class BukkitClasses {
 
 				@Override
 				public String toString(final World w, final int flags) {
-					return "" + w.getName();
+					return "world \"" + w.getName() + "\"";
 				}
 
 				@Override
 				public String toVariableNameString(final World w) {
-					return "" + w.getName();
+					return w.getName();
 				}
 			}).serializer(new Serializer<>() {
 				@Override
