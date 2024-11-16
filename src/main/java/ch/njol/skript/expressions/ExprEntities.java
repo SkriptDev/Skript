@@ -36,10 +36,10 @@ public class ExprEntities extends SimpleExpression<Entity> {
 
 	static {
 		Skript.registerExpression(ExprEntities.class, Entity.class, ExpressionType.PATTERN_MATCHES_EVERYTHING,
-			"[(all [[of] the]|the)] (entities|%*-entitytypes%) [(in|of) ([world[s]] %-worlds%|1¦%-chunks%)]",
-			"[(all [[of] the]|the)] entities of type[s] (entities|%*-entitytypes%) [(in|of) ([world[s]] %-worlds%|1¦%-chunks%)]",
-			"[(all [[of] the]|the)] (entities|%*-entitytypes%) (within|[with]in radius) %number% [(block[s]|met(er|re)[s])] (of|around) %location%",
-			"[(all [[of] the]|the)] entities of type[s] (entities|%-entitytypes%) in radius %number% (of|around) %location%");
+			"[(all [[of] the]|the)] entities [(in|of) ([world[s]] %-worlds%|1¦%-chunks%)]",
+			"[(all [[of] the]|the)] entities of type[s] %*-entitytypes% [(in|of) ([world[s]] %-worlds%|1¦%-chunks%)]",
+			"[(all [[of] the]|the)] entities (within|[with]in radius) %number% [(block[s]|met(er|re)[s])] (of|around) %location%",
+			"[(all [[of] the]|the)] entities of type[s] %-entitytypes% in radius %number% (of|around) %location%");
 	}
 
 	@SuppressWarnings("null")
@@ -59,16 +59,18 @@ public class ExprEntities extends SimpleExpression<Entity> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
-		types = (Expression<EntityType>) exprs[0];
+		if (matchedPattern == 1 || matchedPattern == 3) {
+			types = (Expression<EntityType>) exprs[0];
+		}
 		isUsingRadius = matchedPattern >= 2;
 		if (isUsingRadius) {
-			radius = (Expression<Number>) exprs[exprs.length - 2];
-			center = (Expression<Location>) exprs[exprs.length - 1];
+			radius = (Expression<Number>) exprs[matchedPattern - 2];
+			center = (Expression<Location>) exprs[matchedPattern - 1];
 		} else {
 			if (parseResult.mark == 1) {
-				chunks = (Expression<Chunk>) exprs[2];
+				chunks = (Expression<Chunk>) exprs[matchedPattern];
 			} else {
-				worlds = (Expression<World>) exprs[1];
+				worlds = (Expression<World>) exprs[matchedPattern];
 			}
 		}
 		return true;
