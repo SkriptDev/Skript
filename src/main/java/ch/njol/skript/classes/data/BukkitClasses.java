@@ -933,47 +933,24 @@ public class BukkitClasses {
 					.filter(Material::isItem)
 					.map(ItemStack::new)
 					.iterator())
-			// TODO should itemstack have a parser?!?!
-//				.parser(new Parser<ItemStack>() {
-//					@Override
-//					@Nullable
-//					public ItemStack parse(final String s, final ParseContext context) {
-//						ItemType t = Aliases.parseItemType(s);
-//						if (t == null)
-//							return null;
-//						t = t.getItem();
-//						if (t.numTypes() != 1) {
-//							Skript.error("'" + s + "' represents multiple materials");
-//							return null;
-//						}
-//
-//						final ItemStack i = t.getRandom();
-//						if (i == null) {
-//							Skript.error("'" + s + "' cannot represent an item");
-//							return null;
-//						}
-//						return i;
-//					}
-//
-//					@Override
-//					public String toString(final ItemStack i, final int flags) {
-//						return ItemType.toString(i, flags);
-//					}
-//
-//					@Override
-//					public String toVariableNameString(final ItemStack i) {
-//						final StringBuilder b = new StringBuilder("item:");
-//						b.append(i.getType().name());
-//						b.append(":" + ItemUtils.getDamage(i));
-//						b.append("*" + i.getAmount());
-//
-//						for (Entry<Enchantment, Integer> entry : i.getEnchantments().entrySet())
-//							b.append("#" + EnchantmentUtils.getKey(entry.getKey()))
-//									.append(":" + entry.getValue());
-//
-//						return b.toString();
-//					}
-//				})
+				.parser(new Parser<>() {
+					@Override
+					public boolean canParse(ParseContext context) {
+						return false;
+					}
+
+					@Override
+					public String toString(final ItemStack itemStack, final int flags) {
+						int amount = itemStack.getAmount();
+						String a = amount > 0 ? amount + " " : "";
+						return "itemstack of " + a + Classes.toString(itemStack.getType());
+					}
+
+					@Override
+					public String toVariableNameString(final ItemStack i) {
+						return toString(i, 0);
+					}
+				})
 				.cloner(ItemStack::clone)
 				.serializer(new ConfigurationSerializer<>()));
 		

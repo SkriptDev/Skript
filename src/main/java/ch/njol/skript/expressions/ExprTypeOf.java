@@ -8,8 +8,10 @@ import ch.njol.skript.entity.EntityData;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.util.ConvertedExpression;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +33,7 @@ public class ExprTypeOf extends SimplePropertyExpression<Object, Object> {
 	static {
 		// TODO this one needs some love
 		register(ExprTypeOf.class, Object.class, "type",
-			"entitydatas/itemstacks/inventories/potioneffects/blockdatas");
+			"entitydatas/itemstacks/inventories/potioneffects/blocks/blockdatas");
 	}
 
 	@Override
@@ -48,8 +50,12 @@ public class ExprTypeOf extends SimplePropertyExpression<Object, Object> {
 			return ((Inventory) o).getType();
 		} else if (o instanceof PotionEffect) {
 			return ((PotionEffect) o).getType();
+		} else if (o instanceof Block block) {
+			return block.getType();
 		} else if (o instanceof BlockData blockData) {
 			return blockData.getMaterial();
+		} else if (o instanceof ItemStack itemStack) {
+			return itemStack.getType();
 		}
 		assert false;
 		return null;
@@ -60,6 +66,8 @@ public class ExprTypeOf extends SimplePropertyExpression<Object, Object> {
 		Class<?> returnType = getExpr().getReturnType();
 		return EntityData.class.isAssignableFrom(returnType) ? EntityData.class
 			: PotionEffectType.class.isAssignableFrom(returnType) ? PotionEffectType.class
+			: ItemStack.class.isAssignableFrom(returnType) ? Material.class
+			: Block.class.isAssignableFrom(returnType) ? Material.class
 			: BlockData.class.isAssignableFrom(returnType) ? Material.class : Object.class;
 	}
 
@@ -70,4 +78,5 @@ public class ExprTypeOf extends SimplePropertyExpression<Object, Object> {
 			return null;
 		return super.getConvertedExpr(to);
 	}
+
 }
