@@ -144,9 +144,11 @@ public class BukkitClasses {
 					return "entity:" + e.getUniqueId().toString().toLowerCase(Locale.ENGLISH);
 				}
 
+				@SuppressWarnings("deprecation")
 				@Override
 				public String toString(final Entity entity, final int flags) {
-					return entity.toString(); // TODO do this better?
+					if (entity.getCustomName() != null) return entity.getCustomName();
+					return Classes.toString(entity.getType());
 				}
 			})
 			.changer(DefaultChangers.entityChanger));
