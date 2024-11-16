@@ -10,6 +10,7 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -105,8 +107,9 @@ public class ExprEntities extends SimpleExpression<Entity> {
 						}
 					}
 				}
-			} else if (this.worlds != null) {
-				for (World world : this.worlds.getArray(e)) {
+			} else {
+				List<World> worlds = this.worlds != null ? Arrays.asList(this.worlds.getArray(e)) : Bukkit.getWorlds();
+				for (World world : worlds) {
 					for (@NotNull Entity entity : world.getEntities()) {
 						if (this.types != null) {
 							for (EntityType entityType : this.types.getArray(e)) {
