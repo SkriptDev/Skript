@@ -65,7 +65,7 @@ public class EffSecSpawn extends EffectSection {
 
 	static {
 		Skript.registerSection(EffSecSpawn.class,
-			"(spawn|summon) %entitytypes% [%directions% %locations%]",
+			"(spawn|summon) [a[n]] %entitytypes% [%directions% %locations%]",
 			"(spawn|summon) %number% of %entitytypes% [%directions% %locations%]"
 		);
 		EventValues.registerEventValue(SpawnEvent.class, Entity.class, new Getter<Entity, SpawnEvent>() {
