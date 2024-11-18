@@ -289,7 +289,7 @@ public class BukkitClasses {
 				"set loop-block to minecraft:chest[facing=north]",
 				"set block above player to oak_log[axis=y]",
 				"set target block of player to minecraft:oak_leaves[distance=2;persistent=false]")
-			.after("itemtype")
+			.after("material")
 			.since("2.5")
 			.parser(new Parser<>() {
 				@Nullable
