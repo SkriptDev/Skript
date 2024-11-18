@@ -26,6 +26,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.EnchantmentOffer;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.skriptlang.skript.lang.comparator.Comparator;
 import org.skriptlang.skript.lang.comparator.Comparators;
@@ -142,9 +143,7 @@ public class DefaultComparators {
 				return false;
 			}
 		});
-	}
 
-	static {
 		// CommandSender - CommandSender
 		Comparators.registerComparator(CommandSender.class, CommandSender.class, new Comparator<CommandSender, CommandSender>() {
 			@Override
@@ -157,6 +156,9 @@ public class DefaultComparators {
 				return false;
 			}
 		});
+
+		// ItemStack - ItemStack
+		Comparators.registerComparator(ItemStack.class, ItemStack.class, (o1, o2) -> Relation.get(o1.equals(o2)));
 
 		// OfflinePlayer - OfflinePlayer
 		Comparators.registerComparator(OfflinePlayer.class, OfflinePlayer.class, new Comparator<OfflinePlayer, OfflinePlayer>() {
