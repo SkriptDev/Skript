@@ -1,22 +1,3 @@
-/**
- * This file is part of Skript.
- *
- * Skript is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Skript is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
@@ -24,7 +5,6 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.entity.EntityData;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.Literal;
@@ -35,6 +15,7 @@ import ch.njol.util.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import ch.njol.skript.lang.util.SimpleExpression;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,12 +37,12 @@ public class ExprNearestEntity extends SimpleExpression<Entity> {
 
 	static {
 		Skript.registerExpression(ExprNearestEntity.class, Entity.class, ExpressionType.COMBINED,
-				"[the] nearest %*entitydatas% [[relative] to %entity/location%]",
-				"[the] %*entitydatas% nearest [to %entity/location%]");
+				"[the] nearest %*entitytypes% [[relative] to %entity/location%]",
+				"[the] %*entitytypes% nearest [to %entity/location%]");
 	}
 
 	@SuppressWarnings("NotNullFieldNotInitialized")
-	private EntityData<?>[] entityDatas;
+	private EntityType[] entityTypes;
 
 	@SuppressWarnings("NotNullFieldNotInitialized")
 	private Expression<?> relativeTo;
@@ -69,8 +50,8 @@ public class ExprNearestEntity extends SimpleExpression<Entity> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
-		entityDatas = ((Literal<EntityData<?>>) exprs[0]).getArray();
-		if (entityDatas.length != Arrays.stream(entityDatas).distinct().count()) {
+		entityTypes = ((Literal<EntityType>) exprs[0]).getArray();
+		if (entityTypes.length != Arrays.stream(entityTypes).distinct().count()) {
 			Skript.error("Entity list may not contain duplicate entities");
 			return false;
 		}
@@ -83,12 +64,12 @@ public class ExprNearestEntity extends SimpleExpression<Entity> {
 		Object relativeTo = this.relativeTo.getSingle(event);
 		if (relativeTo == null || (relativeTo instanceof Location && ((Location) relativeTo).getWorld() == null))
 			return (Entity[]) Array.newInstance(this.getReturnType(), 0);;
-		Entity[] nearestEntities = (Entity[]) Array.newInstance(this.getReturnType(), entityDatas.length);
+		Entity[] nearestEntities = (Entity[]) Array.newInstance(this.getReturnType(), entityTypes.length);
 		for (int i = 0; i < nearestEntities.length; i++) {
 			if (relativeTo instanceof Entity) {
-				nearestEntities[i] = getNearestEntity(entityDatas[i], ((Entity) relativeTo).getLocation(), (Entity) relativeTo);
+				nearestEntities[i] = getNearestEntity(entityTypes[i], ((Entity) relativeTo).getLocation(), (Entity) relativeTo);
 			} else {
-				nearestEntities[i] = getNearestEntity(entityDatas[i], (Location) relativeTo, null);
+				nearestEntities[i] = getNearestEntity(entityTypes[i], (Location) relativeTo, null);
 			}
 		}
 		return nearestEntities;
@@ -96,7 +77,7 @@ public class ExprNearestEntity extends SimpleExpression<Entity> {
 
 	@Override
 	public boolean isSingle() {
-		return entityDatas.length == 1;
+		return entityTypes.length == 1;
 	}
 
 	private transient @Nullable Class<? extends Entity> knownReturnType;
@@ -105,28 +86,30 @@ public class ExprNearestEntity extends SimpleExpression<Entity> {
 	public Class<? extends Entity> getReturnType() {
 		if (knownReturnType != null)
 			return knownReturnType;
-		Class<? extends Entity>[] types = new Class[entityDatas.length];
+		Class<? extends Entity>[] types = new Class[entityTypes.length];
 		for (int i = 0; i < types.length; i++) {
-			types[i] = entityDatas[i].getType();
+			types[i] = entityTypes[i].getEntityClass();
 		}
 		return knownReturnType = Utils.highestDenominator(Entity.class, types);
 	}
 
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
-		return "nearest " + StringUtils.join(entityDatas) + " relative to " + relativeTo.toString(event, debug);
+		return "nearest " + StringUtils.join(entityTypes) + " relative to " + relativeTo.toString(event, debug);
 	}
 
 	@Nullable
-	private Entity getNearestEntity(EntityData<?> entityData, Location relativePoint, @Nullable Entity excludedEntity) {
+	private Entity getNearestEntity(EntityType entityType, Location relativePoint, @Nullable Entity excludedEntity) {
 		Entity nearestEntity = null;
 		double nearestDistance = -1;
-		for (Entity entity : relativePoint.getWorld().getEntitiesByClass(entityData.getType())) {
-			if (entity != excludedEntity && entityData.isInstance(entity)) {
-				double distance = entity.getLocation().distance(relativePoint);
-				if (nearestEntity == null || distance < nearestDistance) {
-					nearestDistance = distance;
-					nearestEntity = entity;
+		if (entityType != null && entityType.getEntityClass() != null) {
+			for (Entity entity : relativePoint.getWorld().getEntitiesByClass(entityType.getEntityClass())) {
+				if (entity != excludedEntity && entityType == entity.getType()) {
+					double distance = entity.getLocation().distance(relativePoint);
+					if (nearestEntity == null || distance < nearestDistance) {
+						nearestDistance = distance;
+						nearestEntity = entity;
+					}
 				}
 			}
 		}

@@ -1,24 +1,7 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.events;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +9,6 @@ import com.destroystokyo.paper.event.player.PlayerStartSpectatingEntityEvent;
 import com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.entity.EntityData;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -37,16 +19,16 @@ public class EvtSpectate extends SkriptEvent {
 	static {
 		if (Skript.classExists("com.destroystokyo.paper.event.player.PlayerStartSpectatingEntityEvent"))
 			Skript.registerEvent("Spectate", EvtSpectate.class, CollectionUtils.array(PlayerStartSpectatingEntityEvent.class, PlayerStopSpectatingEntityEvent.class),
-						"[player] stop spectating [(of|from) %-*entitydatas%]",
-						"[player] (swap|switch) spectating [(of|from) %-*entitydatas%]",
-						"[player] start spectating [of %-*entitydatas%]")
+						"[player] stop spectating [(of|from) %-*entitytypes%]",
+						"[player] (swap|switch) spectating [(of|from) %-*entitytypes%]",
+						"[player] start spectating [of %-*entitytypes%]")
 					.description("Called with a player starts, stops or swaps spectating an entity.")
 					.examples("on player start spectating of a zombie:")
 					.requiredPlugins("Paper")
 					.since("2.7");
 	}
 
-	private Literal<EntityData<?>> datas;
+	private Literal<EntityType> entityTypes;
 
 	private static final int STOP = -1, SWAP = 0, START = 1;
 
@@ -61,7 +43,7 @@ public class EvtSpectate extends SkriptEvent {
 	@SuppressWarnings("unchecked")
 	public boolean init(Literal<?>[] args, int matchedPattern, ParseResult parseResult) {
 		pattern = matchedPattern - 1;
-		datas = (Literal<EntityData<?>>) args[0];
+		entityTypes = (Literal<EntityType>) args[0];
 		return true;
 	}
 
@@ -86,10 +68,10 @@ public class EvtSpectate extends SkriptEvent {
 		// Wasn't a swap event.
 		if (pattern == SWAP && !swap)
 			return false;
-		if (datas == null)
+		if (entityTypes == null)
 			return true;
-		for (EntityData<?> data : this.datas.getAll(event)) {
-			if (data.isInstance(entity))
+		for (EntityType entityType : this.entityTypes.getAll(event)) {
+			if (entityType == entity.getType())
 				return true;
 		}
 		return false;
@@ -98,7 +80,7 @@ public class EvtSpectate extends SkriptEvent {
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
 		return (pattern == START ? "start" : pattern == SWAP ? "swap" : "stop") + " spectating" +
-					(datas != null ? "of " + datas.toString(event, debug) : "");
+					(entityTypes != null ? "of " + entityTypes.toString(event, debug) : "");
 	}
 
 }

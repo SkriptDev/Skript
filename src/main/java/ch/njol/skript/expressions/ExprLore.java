@@ -1,40 +1,7 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.expressions;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.event.Event;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.Nullable;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptConfig;
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.classes.Changer.ChangeMode;
 import ch.njol.skript.classes.Changer.ChangerUtils;
 import ch.njol.skript.doc.Description;
@@ -49,6 +16,19 @@ import ch.njol.util.Kleenean;
 import ch.njol.util.Math2;
 import ch.njol.util.StringUtils;
 import ch.njol.util.coll.CollectionUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.event.Event;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * TODO make a 'line %number% of %text%' expression and figure out how to deal with signs (4 lines, delete = empty, etc...)
@@ -62,38 +42,38 @@ import ch.njol.util.coll.CollectionUtils;
 public class ExprLore extends SimpleExpression<String> {
 
 	static {
-			Skript.registerExpression(ExprLore.class, String.class, ExpressionType.PROPERTY,
-					"[the] lore of %itemstack/itemtype%", "%itemstack/itemtype%'[s] lore",
-					"[the] line %number% of [the] lore of %itemstack/itemtype%",
-					"[the] line %number% of %itemstack/itemtype%'[s] lore",
-					"[the] %number%(st|nd|rd|th) line of [the] lore of %itemstack/itemtype%",
-					"[the] %number%(st|nd|rd|th) line of %itemstack/itemtype%'[s] lore");
+		Skript.registerExpression(ExprLore.class, String.class, ExpressionType.PROPERTY,
+			"[the] lore of %itemstack%", "%itemstack%'[s] lore",
+			"[the] line %number% of [the] lore of %itemstack%",
+			"[the] line %number% of %itemstack%'[s] lore",
+			"[the] %number%(st|nd|rd|th) line of [the] lore of %itemstack%",
+			"[the] %number%(st|nd|rd|th) line of %itemstack%'[s] lore");
 	}
 
 	@Nullable
 	private Expression<Number> lineNumber;
 
 	@SuppressWarnings("null")
-	private Expression<?> item;
+	private Expression<ItemStack> item;
 
 	@SuppressWarnings({"unchecked", "null"})
 	@Override
 	public boolean init(final Expression<?>[] exprs, final int matchedPattern, final Kleenean isDelayed, final ParseResult parseResult) {
 		lineNumber = exprs.length > 1 ? (Expression<Number>) exprs[0] : null;
-		item = exprs[exprs.length - 1];
+		item = (Expression<ItemStack>) exprs[exprs.length - 1];
 		return true;
 	}
 
 	@Override
 	@Nullable
 	protected String[] get(final Event e) {
-		final Object i = item.getSingle(e);
+		final ItemStack itemStack = item.getSingle(e);
 		final Number n = lineNumber != null ? lineNumber.getSingle(e) : null;
 		if (n == null && lineNumber != null)
 			return null;
-		if (i == null || i instanceof ItemStack && ((ItemStack) i).getType() == Material.AIR)
+		if (itemStack == null || itemStack.getType() == Material.AIR)
 			return new String[0];
-		final ItemMeta meta = i instanceof ItemStack ? ((ItemStack) i).getItemMeta() : (ItemMeta) ((ItemType) i).getItemMeta();
+		final ItemMeta meta = itemStack.getItemMeta();
 		if (meta == null || !meta.hasLore())
 			return new String[0];
 		final List<String> lore = meta.getLore();
@@ -117,7 +97,7 @@ public class ExprLore extends SimpleExpression<String> {
 				acceptsMany = false;
 			case SET:
 			case ADD:
-				if (ChangerUtils.acceptsChange(item, ChangeMode.SET, ItemStack.class, ItemType.class)) {
+				if (ChangerUtils.acceptsChange(item, ChangeMode.SET, ItemStack.class)) {
 					return CollectionUtils.array(acceptsMany ? String[].class : String.class);
 				}
 				return null;
@@ -129,15 +109,15 @@ public class ExprLore extends SimpleExpression<String> {
 
 	@Override
 	public void change(final Event e, final @Nullable Object[] delta, final ChangeMode mode) throws UnsupportedOperationException {
-		Object i = item.getSingle(e);
+		ItemStack itemStack = item.getSingle(e);
 
 		String[] stringDelta = delta == null ? null : Arrays.copyOf(delta, delta.length, String[].class);
 
 		// air is just nothing, it can't have a lore
-		if (i == null || i instanceof ItemStack && ((ItemStack) i).getType() == Material.AIR)
+		if (itemStack == null || itemStack instanceof ItemStack && itemStack.getType() == Material.AIR)
 			return;
 
-		ItemMeta meta = i instanceof ItemStack ? ((ItemStack) i).getItemMeta() : (ItemMeta) ((ItemType) i).getItemMeta();
+		ItemMeta meta = itemStack.getItemMeta();
 		if (meta == null)
 			meta = Bukkit.getItemFactory().getItemMeta(Material.STONE);
 
@@ -183,7 +163,7 @@ public class ExprLore extends SimpleExpression<String> {
 				case REMOVE_ALL:
 					assert stringDelta != null;
 					lore = Arrays.asList(handleRemove(
-							StringUtils.join(lore, "\n"), stringDelta[0], mode == ChangeMode.REMOVE_ALL).split("\n"));
+						StringUtils.join(lore, "\n"), stringDelta[0], mode == ChangeMode.REMOVE_ALL).split("\n"));
 					break;
 				case RESET:
 					assert false;
@@ -220,18 +200,10 @@ public class ExprLore extends SimpleExpression<String> {
 		}
 
 		meta.setLore(lore == null || lore.size() == 0 ? null : lore);
-		if (i instanceof ItemStack) {
-			((ItemStack) i).setItemMeta(meta);
-		} else {
-			((ItemType) i).setItemMeta(meta);
-		}
+		itemStack.setItemMeta(meta);
 
-		if (ChangerUtils.acceptsChange(item, ChangeMode.SET, i.getClass())) {
-			Object[] itemDelta = i instanceof ItemStack ? new ItemStack[]{(ItemStack) i} : new ItemType[]{(ItemType) i};
-			item.change(e, itemDelta, ChangeMode.SET);
-		} else {
-			Object[] itemDelta = i instanceof ItemStack ? new ItemType[]{new ItemType((ItemStack) i)} :
-					new ItemStack[]{((ItemType) i).getRandom()};
+		if (ChangerUtils.acceptsChange(item, ChangeMode.SET, itemStack.getClass())) {
+			Object[] itemDelta = new ItemStack[]{itemStack};
 			item.change(e, itemDelta, ChangeMode.SET);
 		}
 	}
@@ -246,7 +218,7 @@ public class ExprLore extends SimpleExpression<String> {
 			}
 		} else {
 			final Matcher m = Pattern.compile(Pattern.quote(toRemove),
-					Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE).matcher(input);
+				Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE).matcher(input);
 			return all ? m.replaceAll("") : m.replaceFirst("");
 		}
 	}

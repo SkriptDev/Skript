@@ -1,25 +1,8 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.effects;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
@@ -33,7 +16,6 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.entity.EntityData;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -52,14 +34,14 @@ import ch.njol.util.Kleenean;
 public class EffShoot extends Effect {
 	static {
 		Skript.registerEffect(EffShoot.class,
-				"shoot %entitydatas% [from %livingentities/locations%] [(at|with) (speed|velocity) %-number%] [%-direction%]",
-				"(make|let) %livingentities/locations% shoot %entitydatas% [(at|with) (speed|velocity) %-number%] [%-direction%]");
+				"shoot %entitytypes% [from %livingentities/locations%] [(at|with) (speed|velocity) %-number%] [%-direction%]",
+				"(make|let) %livingentities/locations% shoot %entitytypes% [(at|with) (speed|velocity) %-number%] [%-direction%]");
 	}
 	
 	private final static Double DEFAULT_SPEED = 5.;
 	
 	@SuppressWarnings("null")
-	private Expression<EntityData<?>> types;
+	private Expression<EntityType> entityTypes;
 	@SuppressWarnings("null")
 	private Expression<?> shooters;
 	@Nullable
@@ -73,7 +55,7 @@ public class EffShoot extends Effect {
 	@SuppressWarnings({"unchecked", "null"})
 	@Override
 	public boolean init(final Expression<?>[] exprs, final int matchedPattern, final Kleenean isDelayed, final ParseResult parseResult) {
-		types = (Expression<EntityData<?>>) exprs[matchedPattern];
+		entityTypes = (Expression<EntityType>) exprs[matchedPattern];
 		shooters = exprs[1 - matchedPattern];
 		velocity = (Expression<Number>) exprs[2];
 		direction = (Expression<Direction>) exprs[3];
@@ -91,32 +73,30 @@ public class EffShoot extends Effect {
 		if (dir == null)
 			return;
 		for (final Object shooter : shooters.getArray(e)) {
-			for (final EntityData<?> d : types.getArray(e)) {
+			for (final EntityType entityType : entityTypes.getArray(e)) {
 				if (shooter instanceof LivingEntity) {
 					final Vector vel = dir.getDirection(((LivingEntity) shooter).getLocation()).multiply(v.doubleValue());
-					final Class<? extends Entity> type = d.getType();
-					if (Fireball.class.isAssignableFrom(type)) {// fireballs explode in the shooter's face by default
-						final Fireball projectile = (Fireball) ((LivingEntity) shooter).getWorld().spawn(((LivingEntity) shooter).getEyeLocation().add(vel.clone().normalize().multiply(0.5)), type);
+					if (Fireball.class.isAssignableFrom(entityType.getEntityClass())) {// fireballs explode in the shooter's face by default
+						final Fireball projectile = (Fireball) ((LivingEntity) shooter).getWorld().spawn(((LivingEntity) shooter).getEyeLocation().add(vel.clone().normalize().multiply(0.5)), entityType.getEntityClass());
 						projectile.setShooter((ProjectileSource) shooter);
 						projectile.setVelocity(vel);
 						lastSpawned = projectile;
-					} else if (Projectile.class.isAssignableFrom(type)) {
+					} else if (Projectile.class.isAssignableFrom(entityType.getEntityClass())) {
 						@SuppressWarnings("unchecked")
-						final Projectile projectile = ((LivingEntity) shooter).launchProjectile((Class<? extends Projectile>) type);
-						set(projectile, d);
+						final Projectile projectile = ((LivingEntity) shooter).launchProjectile((Class<? extends Projectile>) entityType.getEntityClass());
 						projectile.setVelocity(vel);
 						lastSpawned = projectile;
 					} else {
 						final Location loc = ((LivingEntity) shooter).getLocation();
 						loc.setY(loc.getY() + ((LivingEntity) shooter).getEyeHeight() / 2);
-						final Entity projectile = d.spawn(loc);
+						final Entity projectile = ((LivingEntity) shooter).getWorld().spawnEntity(loc, entityType);
 						if (projectile != null)
 							projectile.setVelocity(vel);
 						lastSpawned = projectile;
 					}
 				} else {
 					final Vector vel = dir.getDirection((Location) shooter).multiply(v.doubleValue());
-					final Entity projectile = d.spawn((Location) shooter);
+					final Entity projectile = ((Location) shooter).getWorld().spawnEntity((Location) shooter, entityType);
 					if (projectile != null)
 						projectile.setVelocity(vel);
 					lastSpawned = projectile;
@@ -125,14 +105,9 @@ public class EffShoot extends Effect {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	private static <E extends Entity> void set(final Entity e, final EntityData<E> d) {
-		d.set((E) e);
-	}
-	
 	@Override
 	public String toString(final @Nullable Event e, final boolean debug) {
-		return "shoot " + types.toString(e, debug) + " from " + shooters.toString(e, debug) + (velocity != null ? " at speed " + velocity.toString(e, debug) : "") + (direction != null ? " " + direction.toString(e, debug) : "");
+		return "shoot " + entityTypes.toString(e, debug) + " from " + shooters.toString(e, debug) + (velocity != null ? " at speed " + velocity.toString(e, debug) : "") + (direction != null ? " " + direction.toString(e, debug) : "");
 	}
 	
 }

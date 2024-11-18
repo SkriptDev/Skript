@@ -1,49 +1,8 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.expressions;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import ch.njol.skript.Skript;
 import ch.njol.skript.bukkitutil.InventoryUtils;
 import ch.njol.skript.bukkitutil.ItemUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.GameRule;
-import org.bukkit.Nameable;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.World;
-import org.jetbrains.annotations.Nullable;
-
-import ch.njol.skript.Skript;
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.classes.Changer.ChangeMode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -61,6 +20,27 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
+import org.bukkit.Bukkit;
+import org.bukkit.GameRule;
+import org.bukkit.Nameable;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Name("Name / Display Name / Tab List Name")
 @Description({
@@ -122,10 +102,10 @@ public class ExprName extends SimplePropertyExpression<Object, String> {
 	static {
 		// Check for Adventure API
 		if (Skript.classExists("net.kyori.adventure.text.Component") &&
-				Skript.methodExists(Bukkit.class, "createInventory", InventoryHolder.class, int.class, Component.class))
+			Skript.methodExists(Bukkit.class, "createInventory", InventoryHolder.class, int.class, Component.class))
 			serializer = BungeeComponentSerializer.get();
 		HAS_GAMERULES = Skript.classExists("org.bukkit.GameRule");
-		register(ExprName.class, String.class, "(1¦name[s]|2¦(display|nick|chat|custom)[ ]name[s])", "offlineplayers/entities/blocks/itemtypes/inventories/slots/worlds"
+		register(ExprName.class, String.class, "(1¦name[s]|2¦(display|nick|chat|custom)[ ]name[s])", "offlineplayers/entities/blocks/itemstacks/inventories/slots/worlds"
 			+ (HAS_GAMERULES ? "/gamerules" : ""));
 		register(ExprName.class, String.class, "(3¦(player|tab)[ ]list name[s])", "players");
 	}
@@ -171,8 +151,8 @@ public class ExprName extends SimplePropertyExpression<Object, String> {
 			BlockState state = ((Block) object).getState();
 			if (state instanceof Nameable)
 				return ((Nameable) state).getCustomName();
-		} else if (object instanceof ItemType) {
-			ItemMeta m = ((ItemType) object).getItemMeta();
+		} else if (object instanceof ItemStack itemStack) {
+			ItemMeta m = itemStack.getItemMeta();
 			return m.hasDisplayName() ? m.getDisplayName() : null;
 		} else if (object instanceof Inventory) {
 			Inventory inventory = (Inventory) object;
@@ -219,7 +199,8 @@ public class ExprName extends SimplePropertyExpression<Object, String> {
 					case 2:
 						((Player) object).setDisplayName(name != null ? name + ChatColor.RESET : ((Player) object).getName());
 						break;
-					case 3: // Null check not necessary. This method will use the player's name if 'name' is null.
+					case
+						3: // Null check not necessary. This method will use the player's name if 'name' is null.
 						((Player) object).setPlayerListName(name);
 						break;
 				}
@@ -235,11 +216,10 @@ public class ExprName extends SimplePropertyExpression<Object, String> {
 					((Nameable) state).setCustomName(name);
 					state.update();
 				}
-			} else if (object instanceof ItemType) {
-				ItemType i = (ItemType) object;
-				ItemMeta m = i.getItemMeta();
+			} else if (object instanceof ItemStack itemStack) {
+				ItemMeta m = itemStack.getItemMeta();
 				m.setDisplayName(name);
-				i.setItemMeta(m);
+				itemStack.setItemMeta(m);
 			} else if (object instanceof Inventory) {
 				Inventory inv = (Inventory) object;
 
@@ -296,10 +276,14 @@ public class ExprName extends SimplePropertyExpression<Object, String> {
 	@Override
 	protected String getPropertyName() {
 		switch (mark) {
-			case 1: return "name";
-			case 2: return "display name";
-			case 3: return "tablist name";
-			default: return "name";
+			case 1:
+				return "name";
+			case 2:
+				return "display name";
+			case 3:
+				return "tablist name";
+			default:
+				return "name";
 		}
 	}
 

@@ -1,21 +1,3 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.classes.registry;
 
 import ch.njol.skript.classes.Parser;
@@ -73,6 +55,7 @@ public class RegistryParser<R extends Keyed> extends Parser<R> {
 			// If the object is a vanilla Minecraft object, we'll add the key with spaces as a pattern
 			if (namespace.equalsIgnoreCase(NamespacedKey.MINECRAFT)) {
 				parseMap.put(keyWithSpaces, registryObject);
+				parseMap.put(key, registryObject);
 			}
 
 			String[] options = Language.getList(languageKey);
@@ -109,7 +92,7 @@ public class RegistryParser<R extends Keyed> extends Parser<R> {
 	/**
 	 * This method attempts to match the string input against one of the string representations of the registry.
 	 *
-	 * @param input a string to attempt to match against one in the registry.
+	 * @param input   a string to attempt to match against one in the registry.
 	 * @param context of parsing, may not be null
 	 * @return The registry object matching the input, or null if no match could be made.
 	 */

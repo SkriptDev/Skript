@@ -1,23 +1,9 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.classes.data;
 
+import ch.njol.skript.bukkitutil.PlayerUtils;
+import ch.njol.skript.classes.Changer;
+import ch.njol.skript.util.Experience;
+import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -33,41 +19,36 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 
-import ch.njol.skript.Skript;
-import ch.njol.skript.aliases.ItemType;
-import ch.njol.skript.bukkitutil.PlayerUtils;
-import ch.njol.skript.classes.Changer;
-import ch.njol.skript.util.Experience;
-import ch.njol.util.coll.CollectionUtils;
-
 /**
  * @author Peter Güttinger
  */
 public class DefaultChangers {
-	
-	public DefaultChangers() {}
-	
-	public final static Changer<Entity> entityChanger = new Changer<Entity>() {
+
+	public DefaultChangers() {
+	}
+
+	public final static Changer<Entity> entityChanger = new Changer<>() {
 		@Override
 		@Nullable
 		public Class<? extends Object>[] acceptChange(final ChangeMode mode) {
 			switch (mode) {
 				case ADD:
-					return CollectionUtils.array(ItemType[].class, Inventory.class, Experience[].class);
+					return CollectionUtils.array(ItemStack[].class, Inventory.class, Experience[].class);
 				case DELETE:
 					return CollectionUtils.array();
 				case REMOVE:
-					return CollectionUtils.array(PotionEffectType[].class, ItemType[].class, Inventory.class);
+					return CollectionUtils.array(PotionEffectType[].class, ItemStack[].class, Inventory.class);
 				case REMOVE_ALL:
-					return CollectionUtils.array(PotionEffectType[].class, ItemType[].class);
+					return CollectionUtils.array(PotionEffectType[].class, ItemStack[].class);
 				case SET:
-				case RESET: // REMIND reset entity? (unshear, remove held item, reset weapon/armour, ...)
+				case
+					RESET: // REMIND reset entity? (unshear, remove held item, reset weapon/armour, ...)
 					return null;
 			}
 			assert false;
 			return null;
 		}
-		
+
 		@Override
 		public void change(final Entity[] entities, final @Nullable Object[] delta, final ChangeMode mode) {
 			if (delta == null) {
@@ -101,15 +82,16 @@ public class DefaultChangers {
 										inventory.remove(itemStack);
 									}
 								}
-							} else if (d instanceof ItemType) {
+							} else if (d instanceof ItemStack) {
 								hasItem = true;
 								final PlayerInventory invi = p.getInventory();
-								if (mode == ChangeMode.ADD)
-									((ItemType) d).addTo(invi);
-								else if (mode == ChangeMode.REMOVE)
-									((ItemType) d).removeFrom(invi);
-								else
-									((ItemType) d).removeAll(invi);
+								// TODO figure this one out for ItemStack
+//								if (mode == ChangeMode.ADD)
+//									((ItemType) d).addTo(invi);
+//								else if (mode == ChangeMode.REMOVE)
+//									((ItemType) d).removeFrom(invi);
+//								else
+//									((ItemType) d).removeAll(invi);
 							}
 						}
 					}
@@ -119,8 +101,8 @@ public class DefaultChangers {
 			}
 		}
 	};
-	
-	public final static Changer<Player> playerChanger = new Changer<Player>() {
+
+	public final static Changer<Player> playerChanger = new Changer<>() {
 		@Override
 		@Nullable
 		public Class<? extends Object>[] acceptChange(final ChangeMode mode) {
@@ -128,14 +110,14 @@ public class DefaultChangers {
 				return null;
 			return entityChanger.acceptChange(mode);
 		}
-		
+
 		@Override
 		public void change(final Player[] players, final @Nullable Object[] delta, final ChangeMode mode) {
 			entityChanger.change(players, delta, mode);
 		}
 	};
-	
-	public final static Changer<Entity> nonLivingEntityChanger = new Changer<Entity>() {
+
+	public final static Changer<Entity> nonLivingEntityChanger = new Changer<>() {
 		@Override
 		@Nullable
 		public Class<Object>[] acceptChange(final ChangeMode mode) {
@@ -143,7 +125,7 @@ public class DefaultChangers {
 				return CollectionUtils.array();
 			return null;
 		}
-		
+
 		@Override
 		public void change(final Entity[] entities, final @Nullable Object[] delta, final ChangeMode mode) {
 			assert mode == ChangeMode.DELETE;
@@ -154,8 +136,8 @@ public class DefaultChangers {
 			}
 		}
 	};
-	
-	public final static Changer<Item> itemChanger = new Changer<Item>() {
+
+	public final static Changer<Item> itemChanger = new Changer<>() {
 		@Override
 		@Nullable
 		public Class<?>[] acceptChange(final ChangeMode mode) {
@@ -163,7 +145,7 @@ public class DefaultChangers {
 				return CollectionUtils.array(ItemStack.class);
 			return nonLivingEntityChanger.acceptChange(mode);
 		}
-		
+
 		@Override
 		public void change(final Item[] what, final @Nullable Object[] delta, final ChangeMode mode) {
 			if (mode == ChangeMode.SET) {
@@ -175,23 +157,23 @@ public class DefaultChangers {
 			}
 		}
 	};
-	
-	public final static Changer<Inventory> inventoryChanger = new Changer<Inventory>() {
-		
+
+	public final static Changer<Inventory> inventoryChanger = new Changer<>() {
+
 		private Material[] cachedMaterials = Material.values();
-		
+
 		@Override
 		@Nullable
 		public Class<? extends Object>[] acceptChange(final ChangeMode mode) {
 			if (mode == ChangeMode.RESET)
 				return null;
 			if (mode == ChangeMode.REMOVE_ALL)
-				return CollectionUtils.array(ItemType[].class);
+				return CollectionUtils.array(ItemStack[].class);
 			if (mode == ChangeMode.SET)
-				return CollectionUtils.array(ItemType[].class, Inventory.class);
-			return CollectionUtils.array(ItemType[].class, Inventory[].class);
+				return CollectionUtils.array(ItemStack[].class, Inventory.class);
+			return CollectionUtils.array(ItemStack[].class, Inventory[].class);
 		}
-		
+
 		@Override
 		public void change(final Inventory[] invis, final @Nullable Object[] delta, final ChangeMode mode) {
 			for (final Inventory invi : invis) {
@@ -205,10 +187,10 @@ public class DefaultChangers {
 						//$FALL-THROUGH$
 					case ADD:
 						assert delta != null;
-						
-						if(delta instanceof ItemStack[]) { // Old behavior - legacy code (is it used? no idea)
+
+						if (delta instanceof ItemStack[]) { // Old behavior - legacy code (is it used? no idea)
 							ItemStack[] items = (ItemStack[]) delta;
-							if(items.length > 36) {
+							if (items.length > 36) {
 								return;
 							}
 							for (final Object d : delta) {
@@ -218,23 +200,18 @@ public class DefaultChangers {
 											invi.addItem(i);
 									}
 								} else {
-									((ItemType) d).addTo(invi);
+									//((ItemType) d).addTo(invi);
 								}
 							}
 						} else {
-							for (final Object d : delta) {
-								if (d instanceof ItemStack) {
-									new ItemType((ItemStack) d).addTo(invi); // Can't imagine why would be ItemStack, but just in case...
-								} else if (d instanceof ItemType) {
-									((ItemType) d).addTo(invi);
-								} else if (d instanceof Block) {
-									new ItemType((Block) d).addTo(invi);
-								} else {
-									Skript.error("Can't " + d.toString() + " to an inventory!");
+							for (final Object object : delta) {
+								// TODO this probably needs work
+								if (object instanceof ItemStack itemStack) {
+									invi.addItem(itemStack);
 								}
 							}
 						}
-						
+
 						break;
 					case REMOVE:
 					case REMOVE_ALL:
@@ -243,21 +220,21 @@ public class DefaultChangers {
 							// Potential fast path: remove all items -> clear inventory
 							boolean equal = true;
 							for (int i = 0; i < delta.length; i++) {
-								if (!(delta[i] instanceof ItemType)) {
-									equal = false;
-									break; // Not an item, take slow path
-								}
-								if (((ItemType) delta[i]).getMaterial() != cachedMaterials[i]) {
-									equal = false;
-									break;
-								}
+//								if (!(delta[i] instanceof ItemType)) {
+//									equal = false;
+//									break; // Not an item, take slow path
+//								}
+//								if (((ItemType) delta[i]).getMaterial() != cachedMaterials[i]) {
+//									equal = false;
+//									break;
+//								}
 							}
 							if (equal) { // Take fast path, break out before slow one
 								invi.clear();
 								break;
 							}
 						}
-						
+
 						// Slow path
 						for (final Object d : delta) {
 							if (d instanceof Inventory) {
@@ -267,10 +244,10 @@ public class DefaultChangers {
 										invi.removeItem(itemStack);
 								}
 							} else {
-								if (mode == ChangeMode.REMOVE)
-									((ItemType) d).removeFrom(invi);
-								else
-									((ItemType) d).removeAll(invi);
+//								if (mode == ChangeMode.REMOVE)
+//									((ItemType) d).removeFrom(invi);
+//								else
+//									((ItemType) d).removeAll(invi);
 							}
 						}
 						break;
@@ -284,18 +261,18 @@ public class DefaultChangers {
 			}
 		}
 	};
-	
-	public final static Changer<Block> blockChanger = new Changer<Block>() {
+
+	public final static Changer<Block> blockChanger = new Changer<>() {
 		@Override
 		@Nullable
 		public Class<?>[] acceptChange(final ChangeMode mode) {
 			if (mode == ChangeMode.RESET)
 				return null; // REMIND regenerate?
 			if (mode == ChangeMode.SET)
-				return CollectionUtils.array(ItemType.class, BlockData.class);
-			return CollectionUtils.array(ItemType[].class, Inventory[].class);
+				return CollectionUtils.array(ItemStack.class, BlockData.class);
+			return CollectionUtils.array(ItemStack[].class, Inventory[].class);
 		}
-		
+
 		@Override
 		public void change(final Block[] blocks, final @Nullable Object[] delta, final ChangeMode mode) {
 			for (Block block : blocks) {
@@ -304,8 +281,8 @@ public class DefaultChangers {
 					case SET:
 						assert delta != null;
 						Object object = delta[0];
-						if (object instanceof ItemType) {
-							((ItemType) object).getBlock().setBlock(block, true);
+						if (object instanceof ItemStack itemStack && itemStack.getType().isBlock()) {
+							block.setType(itemStack.getType());
 						} else if (object instanceof BlockData) {
 							block.setBlockData(((BlockData) object));
 						}
@@ -329,7 +306,7 @@ public class DefaultChangers {
 											invi.addItem(i);
 									}
 								} else {
-									((ItemType) obj).addTo(invi);
+//									((ItemType) obj).addTo(invi);
 								}
 							}
 						} else {
@@ -337,10 +314,10 @@ public class DefaultChangers {
 								if (obj instanceof Inventory) {
 									invi.removeItem(((Inventory) obj).getContents());
 								} else {
-									if (mode == ChangeMode.REMOVE)
-										((ItemType) obj).removeFrom(invi);
-									else
-										((ItemType) obj).removeAll(invi);
+//									if (mode == ChangeMode.REMOVE)
+//										((ItemType) obj).removeFrom(invi);
+//									else
+//										((ItemType) obj).removeAll(invi);
 								}
 							}
 						}
@@ -352,5 +329,5 @@ public class DefaultChangers {
 			}
 		}
 	};
-	
+
 }
