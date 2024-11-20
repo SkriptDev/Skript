@@ -18,6 +18,7 @@ import ch.njol.skript.registrations.Classes;
 import ch.njol.util.Kleenean;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,8 +35,9 @@ import org.jetbrains.annotations.Nullable;
 @Since("1.0")
 public class ExprEntity extends SimpleExpression<Entity> {
 	static {
+		// TODO need to figure this out (having "event" optional just makes a crap load of conflicts)
 		Skript.registerExpression(ExprEntity.class, Entity.class, ExpressionType.PATTERN_MATCHES_EVERYTHING,
-			"[the] [event-]<.+>");
+			"[the] event-<.+>", "[the] player");
 	}
 
 	@SuppressWarnings("null")
@@ -46,6 +48,11 @@ public class ExprEntity extends SimpleExpression<Entity> {
 
 	@Override
 	public boolean init(final Expression<?>[] exprs, final int matchedPattern, final Kleenean isDelayed, final ParseResult parseResult) {
+		if (matchedPattern == 1) {
+			type = EntityType.PLAYER;
+			entity = new EventValueExpression<>(Player.class);
+			return entity.init();
+		}
 		String pattern = parseResult.regexes.get(0).group();
 		if (pattern.equalsIgnoreCase("entity")) {
 			entity = new EventValueExpression<>(Entity.class);
