@@ -176,7 +176,7 @@ public class BukkitClasses {
 			.defaultExpression(new EventValueExpression<>(Projectile.class))
 			.changer(DefaultChangers.nonLivingEntityChanger));
 
-		Classes.registerClass(new RegistryClassInfo<>(EntityType.class, Registry.ENTITY_TYPE, "entitytype", "entitytype")
+		Classes.registerClass(new RegistryClassInfo<>(EntityType.class, Registry.ENTITY_TYPE, "entitytype")
 			.user("entity ?types?")
 			.name("Entity Type")
 			.description("Represents different types of entities.")
@@ -949,7 +949,7 @@ public class BukkitClasses {
 
 		ClassInfo<?> biomeClassInfo;
 		if (BukkitUtils.registryExists("BIOME")) {
-			biomeClassInfo = new RegistryClassInfo<>(Biome.class, Registry.BIOME, "biome", "biomes");
+			biomeClassInfo = new RegistryClassInfo<>(Biome.class, Registry.BIOME, "biome");
 		} else {
 			//noinspection rawtypes,unchecked
 			biomeClassInfo = new EnumClassInfo<>((Class) Biome.class, "biome", "biomes");
@@ -1193,7 +1193,7 @@ public class BukkitClasses {
 
 		ClassInfo<Enchantment> enchantmentClassInfo;
 		if (BukkitUtils.registryExists("ENCHANTMENT")) {
-			enchantmentClassInfo = new RegistryClassInfo<>(Enchantment.class, Registry.ENCHANTMENT, "enchantment", "enchantments");
+			enchantmentClassInfo = new RegistryClassInfo<>(Enchantment.class, Registry.ENCHANTMENT, "enchantment");
 		} else {
 			enchantmentClassInfo = EnchantmentUtils.createClassInfo();
 		}
@@ -1208,7 +1208,7 @@ public class BukkitClasses {
 			.since("1.4.6")
 			.before("enchantmenttype"));
 
-		Classes.registerClass(new RegistryClassInfo<>(Material.class, Registry.MATERIAL, "material", "material")
+		Classes.registerClass(new RegistryClassInfo<>(Material.class, Registry.MATERIAL, "material")
 			.user("materials?")
 			.name("Material"));
 
@@ -1344,7 +1344,7 @@ public class BukkitClasses {
 		if (Skript.classExists("org.bukkit.entity.Cat$Type")) {
 			ClassInfo<Cat.Type> catTypeClassInfo;
 			if (BukkitUtils.registryExists("CAT_VARIANT")) {
-				catTypeClassInfo = new RegistryClassInfo<>(Cat.Type.class, Registry.CAT_VARIANT, "cattype", "cat types");
+				catTypeClassInfo = new RegistryClassInfo<>(Cat.Type.class, Registry.CAT_VARIANT, "cattype");
 			} else {
 				//noinspection unchecked, rawtypes - it is an enum on other versions
 				catTypeClassInfo = new EnumClassInfo<>((Class) Cat.Type.class, "cattype", "cat types");
@@ -1413,7 +1413,7 @@ public class BukkitClasses {
 
 		ClassInfo<Attribute> attributeClassInfo;
 		if (BukkitUtils.registryExists("ATTRIBUTE")) {
-			attributeClassInfo = new RegistryClassInfo<>(Attribute.class, Registry.ATTRIBUTE, "attributetype", "attribute types");
+			attributeClassInfo = new RegistryClassInfo<>(Attribute.class, Registry.ATTRIBUTE, "attributetype");
 		} else {
 			//noinspection rawtypes,unchecked
 			attributeClassInfo = new EnumClassInfo<>((Class) Attribute.class, "attributetype", "attribute types");
