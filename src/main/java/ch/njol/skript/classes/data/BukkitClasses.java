@@ -904,8 +904,8 @@ public class BukkitClasses {
 			.since("1.0"));
 
 		Classes.registerClass(new ClassInfo<>(ItemStack.class, "itemstack")
-			.user("items?")
-			.name("Item")
+			.user("items?", "itemstacks?")
+			.name("ItemStack")
 			.description("An item, e.g. a stack of torches, a furnace, or a wooden sword of sharpness 2. " +
 					"Unlike <a href='#itemtype'>item type</a> an item can only represent exactly one item (e.g. an upside-down cobblestone stair facing west), " +
 					"while an item type can represent a whole range of items (e.g. any cobble stone stairs regardless of direction).",
@@ -930,7 +930,7 @@ public class BukkitClasses {
 				@Override
 				public String toString(final ItemStack itemStack, final int flags) {
 					int amount = itemStack.getAmount();
-					String a = amount > 0 ? amount + " " : "";
+					String a = amount > 1 ? amount + " " : "";
 					return "itemstack of " + a + Classes.toString(itemStack.getType());
 				}
 

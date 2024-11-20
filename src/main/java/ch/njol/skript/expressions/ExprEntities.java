@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 @Name("Entities")
@@ -83,14 +82,31 @@ public class ExprEntities extends SimpleExpression<Entity> {
 	@SuppressWarnings("null")
 	protected Entity[] get(Event e) {
 		if (isUsingRadius) {
-			Iterator<? extends Entity> iter = iterator(e);
-			if (iter == null || !iter.hasNext())
-				return null;
+			if (this.center == null || this.radius == null) return null;
 
-			List<Entity> entityList = new ArrayList<>();
-			while (iter.hasNext())
-				entityList.add(iter.next());
-			return entityList.toArray(new Entity[0]);
+			List<EntityType> entityTypes;
+			if (this.types == null) entityTypes = null;
+			else {
+				entityTypes = new ArrayList<>(Arrays.asList(this.types.getArray(e)));
+			}
+
+			Location center = this.center.getSingle(e);
+			Number radiusNum = this.radius.getSingle(e);
+			if (center == null || radiusNum == null) return null;
+
+			int radius = radiusNum.intValue();
+			World world = center.getWorld();
+			if (world == null) return null;
+
+			int radiusSquared = radius * radius;
+			List<Entity> entities = new ArrayList<>();
+			for (Entity entity : center.getNearbyEntities(radius, radius, radius)) {
+				if (entity.getLocation().distanceSquared(center) <= radiusSquared) {
+					if (entityTypes == null) entities.add(entity);
+					else if (entityTypes.contains(entity.getType())) entities.add(entity);
+				}
+			}
+			return entities.toArray(new Entity[0]);
 		} else {
 			List<Entity> entities = new ArrayList<>();
 			if (this.chunks != null) {
@@ -140,8 +156,8 @@ public class ExprEntities extends SimpleExpression<Entity> {
 	@Override
 	@SuppressWarnings("null")
 	public String toString(@Nullable Event e, boolean debug) {
-		String types = this.types!= null ?  "of type " + this.types.toString(e,debug) : "";
-		String worlds = this.worlds != null ? " in " + this.worlds.toString(e,debug) : this.chunks != null ? " in " + this.chunks.toString(e,debug) : null;
+		String types = this.types != null ? "of type " + this.types.toString(e, debug) : "";
+		String worlds = this.worlds != null ? " in " + this.worlds.toString(e, debug) : this.chunks != null ? " in " + this.chunks.toString(e, debug) : null;
 		return "all entities " + types + (worlds != null ? worlds :
 			radius != null && center != null ? " in radius " + radius.toString(e, debug) + " around " + center.toString(e, debug) : "");
 	}

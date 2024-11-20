@@ -1,4 +1,3 @@
-// TODO this needs a rework
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
@@ -41,13 +40,14 @@ public class ExprLastSpawnedEntity extends SimpleExpression<Entity> {
 
 	static {
 		Skript.registerExpression(ExprLastSpawnedEntity.class, Entity.class, ExpressionType.SIMPLE,
+			"[the] [last[ly]] (0:spawned|1:shot) entity",
 			"[the] [last[ly]] (0:spawned|1:shot) %*entitytype%",
 			"[the] [last[ly]] dropped (2:item)",
 			"[the] [last[ly]] (created|struck) (3:lightning)",
 			"[the] [last[ly]] (launched|deployed) (4:firework)");
 	}
 
-	@SuppressWarnings("NotNullFieldNotInitialized")
+	@Nullable
 	private EntityType type;
 	private int from;
 
@@ -62,7 +62,7 @@ public class ExprLastSpawnedEntity extends SimpleExpression<Entity> {
 		} else if (from == 4) {
 			type = EntityType.FIREWORK_ROCKET;
 		} else {
-			type = ((Literal<EntityType>) exprs[0]).getSingle();
+			type = matchedPattern == 0 ? null : ((Literal<EntityType>) exprs[0]).getSingle();
 		}
 		return true;
 	}
@@ -81,7 +81,7 @@ public class ExprLastSpawnedEntity extends SimpleExpression<Entity> {
 
 		if (entity == null)
 			return null;
-		if (type != entity.getType())
+		if (type != null && type != entity.getType())
 			return null;
 
 		return new Entity[]{entity};
@@ -94,7 +94,7 @@ public class ExprLastSpawnedEntity extends SimpleExpression<Entity> {
 
 	@Override
 	public Class<? extends Entity> getReturnType() {
-		return type.getEntityClass();
+		return type == null ? Entity.class : type.getEntityClass();
 	}
 
 	@Override

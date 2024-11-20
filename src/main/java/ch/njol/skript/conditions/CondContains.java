@@ -12,6 +12,7 @@ import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import ch.njol.util.StringUtils;
+import org.bukkit.Material;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -34,10 +35,10 @@ public class CondContains extends Condition {
 
 	static {
 		Skript.registerCondition(CondContains.class,
-			"%inventories% (has|have) %itemstacks% [in [(the[ir]|his|her|its)] inventory]",
-			"%inventories% (doesn't|does not|do not|don't) have %itemstacks% [in [(the[ir]|his|her|its)] inventory]",
-			"%inventories/strings/objects% contain[(1¦s)] %itemstacks/strings/objects%",
-			"%inventories/strings/objects% (doesn't|does not|do not|don't) contain %itemstacks/strings/objects%"
+			"%inventories% (has|have) %itemstacks/materials% [in [(the[ir]|his|her|its)] inventory]",
+			"%inventories% (doesn't|does not|do not|don't) have %itemstacks/materials% [in [(the[ir]|his|her|its)] inventory]",
+			"%inventories/strings/objects% contain[(1¦s)] %itemstacks/materials/strings/objects%",
+			"%inventories/strings/objects% (doesn't|does not|do not|don't) contain %itemstacks/materials/strings/objects%"
 		);
 	}
 
@@ -85,12 +86,9 @@ public class CondContains extends Condition {
 
 		// Change checkType according to values
 		if (checkType == CheckType.UNKNOWN) {
-			if (Arrays.stream(containerValues)
-				.allMatch(Inventory.class::isInstance)) {
+			if (Arrays.stream(containerValues).allMatch(Inventory.class::isInstance)) {
 				checkType = CheckType.INVENTORY;
-			} else if (explicitSingle
-				&& Arrays.stream(containerValues)
-				.allMatch(String.class::isInstance)) {
+			} else if (explicitSingle && Arrays.stream(containerValues).allMatch(String.class::isInstance)) {
 				checkType = CheckType.STRING;
 			} else {
 				checkType = CheckType.OBJECTS;
@@ -102,10 +100,12 @@ public class CondContains extends Condition {
 				Inventory inventory = (Inventory) o;
 
 				return items.check(e, o1 -> {
-					if (o1 instanceof ItemStack)
-						return inventory.containsAtLeast((ItemStack) o1, ((ItemStack) o1).getAmount());
+					if (o1 instanceof ItemStack itemStack)
+						return inventory.containsAtLeast(itemStack, itemStack.getAmount());
 					else if (o1 instanceof Inventory)
 						return Objects.equals(inventory, o1);
+					else if (o1 instanceof Material material)
+						return inventory.contains(material);
 					else
 						return false;
 				});

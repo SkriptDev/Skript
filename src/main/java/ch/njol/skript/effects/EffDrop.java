@@ -13,6 +13,7 @@ import ch.njol.skript.util.Direction;
 import ch.njol.skript.util.Experience;
 import ch.njol.util.Kleenean;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Item;
@@ -29,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 public class EffDrop extends Effect {
 
 	static {
-		Skript.registerEffect(EffDrop.class, "drop %itemstacks/experiences% [%directions% %locations%] [(1¦without velocity)]");
+		Skript.registerEffect(EffDrop.class, "drop %itemstacks/materials/experiences% [%directions% %locations%] [(1¦without velocity)]");
 	}
 
 	@Nullable
@@ -53,28 +54,31 @@ public class EffDrop extends Effect {
 
 	@Override
 	public void execute(Event e) {
-		Object[] os = drops.getArray(e);
-		for (Location l : locations.getArray(e)) {
-			Location itemDropLoc = l.clone().subtract(0.5, 0.5, 0.5); // dropItemNaturally adds 0.15 to 0.85 randomly to all coordinates
-			for (Object o : os) {
-				if (o instanceof Experience) {
-					ExperienceOrb orb = l.getWorld().spawn(l, ExperienceOrb.class);
-					orb.setExperience(((Experience) o).getXP() + orb.getExperience()); // ensure we maintain previous experience, due to spigot xp merging behavior
+		for (Location location : locations.getArray(e)) {
+			Location itemDropLoc = location.clone().subtract(0.5, 0.5, 0.5); // dropItemNaturally adds 0.15 to 0.85 randomly to all coordinates
+			for (Object object : this.drops.getArray(e)) {
+				if (object instanceof Experience experience) {
+					ExperienceOrb orb = location.getWorld().spawn(location, ExperienceOrb.class);
+					orb.setExperience(experience.getXP() + orb.getExperience()); // ensure we maintain previous experience, due to spigot xp merging behavior
 					EffSecSpawn.lastSpawned = orb;
-				} else if (o instanceof ItemStack itemStack) {
-
-					if (!itemStack.getType().isAir() && itemStack.getAmount() > 0) {
-						if (useVelocity) {
-							lastSpawned = l.getWorld().dropItemNaturally(itemDropLoc, itemStack);
-						} else {
-							Item item = l.getWorld().dropItem(l, itemStack);
-							item.teleport(l);
-							item.setVelocity(new Vector(0, 0, 0));
-							lastSpawned = item;
-						}
-					}
-
+				} else if (object instanceof ItemStack itemStack) {
+					dropItemstack(itemStack, location, itemDropLoc);
+				} else if (object instanceof Material material) {
+					dropItemstack(new ItemStack(material), location, itemDropLoc);
 				}
+			}
+		}
+	}
+
+	private void dropItemstack(ItemStack itemStack, Location location, Location dropLocation) {
+		if (!itemStack.getType().isAir() && itemStack.getAmount() > 0) {
+			if (useVelocity) {
+				lastSpawned = location.getWorld().dropItemNaturally(dropLocation, itemStack);
+			} else {
+				Item item = location.getWorld().dropItem(location, itemStack);
+				item.teleport(location);
+				item.setVelocity(new Vector(0, 0, 0));
+				lastSpawned = item;
 			}
 		}
 	}

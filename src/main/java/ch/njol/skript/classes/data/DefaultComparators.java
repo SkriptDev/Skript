@@ -24,6 +24,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.EnchantmentOffer;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -43,7 +44,7 @@ public class DefaultComparators {
 	static {
 
 		// Number - Number
-		Comparators.registerComparator(Number.class, Number.class, new Comparator<Number, Number>() {
+		Comparators.registerComparator(Number.class, Number.class, new Comparator<>() {
 			@Override
 			public Relation compare(Number n1, Number n2) {
 				if (n1 instanceof Long && n2 instanceof Long)
@@ -69,7 +70,7 @@ public class DefaultComparators {
 		});
 
 		// Slot - Slot
-		Comparators.registerComparator(Slot.class, Slot.class, new Comparator<Slot, Slot>() {
+		Comparators.registerComparator(Slot.class, Slot.class, new Comparator<>() {
 
 			@Override
 			public Relation compare(Slot o1, Slot o2) {
@@ -88,7 +89,7 @@ public class DefaultComparators {
 		});
 
 		// Slot - Number
-		Comparators.registerComparator(Slot.class, Number.class, new Comparator<Slot, Number>() {
+		Comparators.registerComparator(Slot.class, Number.class, new Comparator<>() {
 
 			@Override
 			public Relation compare(Slot o1, Number o2) {
@@ -106,7 +107,7 @@ public class DefaultComparators {
 		});
 
 		// Block - BlockData
-		Comparators.registerComparator(Block.class, BlockData.class, new Comparator<Block, BlockData>() {
+		Comparators.registerComparator(Block.class, BlockData.class, new Comparator<>() {
 			@Override
 			public Relation compare(Block block, BlockData data) {
 				return Relation.get(block.getBlockData().matches(data));
@@ -119,7 +120,7 @@ public class DefaultComparators {
 		});
 
 		// BlockData - BlockData
-		Comparators.registerComparator(BlockData.class, BlockData.class, new Comparator<BlockData, BlockData>() {
+		Comparators.registerComparator(BlockData.class, BlockData.class, new Comparator<>() {
 			@Override
 			public Relation compare(BlockData data1, BlockData data2) {
 				return Relation.get(data1.matches(data2));
@@ -132,7 +133,7 @@ public class DefaultComparators {
 		});
 
 		// Block - Block
-		Comparators.registerComparator(Block.class, Block.class, new Comparator<Block, Block>() {
+		Comparators.registerComparator(Block.class, Block.class, new Comparator<>() {
 			@Override
 			public Relation compare(Block b1, Block b2) {
 				return Relation.get(BlockUtils.extractBlock(b1).equals(BlockUtils.extractBlock(b2)));
@@ -145,7 +146,7 @@ public class DefaultComparators {
 		});
 
 		// CommandSender - CommandSender
-		Comparators.registerComparator(CommandSender.class, CommandSender.class, new Comparator<CommandSender, CommandSender>() {
+		Comparators.registerComparator(CommandSender.class, CommandSender.class, new Comparator<>() {
 			@Override
 			public Relation compare(CommandSender s1, CommandSender s2) {
 				return Relation.get(s1.equals(s2));
@@ -160,8 +161,13 @@ public class DefaultComparators {
 		// ItemStack - ItemStack
 		Comparators.registerComparator(ItemStack.class, ItemStack.class, (o1, o2) -> Relation.get(o1.equals(o2)));
 
+		// ItemStack - Slot
+		Comparators.registerComparator(ItemStack.class, Slot.class, (itemStack, slot) -> Relation.get(itemStack.equals(slot.getItem())));
+		// EntityType - EntityType
+		Comparators.registerComparator(EntityType.class, EntityType.class, (o1, o2) -> Relation.get(o1.equals(o2)));
+
 		// OfflinePlayer - OfflinePlayer
-		Comparators.registerComparator(OfflinePlayer.class, OfflinePlayer.class, new Comparator<OfflinePlayer, OfflinePlayer>() {
+		Comparators.registerComparator(OfflinePlayer.class, OfflinePlayer.class, new Comparator<>() {
 			@Override
 			public Relation compare(OfflinePlayer p1, OfflinePlayer p2) {
 				return Relation.get(Objects.equals(p1.getName(), p2.getName()));
@@ -174,7 +180,7 @@ public class DefaultComparators {
 		});
 
 		// OfflinePlayer - String
-		Comparators.registerComparator(OfflinePlayer.class, String.class, new Comparator<OfflinePlayer, String>() {
+		Comparators.registerComparator(OfflinePlayer.class, String.class, new Comparator<>() {
 			@Override
 			public Relation compare(OfflinePlayer p, String name) {
 				String offlineName = p.getName();
@@ -188,7 +194,7 @@ public class DefaultComparators {
 		});
 
 		// World - String
-		Comparators.registerComparator(World.class, String.class, new Comparator<World, String>() {
+		Comparators.registerComparator(World.class, String.class, new Comparator<>() {
 			@Override
 			public Relation compare(World w, String name) {
 				return Relation.get(w.getName().equalsIgnoreCase(name));
@@ -201,7 +207,7 @@ public class DefaultComparators {
 		});
 
 		// String - String
-		Comparators.registerComparator(String.class, String.class, new Comparator<String, String>() {
+		Comparators.registerComparator(String.class, String.class, new Comparator<>() {
 			@Override
 			public Relation compare(String s1, String s2) {
 				return Relation.get(StringUtils.equals(s1, s2, SkriptConfig.caseSensitive.value()));
@@ -214,7 +220,7 @@ public class DefaultComparators {
 		});
 
 		// Date - Date
-		Comparators.registerComparator(Date.class, Date.class, new Comparator<Date, Date>() {
+		Comparators.registerComparator(Date.class, Date.class, new Comparator<>() {
 			@Override
 			public Relation compare(Date d1, Date d2) {
 				return Relation.get(d1.compareTo(d2));
@@ -227,7 +233,7 @@ public class DefaultComparators {
 		});
 
 		// Time - Time
-		Comparators.registerComparator(Time.class, Time.class, new Comparator<Time, Time>() {
+		Comparators.registerComparator(Time.class, Time.class, new Comparator<>() {
 			@Override
 			public Relation compare(Time t1, Time t2) {
 				return Relation.get(t1.getTime() - t2.getTime());
@@ -240,7 +246,7 @@ public class DefaultComparators {
 		});
 
 		// Timespan - Timespan
-		Comparators.registerComparator(Timespan.class, Timespan.class, new Comparator<Timespan, Timespan>() {
+		Comparators.registerComparator(Timespan.class, Timespan.class, new Comparator<>() {
 			@Override
 			public Relation compare(Timespan t1, Timespan t2) {
 				return Relation.get(t1.getMilliSeconds() - t2.getMilliSeconds());
@@ -253,7 +259,7 @@ public class DefaultComparators {
 		});
 
 		// Time - Timeperiod
-		Comparators.registerComparator(Time.class, Timeperiod.class, new Comparator<Time, Timeperiod>() {
+		Comparators.registerComparator(Time.class, Timeperiod.class, new Comparator<>() {
 			@Override
 			public Relation compare(Time t, Timeperiod p) {
 				return Relation.get(p.contains(t));
@@ -266,7 +272,7 @@ public class DefaultComparators {
 		});
 
 		// StructureType - StructureType
-		Comparators.registerComparator(StructureType.class, StructureType.class, new Comparator<StructureType, StructureType>() {
+		Comparators.registerComparator(StructureType.class, StructureType.class, new Comparator<>() {
 			@Override
 			public Relation compare(StructureType s1, StructureType s2) {
 				return Relation.get(CollectionUtils.containsAll(s2.getTypes(), s2.getTypes()));
@@ -279,7 +285,7 @@ public class DefaultComparators {
 		});
 
 		// Object - ClassInfo
-		Comparators.registerComparator(Object.class, ClassInfo.class, new Comparator<Object, ClassInfo>() {
+		Comparators.registerComparator(Object.class, ClassInfo.class, new Comparator<>() {
 			@Override
 			public Relation compare(Object o, ClassInfo c) {
 				return Relation.get(c.getC().isInstance(o) || o instanceof ClassInfo && c.getC().isAssignableFrom(((ClassInfo<?>) o).getC()));
@@ -291,7 +297,7 @@ public class DefaultComparators {
 			}
 		});
 
-		Comparators.registerComparator(GameruleValue.class, GameruleValue.class, new Comparator<GameruleValue, GameruleValue>() {
+		Comparators.registerComparator(GameruleValue.class, GameruleValue.class, new Comparator<>() {
 			@Override
 			public Relation compare(GameruleValue o1, GameruleValue o2) {
 				return Relation.get(o1.equals(o2));
@@ -303,7 +309,7 @@ public class DefaultComparators {
 			}
 		});
 
-		Comparators.registerComparator(GameruleValue.class, Number.class, new Comparator<GameruleValue, Number>() {
+		Comparators.registerComparator(GameruleValue.class, Number.class, new Comparator<>() {
 			@Override
 			public Relation compare(GameruleValue o1, Number o2) {
 				if (!(o1.getGameruleValue() instanceof Number))
@@ -318,7 +324,7 @@ public class DefaultComparators {
 			}
 		});
 
-		Comparators.registerComparator(GameruleValue.class, Boolean.class, new Comparator<GameruleValue, Boolean>() {
+		Comparators.registerComparator(GameruleValue.class, Boolean.class, new Comparator<>() {
 			@Override
 			public Relation compare(GameruleValue o1, Boolean o2) {
 				if (!(o1.getGameruleValue() instanceof Boolean))
@@ -334,7 +340,7 @@ public class DefaultComparators {
 
 		// EnchantmentOffer Comparators
 		// EnchantmentOffer - Experience
-		Comparators.registerComparator(EnchantmentOffer.class, Experience.class, new Comparator<EnchantmentOffer, Experience>() {
+		Comparators.registerComparator(EnchantmentOffer.class, Experience.class, new Comparator<>() {
 			@Override
 			public Relation compare(EnchantmentOffer eo, Experience exp) {
 				return Relation.get(eo.getCost() == exp.getXP());
@@ -346,7 +352,7 @@ public class DefaultComparators {
 			}
 		});
 
-		Comparators.registerComparator(Inventory.class, InventoryType.class, new Comparator<Inventory, InventoryType>() {
+		Comparators.registerComparator(Inventory.class, InventoryType.class, new Comparator<>() {
 			@Override
 			public Relation compare(Inventory inventory, InventoryType inventoryType) {
 				return Relation.get(inventory.getType() == inventoryType);
@@ -359,7 +365,7 @@ public class DefaultComparators {
 		});
 
 		// World - WeatherType
-		Comparators.registerComparator(World.class, WeatherType.class, new Comparator<World, WeatherType>() {
+		Comparators.registerComparator(World.class, WeatherType.class, new Comparator<>() {
 			@Override
 			public Relation compare(World world, WeatherType weatherType) {
 				return Relation.get(WeatherType.fromWorld(world) == weatherType);
@@ -372,7 +378,7 @@ public class DefaultComparators {
 		});
 
 		// Location - Location
-		Comparators.registerComparator(Location.class, Location.class, new Comparator<Location, Location>() {
+		Comparators.registerComparator(Location.class, Location.class, new Comparator<>() {
 			@Override
 			public Relation compare(Location first, Location second) {
 				return Relation.get(

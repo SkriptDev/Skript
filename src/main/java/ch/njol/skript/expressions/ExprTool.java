@@ -1,6 +1,7 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.classes.Changer.ChangeMode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -11,12 +12,11 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.Getter;
 import ch.njol.util.Kleenean;
+import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -52,17 +52,36 @@ public class ExprTool extends PropertyExpression<LivingEntity, ItemStack> {
 			@Override
 			@Nullable
 			public ItemStack get(final LivingEntity ent) {
-				if (ent instanceof Player player) {
-					PlayerInventory inventory = player.getInventory();
-					return offHand ? inventory.getItemInOffHand() : inventory.getItemInMainHand();
-				} else {
-					EntityEquipment equipment = ent.getEquipment();
-					if (equipment == null) return null;
+				EntityEquipment equipment = ent.getEquipment();
+				if (equipment == null) return null;
 
-					return offHand ? equipment.getItemInOffHand() : equipment.getItemInMainHand();
-				}
+				return offHand ? equipment.getItemInOffHand() : equipment.getItemInMainHand();
 			}
 		});
+	}
+
+	@Override
+	public @Nullable Class<?>[] acceptChange(ChangeMode mode) {
+		if (mode == ChangeMode.SET || mode == ChangeMode.DELETE) {
+			return CollectionUtils.array(ItemStack.class);
+		}
+		return null;
+	}
+
+	@Override
+	public void change(Event event, @Nullable Object[] delta, ChangeMode mode) {
+		ItemStack tool = delta != null ? (ItemStack) delta[0] : null;
+
+		assert getExpr() != null;
+		for (LivingEntity livingEntity : getExpr().getArray(event)) {
+			EntityEquipment equipment = livingEntity.getEquipment();
+			if (equipment == null) continue;
+			if (this.offHand) {
+				equipment.setItemInOffHand(tool);
+			} else {
+				equipment.setItemInMainHand(tool);
+			}
+		}
 	}
 
 	@Override

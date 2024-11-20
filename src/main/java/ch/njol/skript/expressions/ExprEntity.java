@@ -37,7 +37,7 @@ public class ExprEntity extends SimpleExpression<Entity> {
 	static {
 		// TODO need to figure this out (having "event" optional just makes a crap load of conflicts)
 		Skript.registerExpression(ExprEntity.class, Entity.class, ExpressionType.PATTERN_MATCHES_EVERYTHING,
-			"[the] event-<.+>", "[the] player");
+			"[the] event-<.+>", "[the] (entity|p:player)");
 	}
 
 	@SuppressWarnings("null")
@@ -49,8 +49,12 @@ public class ExprEntity extends SimpleExpression<Entity> {
 	@Override
 	public boolean init(final Expression<?>[] exprs, final int matchedPattern, final Kleenean isDelayed, final ParseResult parseResult) {
 		if (matchedPattern == 1) {
-			type = EntityType.PLAYER;
-			entity = new EventValueExpression<>(Player.class);
+			if (parseResult.hasTag("player")) {
+				type = EntityType.PLAYER;
+				entity = new EventValueExpression<>(Player.class);
+			} else {
+				entity = new EventValueExpression<>(Entity.class);
+			}
 			return entity.init();
 		}
 		String pattern = parseResult.regexes.get(0).group();
