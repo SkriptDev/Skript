@@ -1199,7 +1199,8 @@ public class BukkitClasses {
 
 		Classes.registerClass(new RegistryClassInfo<>(Material.class, Registry.MATERIAL, "material")
 			.user("materials?")
-			.name("Material"));
+			.name("Material")
+			.description("Represents the different types of items and blocks."));
 
 		Classes.registerClass(new ClassInfo<>(Metadatable.class, "metadataholder")
 			.user("metadata ?holders?")
