@@ -1,6 +1,6 @@
 test "health effect":
 	clear all entities
-	set {_i} to diamond sword
+	set {_i} to itemstack of diamond sword
 	assert {_i}'s damage value is 0 with "new item durability failed"
 	damage {_i} by 50
 	assert {_i}'s damage value is 50 with "damage item failed"

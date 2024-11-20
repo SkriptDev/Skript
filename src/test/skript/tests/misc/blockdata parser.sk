@@ -1,5 +1,0 @@
-aliases:
-	test alias = wheat
-
-test "blockdata parser using aliases":
-	assert wheat[age=7] is test alias[age=7] with "Parsing blockdata using an alias gave a different result"

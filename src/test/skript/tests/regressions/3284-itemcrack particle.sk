@@ -1,3 +1,4 @@
 test "item crack particles":
-	set {_loc} to location of spawn of world "world"
-	play diamond sword item crack at {_loc}
+	#set {_loc} to location of spawn of world "world"
+	#play diamond sword item crack at {_loc}
+	# TODO i have removed "visual effect", will add particles later

@@ -1,8 +1,8 @@
 test "unbreakable":
-	set {_breakable1} to iron sword
+	set {_breakable1} to itemstack of iron sword
 	assert {_breakable1} is breakable with "Iron Sword should be breakable ##1"
 	assert {_breakable1} is not unbreakable with "Iron Sword should be not unbreakable ##1"
-	set {_unbreakable1} to unbreakable iron sword
+	set {_unbreakable1} to unbreakable itemstack of  iron sword
 	assert {_unbreakable1} is unbreakable with "Iron Sword should be unbreakable ##2"
 	assert {_unbreakable1} is not breakable with "Iron Sword should be not breakable ##2"
 	set {_breakable2} to breakable {_unbreakable1}
