@@ -8,14 +8,11 @@ import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.sections.EffSecSpawn;
 import ch.njol.skript.util.Direction;
-import ch.njol.skript.util.Experience;
 import ch.njol.util.Kleenean;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Item;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
@@ -25,12 +22,13 @@ import org.jetbrains.annotations.Nullable;
 @Name("Drop")
 @Description("Drops one or more items.")
 @Examples({"on death of creeper:",
-	"	drop 1 TNT"})
+	"\tdrop tnt"})
 @Since("1.0")
 public class EffDrop extends Effect {
-
+//TODO this class needs some love
 	static {
-		Skript.registerEffect(EffDrop.class, "drop %itemstacks/materials/experiences% [%directions% %locations%] [(1¦without velocity)]");
+		Skript.registerEffect(EffDrop.class,
+			"drop %itemstacks/materials% [%directions% %locations%] [(1¦without velocity)]");
 	}
 
 	@Nullable
@@ -57,11 +55,7 @@ public class EffDrop extends Effect {
 		for (Location location : locations.getArray(e)) {
 			Location itemDropLoc = location.clone().subtract(0.5, 0.5, 0.5); // dropItemNaturally adds 0.15 to 0.85 randomly to all coordinates
 			for (Object object : this.drops.getArray(e)) {
-				if (object instanceof Experience experience) {
-					ExperienceOrb orb = location.getWorld().spawn(location, ExperienceOrb.class);
-					orb.setExperience(experience.getXP() + orb.getExperience()); // ensure we maintain previous experience, due to spigot xp merging behavior
-					EffSecSpawn.lastSpawned = orb;
-				} else if (object instanceof ItemStack itemStack) {
+				if (object instanceof ItemStack itemStack) {
 					dropItemstack(itemStack, location, itemDropLoc);
 				} else if (object instanceof Material material) {
 					dropItemstack(new ItemStack(material), location, itemDropLoc);

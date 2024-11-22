@@ -2,7 +2,6 @@ package ch.njol.skript.classes.data;
 
 import ch.njol.skript.bukkitutil.PlayerUtils;
 import ch.njol.skript.classes.Changer;
-import ch.njol.skript.util.Experience;
 import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -33,7 +32,7 @@ public class DefaultChangers {
 		public Class<?>[] acceptChange(final ChangeMode mode) {
 			return switch (mode) {
 				case ADD ->
-					CollectionUtils.array(ItemStack[].class, Material[].class, Inventory.class, Experience[].class);
+					CollectionUtils.array(ItemStack[].class, Material[].class, Inventory.class, Number[].class);
 				case DELETE -> CollectionUtils.array();
 				case REMOVE ->
 					CollectionUtils.array(PotionEffectType[].class, ItemStack[].class, Material[].class, Inventory.class);
@@ -63,8 +62,8 @@ public class DefaultChangers {
 					} else {
 						if (e instanceof Player player) {
 							final PlayerInventory inventory = player.getInventory();
-							if (d instanceof Experience exp) {
-								player.giveExp(exp.getXP());
+							if (d instanceof Number exp) {
+								player.giveExp(exp.intValue());
 							} else if (d instanceof Inventory) {
 								for (ItemStack itemStack : (Inventory) d) {
 									if (itemStack == null)

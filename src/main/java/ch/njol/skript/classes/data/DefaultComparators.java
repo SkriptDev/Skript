@@ -5,7 +5,6 @@ import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.util.BlockUtils;
 import ch.njol.skript.util.Date;
-import ch.njol.skript.util.Experience;
 import ch.njol.skript.util.GameruleValue;
 import ch.njol.skript.util.StructureType;
 import ch.njol.skript.util.Time;
@@ -339,11 +338,11 @@ public class DefaultComparators {
 		});
 
 		// EnchantmentOffer Comparators
-		// EnchantmentOffer - Experience
-		Comparators.registerComparator(EnchantmentOffer.class, Experience.class, new Comparator<>() {
+		// EnchantmentOffer - Number
+		Comparators.registerComparator(EnchantmentOffer.class, Number.class, new Comparator<>() {
 			@Override
-			public Relation compare(EnchantmentOffer eo, Experience exp) {
-				return Relation.get(eo.getCost() == exp.getXP());
+			public Relation compare(EnchantmentOffer eo, Number exp) {
+				return Relation.get(eo.getCost() == exp.intValue());
 			}
 
 			@Override

@@ -1,15 +1,12 @@
 package org.skriptlang.skript.test.tests.classes;
 
 import org.bukkit.GameMode;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Snowball;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.InventoryType;
 import org.junit.Test;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.Date;
 import ch.njol.skript.util.Direction;
-import ch.njol.skript.util.Experience;
 import ch.njol.skript.util.SkriptColor;
 import ch.njol.skript.util.StructureType;
 import ch.njol.skript.util.Time;
@@ -29,8 +26,6 @@ public class ClassesTest {
 				// Skript
 				SkriptColor.BLACK, StructureType.RED_MUSHROOM, WeatherType.THUNDER,
 				new Date(System.currentTimeMillis()), new Timespan(1337), new Time(12000), new Timeperiod(1000, 23000),
-				new Experience(15), new Direction(0, Math.PI, 10), new Direction(new double[] {0, 1, 0}),
-
 				
 				// Bukkit - simple classes only
 				GameMode.ADVENTURE, InventoryType.CHEST, DamageCause.FALL,

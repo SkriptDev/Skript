@@ -36,7 +36,6 @@ import ch.njol.skript.util.Color;
 import ch.njol.skript.util.ColorRGB;
 import ch.njol.skript.util.Date;
 import ch.njol.skript.util.Direction;
-import ch.njol.skript.util.Experience;
 import ch.njol.skript.util.GameruleValue;
 import ch.njol.skript.util.SkriptColor;
 import ch.njol.skript.util.StructureType;
@@ -508,43 +507,6 @@ public class SkriptClasses {
 					return "" + o.name().toLowerCase(Locale.ENGLISH);
 				}
 			}).serializer(new EnumSerializer<>(StructureType.class)));
-
-		Classes.registerClass(new ClassInfo<>(Experience.class, "experience")
-			.user("experience ?(points?)?")
-			.name("Experience")
-			.description("Experience points. Please note that Bukkit only allows to give XP, but not remove XP from players. " +
-				"You can however change a player's <a href='./expressions.html#ExprLevel'>level</a> and <a href='./expressions/#ExprLevelProgress'>level progress</a> freely.")
-			.usage("[&lt;number&gt;] ([e]xp|experience [point[s]])")
-			.examples("give 10 xp to the player")
-			.since("2.0")
-			.parser(new Parser<Experience>() {
-				private final RegexMessage pattern = new RegexMessage("types.experience.pattern", Pattern.CASE_INSENSITIVE);
-
-				@Override
-				@Nullable
-				public Experience parse(String s, final ParseContext context) {
-					int xp = -1;
-					if (s.matches("\\d+ .+")) {
-						xp = Utils.parseInt("" + s.substring(0, s.indexOf(' ')));
-						s = "" + s.substring(s.indexOf(' ') + 1);
-					}
-					if (pattern.matcher(s).matches())
-						return new Experience(xp);
-					return null;
-				}
-
-				@Override
-				public String toString(final Experience xp, final int flags) {
-					return xp.toString();
-				}
-
-				@Override
-				public String toVariableNameString(final Experience xp) {
-					return "" + xp.getXP();
-				}
-
-			})
-			.serializer(new YggdrasilSerializer<>()));
 
 		Classes.registerClass(new ClassInfo<>(GameruleValue.class, "gamerulevalue")
 			.user("gamerule values?")
