@@ -37,7 +37,7 @@ public class ExprEntity extends SimpleExpression<Entity> {
 	static {
 		// TODO need to figure this out (having "event" optional just makes a crap load of conflicts)
 		Skript.registerExpression(ExprEntity.class, Entity.class, ExpressionType.PATTERN_MATCHES_EVERYTHING,
-			"[the] event-<.+>", "[the] (entity|p:player)");
+			"[the] event-<.+>", "[the] (entity|:player)");
 	}
 
 	@SuppressWarnings("null")
