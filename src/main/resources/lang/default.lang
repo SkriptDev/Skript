@@ -49,70 +49,82 @@ weather:
 		adjective: thundering
 
 # -- Tree Types --
-tree types:
+treetype:
 	tree:
 		name: tree¦s
-		pattern: (any )?trees?
-	regular:
-		name: oak¦s
-		pattern: (any )?(regular|normal|oak)( tree)?s?
-	small_regular:
-		name: small oak¦s
-		pattern: small (regular|normal|oak)( tree)?s?
-	big_regular:
+		pattern: oak trees?
+	big_tree:
 		name: big tree¦s
-		pattern: (big|large) (regular|normal|oak)( tree)?s?
+		pattern: big oak trees?
 	redwood:
 		name: redwood¦s
 		pattern: (any )?(fir|pine|spruce|redwood)( tree)?s?
-	small_redwood:
-		name: small redwood¦s
-		pattern: small (fir|pine|spruce|redwood)( tree)?s?
-	big_redwood:
-		name: tall redwood¦s
-		pattern: (big|tall) (fir|pine|spruce|redwood)( tree)?s?
-	mega_redwood:
-		name: mega redwood¦s
-		pattern: (mega|giant) (fir|pine|spruce|redwood)( tree)?s?
 	birch:
 		name: birch¦es
 		pattern: birch( trees?|es)
-	tall_birch:
-		name: tall birch¦es
-		pattern: (tall|big) birch( trees?|es)
 	jungle:
 		name: jungle tree¦s
 		pattern: (any )?jungle( tree)?s?
 	small_jungle:
 		name: small jungle tree¦s
 		pattern: small jungle( tree)?s?
-	big_jungle:
-		name: big jungle tree¦s
-		pattern: (big|tall|huge|giant|large) jungle( tree)?s?
 	cocoa_tree:
 		name: cocoa tree¦s
 		pattern: cocoa trees?
-	acacia:
-		name: acacia¦s
-		pattern: acacia( tree)?s?
-	dark_oak:
-		name: dark oak¦s
-		pattern: dark oak( tree)?s?
 	jungle_bush:
 		name: bush¦es
 		pattern: (jungle )?bush(es)?
-	swamp:
-		name: swamp tree¦s
-		pattern: swamp trees?
-	mushroom:
-		name: huge mushroom¦s
-		pattern: (any )?(huge|giant|large|big) mushrooms?
 	red_mushroom:
 		name: huge red mushroom¦s
 		pattern: (huge|giant|large|big) red mushrooms?
 	brown_mushroom:
 		name: huge brown mushroom¦s
 		pattern: (huge|giant|large|big) brown mushrooms?
+	swamp:
+		name: swamp tree¦s
+		pattern: swamp trees?
+	acacia:
+		name: acacia¦s
+		pattern: acacia( tree)?s?
+	dark_oak:
+		name: dark oak¦s
+		pattern: dark oak( tree)?s?
+	mega_redwood:
+		name: mega redwood¦s
+		pattern: (mega|giant) redwood( tree)?s?
+	mega_pine:
+		name: mega pine¦s
+		pattern: (mega|giant) pine( tree)?s?
+	tall_birch:
+		name: tall birch¦es
+		pattern: (tall|big) birch( trees?|es)
+	chorus_plant:
+		name: chorus plant¦s
+		pattern: chorus plants?
+	crimson_fungus:
+		name: crimson fungus¦es
+		pattern: crimson fung(us|ie)
+	warped_fungus:
+		name: warped fungus¦es
+		pattern: warped fung(us|ie)
+	azalea:
+		name: azalea¦s
+		pattern: azaleas?
+	mangrove:
+		name: mangrove¦s
+		pattern: mangroves?
+	tall_mangrove:
+		name: tall mangrove¦s
+		pattern: tall mangroves?
+	cherry:
+		name: cherry¦s
+		pattern: cherr(y|ies)
+	pale_oak:
+		name: pale oak¦s
+		pattern: pale oaks?
+	pale_oak_creaking:
+		name: pale oak creaking¦s
+		pattern: pale oak creakings?
 
 # -- Time --
 time:
@@ -603,6 +615,7 @@ types:
 	quitreason: quit reason¦s @a
 	inventoryclosereason: inventory close reason¦s @an
 	transformreason: transform reason¦s @a
+	treetype: tree type¦s @a
 
 	# Skript
 	weathertype: weather type¦s @a
@@ -614,7 +627,6 @@ types:
 	direction: direction¦s @a
 	slot: slot¦s @a
 	color: color¦s @a
-	structuretype: tree type¦s @a
 	experience: experience point¦s @an
 	experience.pattern: (e?xp|experience( points?)?)
 	classinfo: type¦s @a

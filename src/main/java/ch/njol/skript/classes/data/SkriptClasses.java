@@ -1,21 +1,3 @@
-/**
- * This file is part of Skript.
- * <p>
- * Skript is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * Skript is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * <p>
- * You should have received a copy of the GNU General Public License
- * along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- * <p>
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.classes.data;
 
 import ch.njol.skript.Skript;
@@ -30,7 +12,6 @@ import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.localization.Noun;
-import ch.njol.skript.localization.RegexMessage;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.Color;
 import ch.njol.skript.util.ColorRGB;
@@ -38,11 +19,9 @@ import ch.njol.skript.util.Date;
 import ch.njol.skript.util.Direction;
 import ch.njol.skript.util.GameruleValue;
 import ch.njol.skript.util.SkriptColor;
-import ch.njol.skript.util.StructureType;
 import ch.njol.skript.util.Time;
 import ch.njol.skript.util.Timeperiod;
 import ch.njol.skript.util.Timespan;
-import ch.njol.skript.util.Utils;
 import ch.njol.skript.util.WeatherType;
 import ch.njol.skript.util.slot.Slot;
 import ch.njol.yggdrasil.Fields;
@@ -53,7 +32,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.StreamCorruptedException;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 /**
  * @author Peter Güttinger
@@ -144,6 +122,8 @@ public class SkriptClasses {
 				}
 			}));
 
+		// Bukkit doesn't have any weather type, only World#isThunder/isRaining
+		// We shall leave this as there really isn't another option
 		Classes.registerClass(new ClassInfo<>(WeatherType.class, "weathertype")
 			.user("weather ?types?", "weather conditions?", "weathers?")
 			.name("Weather Type")
@@ -480,33 +460,6 @@ public class SkriptClasses {
 					return "" + color.getName().toLowerCase(Locale.ENGLISH).replace('_', ' ');
 				}
 			}));
-
-		Classes.registerClass(new ClassInfo<>(StructureType.class, "structuretype")
-			.user("tree ?types?", "trees?")
-			.name("Tree Type")
-			.description("A tree type represents a tree species or a huge mushroom species. These can be generated in a world with the <a href='./effects.html#EffTree'>generate tree</a> effect.")
-			.usage("[any] &lt;general tree/mushroom type&gt;, e.g. tree/any jungle tree/etc.", "&lt;specific tree/mushroom species&gt;, e.g. red mushroom/small jungle tree/big regular tree/etc.")
-			.examples("grow any regular tree at the block",
-				"grow a huge red mushroom above the block")
-			.since("")
-			.defaultExpression(new SimpleLiteral<>(StructureType.TREE, true))
-			.parser(new Parser<StructureType>() {
-				@Override
-				@Nullable
-				public StructureType parse(final String s, final ParseContext context) {
-					return StructureType.fromName(s);
-				}
-
-				@Override
-				public String toString(final StructureType o, final int flags) {
-					return o.toString(flags);
-				}
-
-				@Override
-				public String toVariableNameString(final StructureType o) {
-					return "" + o.name().toLowerCase(Locale.ENGLISH);
-				}
-			}).serializer(new EnumSerializer<>(StructureType.class)));
 
 		Classes.registerClass(new ClassInfo<>(GameruleValue.class, "gamerulevalue")
 			.user("gamerule values?")

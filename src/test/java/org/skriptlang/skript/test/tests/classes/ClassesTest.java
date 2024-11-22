@@ -6,9 +6,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.junit.Test;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.Date;
-import ch.njol.skript.util.Direction;
 import ch.njol.skript.util.SkriptColor;
-import ch.njol.skript.util.StructureType;
 import ch.njol.skript.util.Time;
 import ch.njol.skript.util.Timeperiod;
 import ch.njol.skript.util.Timespan;
@@ -24,7 +22,7 @@ public class ClassesTest {
 				"String",
 				
 				// Skript
-				SkriptColor.BLACK, StructureType.RED_MUSHROOM, WeatherType.THUNDER,
+				SkriptColor.BLACK, WeatherType.THUNDER,
 				new Date(System.currentTimeMillis()), new Timespan(1337), new Time(12000), new Timeperiod(1000, 23000),
 				
 				// Bukkit - simple classes only

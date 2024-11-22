@@ -6,7 +6,6 @@ import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.LiteralList;
 import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.util.StructureType;
 import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
@@ -31,10 +30,10 @@ public class EvtGrow extends SkriptEvent {
 
 	static {
 		Skript.registerEvent("Grow", EvtGrow.class, CollectionUtils.array(StructureGrowEvent.class, BlockGrowEvent.class),
-				"grow[th] [of (1:%-structuretypes%|2:%-materials/blockdatas%)]",
+				"grow[th] [of (1:%-treetypes%|2:%-materials/blockdatas%)]",
 				"grow[th] from %materials/blockdatas%",
-				"grow[th] [in]to (1:%structuretypes%|2:%materials/blockdatas%)",
-				"grow[th] from %materials/blockdatas% [in]to (1:%structuretypes%|2:%materials/blockdatas%)"
+				"grow[th] [in]to (1:%treetypes%|2:%materials/blockdatas%)",
+				"grow[th] from %materials/blockdatas% [in]to (1:%treetypes%|2:%materials/blockdatas%)"
 			)
 			.description(
 				"Called when a tree, giant mushroom or plant grows to next stage.",
@@ -170,11 +169,11 @@ public class EvtGrow extends SkriptEvent {
 		if (types.getAnd() && types instanceof LiteralList)
 			((LiteralList<Object>) types).invertAnd();
 
-		if (event instanceof StructureGrowEvent) {
-			TreeType species = ((StructureGrowEvent) event).getSpecies();
+		if (event instanceof StructureGrowEvent structureGrowEvent) {
+			TreeType species = structureGrowEvent.getSpecies();
 			return types.check(event, type -> {
-				if (type instanceof StructureType) {
-					return ((StructureType) type).is(species);
+				if (type instanceof TreeType treeType) {
+					return treeType == species;
 				}
 				return false;
 			});

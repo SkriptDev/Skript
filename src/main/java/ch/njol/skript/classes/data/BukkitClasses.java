@@ -32,6 +32,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Registry;
 import org.bukkit.SoundCategory;
+import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.attribute.Attribute;
@@ -1305,6 +1306,12 @@ public class BukkitClasses {
 			.name("Transform Reason")
 			.description("Represents a transform reason of an <a href='events.html#entity transform'>entity transform event</a>.")
 			.since("2.8.0"));
+
+		Classes.registerClass(new EnumClassInfo<>(TreeType.class, "treetype", "treetype")
+			.user("tree ?types?")
+			.name("Tree Type")
+			.description("Represents different types of trees that can be grown.")
+			.since("INSERT VERSION"));
 	}
 
 }

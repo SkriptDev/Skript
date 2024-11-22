@@ -6,7 +6,6 @@ import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.util.BlockUtils;
 import ch.njol.skript.util.Date;
 import ch.njol.skript.util.GameruleValue;
-import ch.njol.skript.util.StructureType;
 import ch.njol.skript.util.Time;
 import ch.njol.skript.util.Timeperiod;
 import ch.njol.skript.util.Timespan;
@@ -18,6 +17,7 @@ import ch.njol.util.StringUtils;
 import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
@@ -270,11 +270,11 @@ public class DefaultComparators {
 			}
 		});
 
-		// StructureType - StructureType
-		Comparators.registerComparator(StructureType.class, StructureType.class, new Comparator<>() {
+		// TreeType - TreeType
+		Comparators.registerComparator(TreeType.class, TreeType.class, new Comparator<>() {
 			@Override
-			public Relation compare(StructureType s1, StructureType s2) {
-				return Relation.get(CollectionUtils.containsAll(s2.getTypes(), s2.getTypes()));
+			public Relation compare(TreeType s1, TreeType s2) {
+				return Relation.get(s1.equals(s2));
 			}
 
 			@Override
