@@ -19,7 +19,6 @@ import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.BlockUtils;
 import ch.njol.skript.util.PotionEffectUtils;
 import ch.njol.skript.util.StringMode;
-import ch.njol.util.StringUtils;
 import ch.njol.yggdrasil.Fields;
 import io.papermc.paper.world.MoonPhase;
 import org.bukkit.Bukkit;
@@ -147,7 +146,8 @@ public class BukkitClasses {
 				@SuppressWarnings("deprecation")
 				@Override
 				public String toString(final Entity entity, final int flags) {
-					if (entity.getCustomName() != null) return entity.getCustomName();
+					if (entity.getCustomName() != null)
+						return entity.getCustomName();
 					return Classes.toString(entity.getType());
 				}
 			})
@@ -252,26 +252,6 @@ public class BukkitClasses {
 				@Override
 				public boolean canBeInstantiated() {
 					return false;
-				}
-
-				// return b.getWorld().getName() + ":" + b.getX() + "," + b.getY() + "," + b.getZ();
-				@Override
-				@Nullable
-				public Block deserialize(final String s) {
-					final String[] split = s.split("[:,]");
-					if (split.length != 4)
-						return null;
-					final World w = Bukkit.getWorld(split[0]);
-					if (w == null)
-						return null;
-					try {
-						final int[] l = new int[3];
-						for (int i = 0; i < 3; i++)
-							l[i] = Integer.parseInt(split[i + 1]);
-						return w.getBlockAt(l[0], l[1], l[2]);
-					} catch (final NumberFormatException e) {
-						return null;
-					}
 				}
 			}));
 
@@ -419,26 +399,6 @@ public class BukkitClasses {
 				public boolean mustSyncDeserialization() {
 					return true;
 				}
-
-				// return l.getWorld().getName() + ":" + l.getX() + "," + l.getY() + "," + l.getZ() + "|" + l.getYaw() + "/" + l.getPitch();
-				@Override
-				@Nullable
-				public Location deserialize(final String s) {
-					final String[] split = s.split("[:,|/]");
-					if (split.length != 6)
-						return null;
-					final World w = Bukkit.getWorld(split[0]);
-					if (w == null)
-						return null;
-					try {
-						final double[] l = new double[5];
-						for (int i = 0; i < 5; i++)
-							l[i] = Double.parseDouble(split[i + 1]);
-						return new Location(w, l[0], l[1], l[2], (float) l[3], (float) l[4]);
-					} catch (final NumberFormatException e) {
-						return null;
-					}
-				}
 			})
 			.cloner(Location::clone));
 
@@ -572,13 +532,6 @@ public class BukkitClasses {
 					return w;
 				}
 
-				// return w.getName();
-				@Override
-				@Nullable
-				public World deserialize(final String s) {
-					return Bukkit.getWorld(s);
-				}
-
 				@Override
 				public boolean mustSyncDeserialization() {
 					return true;
@@ -703,7 +656,7 @@ public class BukkitClasses {
 
 				@Override
 				public String toString(final Player p, final int flags) {
-					return "" + p.getName();
+					return p.getName();
 				}
 
 				@Override
@@ -711,7 +664,7 @@ public class BukkitClasses {
 					if (SkriptConfig.usePlayerUUIDsInVariableNames.value())
 						return "" + p.getUniqueId();
 					else
-						return "" + p.getName();
+						return p.getName();
 				}
 
 				@Override
@@ -766,7 +719,7 @@ public class BukkitClasses {
 					if (SkriptConfig.usePlayerUUIDsInVariableNames.value() || p.getName() == null)
 						return "" + p.getUniqueId();
 					else
-						return "" + p.getName();
+						return p.getName();
 				}
 
 				@Override
@@ -809,14 +762,6 @@ public class BukkitClasses {
 					}
 				}
 
-				// return p.getName();
-				@SuppressWarnings("deprecation")
-				@Override
-				@Nullable
-				public OfflinePlayer deserialize(final String s) {
-					return Bukkit.getOfflinePlayer(s);
-				}
-
 				@Override
 				public boolean mustSyncDeserialization() {
 					return true;
@@ -856,12 +801,12 @@ public class BukkitClasses {
 
 				@Override
 				public String toString(final CommandSender s, final int flags) {
-					return "" + s.getName();
+					return s.getName();
 				}
 
 				@Override
 				public String toVariableNameString(final CommandSender s) {
-					return "" + s.getName();
+					return s.getName();
 				}
 			}));
 
@@ -936,14 +881,7 @@ public class BukkitClasses {
 			.since("2.0")
 			.changer(DefaultChangers.itemChanger));
 
-		ClassInfo<?> biomeClassInfo;
-		if (BukkitUtils.registryExists("BIOME")) {
-			biomeClassInfo = new RegistryClassInfo<>(Biome.class, Registry.BIOME, "biome");
-		} else {
-			//noinspection rawtypes,unchecked
-			biomeClassInfo = new EnumClassInfo<>((Class) Biome.class, "biome", "biomes");
-		}
-		Classes.registerClass(biomeClassInfo
+		Classes.registerClass(new RegistryClassInfo<>(Biome.class, Registry.BIOME, "biome")
 			.user("biomes?")
 			.name("Biome")
 			.description("All possible biomes Minecraft uses to generate a world.",
@@ -972,7 +910,7 @@ public class BukkitClasses {
 
 				@Override
 				public String toVariableNameString(PotionEffect o) {
-					return "potion_effect:" + o.getType().getName();
+					return "potion_effect:" + o.getType().getKey();
 				}
 
 			})
@@ -1018,73 +956,14 @@ public class BukkitClasses {
 				}
 			}));
 
-		Classes.registerClass(new ClassInfo<>(PotionEffectType.class, "potioneffecttype")
+		Classes.registerClass(new RegistryClassInfo<>(PotionEffectType.class, Registry.POTION_EFFECT_TYPE, "potioneffecttype")
 			.user("potion( ?effect)? ?types?") // "type" had to be made non-optional to prevent clashing with potion effects
 			.name("Potion Effect Type")
 			.description("A potion effect type, e.g. 'strength' or 'swiftness'.")
-			.usage(StringUtils.join(PotionEffectUtils.getNames(), ", "))
 			.examples("apply swiftness 5 to the player",
 				"apply potion of speed 2 to the player for 60 seconds",
 				"remove invisibility from the victim")
-			.since("")
-			.supplier(PotionEffectType.values())
-			.parser(new Parser<>() {
-				@Override
-				@Nullable
-				public PotionEffectType parse(final String s, final ParseContext context) {
-					return PotionEffectUtils.parseType(s);
-				}
-
-				@Override
-				public String toString(final PotionEffectType p, final int flags) {
-					return PotionEffectUtils.toString(p, flags);
-				}
-
-				@Override
-				public String toVariableNameString(final PotionEffectType p) {
-					return "" + p.getName();
-				}
-			})
-			.serializer(new Serializer<>() {
-				@Override
-				public Fields serialize(final PotionEffectType o) {
-					final Fields f = new Fields();
-					f.putObject("name", o.getName());
-					return f;
-				}
-
-				@Override
-				public boolean canBeInstantiated() {
-					return false;
-				}
-
-				@Override
-				public void deserialize(final PotionEffectType o, final Fields f) {
-					assert false;
-				}
-
-				@Override
-				protected PotionEffectType deserialize(final Fields fields) throws StreamCorruptedException {
-					final String name = fields.getObject("name", String.class);
-					assert name != null;
-					final PotionEffectType t = PotionEffectType.getByName(name);
-					if (t == null)
-						throw new StreamCorruptedException("Invalid PotionEffectType " + name);
-					return t;
-				}
-
-				// return o.getName();
-				@Override
-				@Nullable
-				public PotionEffectType deserialize(final String s) {
-					return PotionEffectType.getByName(s);
-				}
-
-				@Override
-				public boolean mustSyncDeserialization() {
-					return false;
-				}
-			}));
+			.since(""));
 
 		// REMIND make my own damage cause class (that e.g. stores the attacker entity, the projectile, or the attacking block)
 		Classes.registerClass(new EnumClassInfo<>(DamageCause.class, "damagecause", "damage causes", new ExprDamageCause())
@@ -1155,52 +1034,27 @@ public class BukkitClasses {
 					return w.getChunkAt(x, z);
 				}
 
-				// return c.getWorld().getName() + ":" + c.getX() + "," + c.getZ();
-				@Override
-				@Nullable
-				public Chunk deserialize(final String s) {
-					final String[] split = s.split("[:,]");
-					if (split.length != 3)
-						return null;
-					final World w = Bukkit.getWorld(split[0]);
-					if (w == null)
-						return null;
-					try {
-						final int x = Integer.parseInt(split[1]);
-						final int z = Integer.parseInt(split[1]);
-						return w.getChunkAt(x, z);
-					} catch (final NumberFormatException e) {
-						return null;
-					}
-				}
-
 				@Override
 				public boolean mustSyncDeserialization() {
 					return true;
 				}
 			}));
 
-		ClassInfo<Enchantment> enchantmentClassInfo;
-		if (BukkitUtils.registryExists("ENCHANTMENT")) {
-			enchantmentClassInfo = new RegistryClassInfo<>(Enchantment.class, Registry.ENCHANTMENT, "enchantment");
-		} else {
-			enchantmentClassInfo = EnchantmentUtils.createClassInfo();
-		}
-		Classes.registerClass(enchantmentClassInfo
+		Classes.registerClass(new RegistryClassInfo<>(Enchantment.class, Registry.ENCHANTMENT, "enchantment")
 			.user("enchantments?")
 			.name("Enchantment")
-			.description("An enchantment, e.g. 'sharpness' or 'fortune'. Unlike <a href='#enchantmenttype'>enchantment type</a> " +
-					"this type has no level, but you usually don't need to use this type anyway.",
-				"NOTE: Minecraft namespaces are supported, ex: 'minecraft:basalt_deltas'.",
+			.description("Represents an enchantment, e.g. 'sharpness' or 'fortune'.",
+				"NOTE: Minecraft namespaces are supported, ex: 'minecraft:vanishing_curse'.",
 				"As of Minecraft 1.21 this will also support custom enchantments using namespaces, ex: 'myenchants:explosive'.")
 			.examples("")
-			.since("1.4.6")
-			.before("enchantmenttype"));
+			.since("1.4.6"));
 
 		Classes.registerClass(new RegistryClassInfo<>(Material.class, Registry.MATERIAL, "material")
 			.user("materials?")
 			.name("Material")
-			.description("Represents the different types of items and blocks."));
+			.description("Represents the different types of items and blocks.",
+				"Patterns are auto-generated and may differ between Minecraft versions.",
+				"NOTE: Minecraft namespaces are supported, ex: 'minecraft:oak_log'."));
 
 		Classes.registerClass(new ClassInfo<>(Metadatable.class, "metadataholder")
 			.user("metadata ?holders?")
