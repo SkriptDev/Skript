@@ -540,6 +540,7 @@ types:
 	potioneffecttype: potion effect type¦s @a
 	potioneffect: potion effect¦s @a
 	enchantment: enchantment¦s @an
+	enchantmentoffer: enchantment offer¦s @an
 	damagecause: damage cause¦s @a
 	teleportcause: teleport cause¦s @a
 	inventoryaction: inventory action¦s @a
