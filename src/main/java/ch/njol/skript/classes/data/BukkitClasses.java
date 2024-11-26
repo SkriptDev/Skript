@@ -974,7 +974,7 @@ public class BukkitClasses {
 					"as well as projectile and attack are considered different types.")
 			.examples("")
 			.since("2.0")
-			.after("itemtype", "itemstack", "entitydata", "entitytype"));
+			.after("itemstack", "entitytype"));
 
 		Classes.registerClass(new ClassInfo<>(Chunk.class, "chunk")
 			.user("chunks?")

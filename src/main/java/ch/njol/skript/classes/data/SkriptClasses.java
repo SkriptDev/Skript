@@ -55,7 +55,7 @@ public class SkriptClasses {
 				"disable PvP in the event-world",
 				"kill the loop-entity")
 			.since("2.0")
-			.after("entitydata", "entitytype", "itemtype")
+			.after("entitytype")
 			.supplier(() -> (Iterator) Classes.getClassInfos().iterator())
 			.parser(new Parser<ClassInfo>() {
 				@Override
