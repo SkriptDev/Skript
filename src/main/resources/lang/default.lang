@@ -50,81 +50,32 @@ weather:
 
 # -- Tree Types --
 treetype:
-	tree:
-		name: tree¦s
-		pattern: oak trees?
-	big_tree:
-		name: big tree¦s
-		pattern: big oak trees?
-	redwood:
-		name: redwood¦s
-		pattern: (any )?(fir|pine|spruce|redwood)( tree)?s?
-	birch:
-		name: birch¦es
-		pattern: birch( trees?|es)
-	jungle:
-		name: jungle tree¦s
-		pattern: (any )?jungle( tree)?s?
-	small_jungle:
-		name: small jungle tree¦s
-		pattern: small jungle( tree)?s?
-	cocoa_tree:
-		name: cocoa tree¦s
-		pattern: cocoa trees?
-	jungle_bush:
-		name: bush¦es
-		pattern: (jungle )?bush(es)?
-	red_mushroom:
-		name: huge red mushroom¦s
-		pattern: (huge|giant|large|big) red mushrooms?
-	brown_mushroom:
-		name: huge brown mushroom¦s
-		pattern: (huge|giant|large|big) brown mushrooms?
-	swamp:
-		name: swamp tree¦s
-		pattern: swamp trees?
-	acacia:
-		name: acacia¦s
-		pattern: acacia( tree)?s?
-	dark_oak:
-		name: dark oak¦s
-		pattern: dark oak( tree)?s?
-	mega_redwood:
-		name: mega redwood¦s
-		pattern: (mega|giant) redwood( tree)?s?
-	mega_pine:
-		name: mega pine¦s
-		pattern: (mega|giant) pine( tree)?s?
-	tall_birch:
-		name: tall birch¦es
-		pattern: (tall|big) birch( trees?|es)
-	chorus_plant:
-		name: chorus plant¦s
-		pattern: chorus plants?
-	crimson_fungus:
-		name: crimson fungus¦es
-		pattern: crimson fung(us|ie)
-	warped_fungus:
-		name: warped fungus¦es
-		pattern: warped fung(us|ie)
-	azalea:
-		name: azalea¦s
-		pattern: azaleas?
-	mangrove:
-		name: mangrove¦s
-		pattern: mangroves?
-	tall_mangrove:
-		name: tall mangrove¦s
-		pattern: tall mangroves?
-	cherry:
-		name: cherry¦s
-		pattern: cherr(y|ies)
-	pale_oak:
-		name: pale oak¦s
-		pattern: pale oaks?
-	pale_oak_creaking:
-		name: pale oak creaking¦s
-		pattern: pale oak creakings?
+	acacia: acacia tree, acacia
+	azalea: azalea tree, azalea
+	big_tree: big oak tree, tree
+	birch: birch tree, birch
+	brown_mushroom: brown mushroom
+	cherry: cherry tree, cherry
+	chorus_plant: chorus plant
+	cocoa_tree: cocoa tree
+	crimson_fungus: crimson fungus
+	dark_oak: dark oak tree, dark oak
+	jungle: jungle tree, jungle
+	jungle_bush: jungle bush
+	mangrove: mangrove tree, mangrove
+	mega_pine: mega pine tree, mega pine
+	mega_redwood: mega spruce tree, mega spruce, mega redwood
+	pale_oak: pale oak tree, pale oak
+	pale_oak_creaking: pale oak creaking tree, pale oak creaking
+	red_mushroom: red mushroom
+	redwood: spruce tree, redwood
+	small_jungle: small jungle tree, small jungle
+	swamp: swamp tree, swamp
+	tall_birch: tall birch tree, tall birch
+	tall_mangrove: tall mangrove tree, tall mangrove
+	tall_redwood: tall spruce tree, tall redwood tree, tall redwood
+	tree: oak tree, tree
+	warped_fungus: warped fungus
 
 # -- Time --
 time:
