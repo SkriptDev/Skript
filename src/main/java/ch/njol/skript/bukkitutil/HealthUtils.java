@@ -26,7 +26,7 @@ public class HealthUtils {
 		if (Skript.isRunningMinecraft(1, 21, 2)) { // "generic" removed in 1.21.2
 			MAX_HEALTH = Registry.ATTRIBUTE.get(NamespacedKey.minecraft("max_health"));
 		} else {
-			MAX_HEALTH = Registry.ATTRIBUTE.get(NamespacedKey.minecraft("generic_max_health"));
+			MAX_HEALTH = Registry.ATTRIBUTE.get(NamespacedKey.minecraft("generic.max_health"));
 		}
 	}
 
