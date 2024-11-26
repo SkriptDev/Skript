@@ -3,7 +3,6 @@ package ch.njol.skript.classes.data;
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.bukkitutil.BukkitUtils;
-import ch.njol.skript.bukkitutil.EnchantmentUtils;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.classes.ConfigurationSerializer;
 import ch.njol.skript.classes.EnumClassInfo;
@@ -1247,12 +1246,12 @@ public class BukkitClasses {
 
 				@Override
 				public String toString(EnchantmentOffer eo, int flags) {
-					return EnchantmentUtils.toString(eo.getEnchantment(), flags) + " " + eo.getEnchantmentLevel();
+					return Classes.toString(eo.getEnchantment()) + " " + eo.getEnchantmentLevel();
 				}
 
 				@Override
 				public String toVariableNameString(EnchantmentOffer eo) {
-					return "offer:" + EnchantmentUtils.toString(eo.getEnchantment()) + "=" + eo.getEnchantmentLevel();
+					return "offer:" + Classes.toString(eo.getEnchantment()) + "=" + eo.getEnchantmentLevel();
 				}
 			}));
 
