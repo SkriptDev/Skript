@@ -39,10 +39,10 @@ public class CondIsPreferredTool extends Condition {
 			types += "/blockdatas";
 
 		Skript.registerCondition(CondIsPreferredTool.class,
-			"%itemstacks/materials% (is|are) %" + types + "%'s preferred tool[s]",
-			"%itemstacks/materials% (is|are) [the|a] preferred tool[s] (for|of) %" + types + "%",
-			"%itemstacks/materials% (is|are)(n't| not) %" + types + "%'s preferred tool[s]",
-			"%itemstacks/materials% (is|are)(n't| not) [the|a] preferred tool[s] (for|of) %" + types + "%"
+			"%materials/itemstacks% (is|are) %" + types + "%'s preferred tool[s]",
+			"%materials/itemstacks% (is|are) [the|a] preferred tool[s] (for|of) %" + types + "%",
+			"%materials/itemstacks% (is|are)(n't| not) %" + types + "%'s preferred tool[s]",
+			"%materials/itemstacks% (is|are)(n't| not) [the|a] preferred tool[s] (for|of) %" + types + "%"
 		);
 	}
 

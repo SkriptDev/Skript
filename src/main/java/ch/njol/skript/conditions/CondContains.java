@@ -35,10 +35,10 @@ public class CondContains extends Condition {
 
 	static {
 		Skript.registerCondition(CondContains.class,
-			"%inventories% (has|have) %itemstacks/materials% [in [(the[ir]|his|her|its)] inventory]",
-			"%inventories% (doesn't|does not|do not|don't) have %itemstacks/materials% [in [(the[ir]|his|her|its)] inventory]",
-			"%inventories/strings/objects% contain[(1¦s)] %itemstacks/materials/strings/objects%",
-			"%inventories/strings/objects% (doesn't|does not|do not|don't) contain %itemstacks/materials/strings/objects%"
+			"%inventories% (has|have) %materials/itemstacks% [in [(the[ir]|his|her|its)] inventory]",
+			"%inventories% (doesn't|does not|do not|don't) have %materials/itemstacks% [in [(the[ir]|his|her|its)] inventory]",
+			"%inventories/strings/objects% contain[(1¦s)] %materials/itemstacks/strings/objects%",
+			"%inventories/strings/objects% (doesn't|does not|do not|don't) contain %materials/itemstacks/strings/objects%"
 		);
 	}
 

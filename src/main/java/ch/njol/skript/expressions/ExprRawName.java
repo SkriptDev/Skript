@@ -27,7 +27,7 @@ public class ExprRawName extends SimpleExpression<String> {
 
 	static {
 		Skript.registerExpression(ExprRawName.class, String.class, ExpressionType.SIMPLE,
-			"(minecraft|vanilla) name[s] of %itemstacks/materials%");
+			"(minecraft|vanilla) name[s] of %materials/itemstacks%");
 	}
 
 	@SuppressWarnings("null")

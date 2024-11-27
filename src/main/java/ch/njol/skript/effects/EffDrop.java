@@ -28,7 +28,7 @@ public class EffDrop extends Effect {
 //TODO this class needs some love
 	static {
 		Skript.registerEffect(EffDrop.class,
-			"drop %itemstacks/materials% [%directions% %locations%] [(1¦without velocity)]");
+			"drop %materials/itemstacks% [%directions% %locations%] [(1¦without velocity)]");
 	}
 
 	@Nullable

@@ -18,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 public class ExprMaxStack extends SimplePropertyExpression<Object, Long> {
 
 	static {
-		register(ExprMaxStack.class, Long.class, "max[imum] stack[[ ]size]", "itemstack/material");
+		register(ExprMaxStack.class, Long.class, "max[imum] stack[[ ]size]", "material/itemstack");
 	}
 
 	@SuppressWarnings("null")

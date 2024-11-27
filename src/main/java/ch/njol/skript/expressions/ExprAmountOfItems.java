@@ -24,7 +24,7 @@ public class ExprAmountOfItems extends SimpleExpression<Long> {
 
 	static {
 		Skript.registerExpression(ExprAmountOfItems.class, Long.class, ExpressionType.PROPERTY,
-			"[the] (amount|number) of %itemstacks/materials% (in|of) %inventories%");
+			"[the] (amount|number) of %materials/itemstacks% (in|of) %inventories%");
 	}
 
 	private Expression<?> items;
