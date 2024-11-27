@@ -1,0 +1,9 @@
+test "enchanted condition":
+	set {_item} to itemstack of diamond sword
+
+	assert {_item} is not enchanted with "Item should not have been enchanted"
+	assert {_item} is not enchanted with sharpness with "Item should not have been enchanted with sharpness"
+
+	enchant {_item} with sharpness 10
+	assert {_item} is enchanted with "Item should have been enchanted"
+	assert {_item} is enchanted with sharpness with "Item should have been enchanted with sharpness"
