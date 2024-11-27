@@ -63,6 +63,7 @@ import org.bukkit.event.player.PlayerQuitEvent.QuitReason;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.BlockInventoryHolder;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -1315,6 +1316,12 @@ public class BukkitClasses {
 			.user("tree ?types?")
 			.name("Tree Type")
 			.description("Represents different types of trees that can be grown.")
+			.since("INSERT VERSION"));
+
+		Classes.registerClass(new EnumClassInfo<>(EquipmentSlot.class, "equipmentslot", "equipment slots")
+			.user("equipment ?slots?")
+			.name("Equipment Slot")
+			.description("Represents the different slot types of an entity.")
 			.since("INSERT VERSION"));
 	}
 

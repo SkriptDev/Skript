@@ -10,7 +10,6 @@ import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.util.slot.Slot;
 import ch.njol.util.Kleenean;
 import ch.njol.util.Math2;
 import org.bukkit.entity.Damageable;
@@ -71,23 +70,8 @@ public class EffHealth extends Effect {
 					ItemUtils.setDamage(itemStack, (int) Math2.fit(0, (ItemUtils.getDamage(itemStack) + (isHealing ? -amount : amount)), ItemUtils.getMaxDamage(itemStack)));
 				}
 
-			} else if (obj instanceof Slot) {
-				Slot slot = (Slot) obj;
-				ItemStack itemStack = slot.getItem();
-
-				if (itemStack == null)
-					continue;
-
-				if (this.amount == null) {
-					ItemUtils.setDamage(itemStack, 0);
-				} else {
-					int damageAmt = (int) Math2.fit(0, (ItemUtils.getDamage(itemStack) + (isHealing ? -amount : amount)), ItemUtils.getMaxDamage(itemStack));
-					ItemUtils.setDamage(itemStack, damageAmt);
-				}
-
-				slot.setItem(itemStack);
-
-			} else if (obj instanceof Damageable) {
+			}
+			if (obj instanceof Damageable) {
 				Damageable damageable = (Damageable) obj;
 
 				if (this.amount == null) {

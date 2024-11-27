@@ -10,11 +10,7 @@ import ch.njol.skript.util.Time;
 import ch.njol.skript.util.Timeperiod;
 import ch.njol.skript.util.Timespan;
 import ch.njol.skript.util.WeatherType;
-import ch.njol.skript.util.slot.EquipmentSlot;
-import ch.njol.skript.util.slot.Slot;
-import ch.njol.skript.util.slot.SlotWithIndex;
 import ch.njol.util.StringUtils;
-import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.TreeType;
@@ -66,43 +62,6 @@ public class DefaultComparators {
 			public boolean supportsOrdering() {
 				return true;
 			}
-		});
-
-		// Slot - Slot
-		Comparators.registerComparator(Slot.class, Slot.class, new Comparator<>() {
-
-			@Override
-			public Relation compare(Slot o1, Slot o2) {
-				if (o1 instanceof EquipmentSlot != o2 instanceof EquipmentSlot)
-					return Relation.NOT_EQUAL;
-				if (o1.isSameSlot(o2))
-					return Relation.EQUAL;
-				return Relation.NOT_EQUAL;
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-
-		});
-
-		// Slot - Number
-		Comparators.registerComparator(Slot.class, Number.class, new Comparator<>() {
-
-			@Override
-			public Relation compare(Slot o1, Number o2) {
-				if (o1 instanceof SlotWithIndex) {
-					return Relation.get(((SlotWithIndex) o1).getIndex() - o2.intValue());
-				}
-				return Relation.NOT_EQUAL;
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return true;
-			}
-
 		});
 
 		// Block - BlockData
@@ -160,8 +119,6 @@ public class DefaultComparators {
 		// ItemStack - ItemStack
 		Comparators.registerComparator(ItemStack.class, ItemStack.class, (o1, o2) -> Relation.get(o1.equals(o2)));
 
-		// ItemStack - Slot
-		Comparators.registerComparator(ItemStack.class, Slot.class, (itemStack, slot) -> Relation.get(itemStack.equals(slot.getItem())));
 		// EntityType - EntityType
 		Comparators.registerComparator(EntityType.class, EntityType.class, (o1, o2) -> Relation.get(o1.equals(o2)));
 

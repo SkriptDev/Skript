@@ -1,0 +1,11 @@
+test "equipment slot of living entity":
+	spawn zombie at spawn of world "world":
+		set feet slot of event-entity to itemstack of golden boots
+		assert material of feet slot of event-entity is golden boots with "Golden boots were not applied"
+		set legs slot of event-entity to itemstack of iron leggings
+		assert material of legs slot of event-entity is iron leggings with "Iron leggings were not applied"
+		set chest slot of event-entity to itemstack of diamond chestplate
+		assert material of chest slot of event-entity is diamond chestplate with "Diamond chestplate was not applied"
+		set head slot of event-entity to itemstack of dirt
+		assert material of head slot of event-entity is dirt with "Dirt helmet was not applied"
+		delete event-entity

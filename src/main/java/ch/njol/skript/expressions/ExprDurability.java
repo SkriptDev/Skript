@@ -9,7 +9,6 @@ import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.util.slot.Slot;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.event.Event;
@@ -17,19 +16,19 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Damage Value/Durability")
-@Description("The damage value/durability of an item.")
+@Description("The damage value/durability of an ItemStack.")
 @Examples({
 	"set damage value of player's tool to 10",
 	"reset the durability of {_item}",
 	"set durability of player's held item to 0"
 })
 @Since("1.2, 2.7 (durability reversed)")
-public class ExprDurability extends SimplePropertyExpression<Object, Integer> {
+public class ExprDurability extends SimplePropertyExpression<ItemStack, Integer> {
 
 	private boolean durability;
 
 	static {
-		register(ExprDurability.class, Integer.class, "(damage[s] [value[s]]|1:durabilit(y|ies))", "itemstacks/slots");
+		register(ExprDurability.class, Integer.class, "(damage[s] [value[s]]|1:durabilit(y|ies))", "itemstacks");
 	}
 
 	@Override
@@ -40,8 +39,7 @@ public class ExprDurability extends SimplePropertyExpression<Object, Integer> {
 
 	@Override
 	@Nullable
-	public Integer convert(Object object) {
-		ItemStack itemStack = ItemUtils.asItemStack(object);
+	public Integer convert(ItemStack itemStack) {
 		if (itemStack == null)
 			return null;
 		int damage = ItemUtils.getDamage(itemStack);
@@ -51,15 +49,11 @@ public class ExprDurability extends SimplePropertyExpression<Object, Integer> {
 	@Override
 	@Nullable
 	public Class<?>[] acceptChange(ChangeMode mode) {
-		switch (mode) {
-			case SET:
-			case ADD:
-			case REMOVE:
-			case DELETE:
-			case RESET:
-				return CollectionUtils.array(Number.class);
-		}
-		return null;
+		return switch (mode) {
+			case SET, ADD, REMOVE, DELETE, RESET ->
+				CollectionUtils.array(Number.class);
+			default -> null;
+		};
 	}
 
 	@Override
@@ -67,28 +61,20 @@ public class ExprDurability extends SimplePropertyExpression<Object, Integer> {
 		int change = delta == null ? 0 : ((Number) delta[0]).intValue();
 		if (mode == ChangeMode.REMOVE)
 			change = -change;
-		for (Object object : getExpr().getArray(event)) {
-			ItemStack itemStack = ItemUtils.asItemStack(object);
+		for (ItemStack itemStack : getExpr().getArray(event)) {
 			if (itemStack == null)
 				continue;
 
-			int newAmount;
-			switch (mode) {
-				case ADD:
-				case REMOVE:
+			int newAmount = switch (mode) {
+				case ADD, REMOVE -> {
 					int current = convertToDamage(itemStack, ItemUtils.getDamage(itemStack));
-					newAmount = current + change;
-					break;
-				case SET:
-					newAmount = change;
-					break;
-				default:
-					newAmount = 0;
-			}
+					yield current + change;
+				}
+				case SET -> change;
+				default -> 0;
+			};
 
 			ItemUtils.setDamage(itemStack, convertToDamage(itemStack, newAmount));
-			if (object instanceof Slot)
-				((Slot) object).setItem(itemStack);
 		}
 	}
 

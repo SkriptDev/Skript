@@ -1,8 +1,6 @@
 package ch.njol.skript.classes.data;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.bukkitutil.ItemUtils;
-import ch.njol.skript.classes.Changer;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.classes.EnumSerializer;
 import ch.njol.skript.classes.Parser;
@@ -23,10 +21,7 @@ import ch.njol.skript.util.Time;
 import ch.njol.skript.util.Timeperiod;
 import ch.njol.skript.util.Timespan;
 import ch.njol.skript.util.WeatherType;
-import ch.njol.skript.util.slot.Slot;
 import ch.njol.yggdrasil.Fields;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.StreamCorruptedException;
@@ -319,116 +314,6 @@ public class SkriptClasses {
 				}
 			})
 			.serializer(new YggdrasilSerializer<>()));
-
-		Classes.registerClass(new ClassInfo<>(Slot.class, "slot")
-			.user("(inventory )?slots?")
-			.name("Slot")
-			.description("Represents a single slot of an <a href='#inventory'>inventory</a>. " +
-					"Notable slots are the <a href='./expressions.html#ExprArmorSlot'>armour slots</a> and <a href='./expressions/#ExprFurnaceSlot'>furnace slots</a>. ",
-				"The most important property that distinguishes a slot from an <a href='#itemstack'>item</a> is its ability to be changed, e.g. it can be set, deleted, enchanted, etc. " +
-					"(Some item expressions can be changed as well, e.g. items stored in variables. " +
-					"For that matter: slots are never saved to variables, only the items they represent at the time when the variable is set).",
-				"Please note that <a href='./expressions.html#ExprTool'>tool</a> can be regarded a slot, but it can actually change it's position, i.e. doesn't represent always the same slot.")
-			.usage("")
-			.examples("set tool of player to dirt",
-				"delete helmet of the victim",
-				"set the color of the player's tool to green",
-				"enchant the player's chestplate with projectile protection 5")
-			.since("")
-			.defaultExpression(new EventValueExpression<>(Slot.class))
-			.changer(new Changer<Slot>() {
-				@SuppressWarnings("unchecked")
-				@Override
-				@Nullable
-				public Class<Object>[] acceptChange(final ChangeMode mode) {
-					if (mode == ChangeMode.RESET)
-						return null;
-					if (mode == ChangeMode.SET)
-						return new Class[]{ItemStack[].class};
-					return new Class[]{ItemStack.class};
-				}
-
-				@Override
-				public void change(final Slot[] slots, final @Nullable Object[] deltas, final ChangeMode mode) {
-					if (mode == ChangeMode.SET) {
-						if (deltas != null) {
-							if (deltas.length == 1) {
-								ItemStack itemStack = deltas[0] instanceof ItemStack ? (ItemStack) deltas[0] : null;
-								for (final Slot slot : slots) {
-									slot.setItem(itemStack);
-								}
-							} else if (deltas.length == slots.length) {
-								for (int i = 0; i < slots.length; i++) {
-									ItemStack itemStack = deltas[i] instanceof ItemStack ? (ItemStack) deltas[i] : null;
-									slots[i].setItem(itemStack);
-								}
-							}
-						}
-						return;
-					}
-					final Object delta = deltas == null ? null : deltas[0];
-					for (final Slot slot : slots) {
-						switch (mode) {
-							case ADD:
-								assert delta != null;
-								if (delta instanceof ItemStack) {
-									final ItemStack i = slot.getItem();
-									if (i == null || i.getType() == Material.AIR || ItemUtils.itemStacksEqual(i, (ItemStack) delta)) {
-										if (i != null && i.getType() != Material.AIR) {
-											i.setAmount(Math.min(i.getAmount() + ((ItemStack) delta).getAmount(), i.getMaxStackSize()));
-											slot.setItem(i);
-										} else {
-											slot.setItem((ItemStack) delta);
-										}
-									}
-								}
-								break;
-							case REMOVE:
-							case REMOVE_ALL:
-								assert delta != null;
-								if (delta instanceof ItemStack) {
-									final ItemStack i = slot.getItem();
-									if (i != null && ItemUtils.itemStacksEqual(i, (ItemStack) delta)) {
-										final int a = mode == ChangeMode.REMOVE_ALL ? 0 : i.getAmount() - ((ItemStack) delta).getAmount();
-										if (a <= 0) {
-											slot.setItem(null);
-										} else {
-											i.setAmount(a);
-											slot.setItem(i);
-										}
-									}
-								}
-								break;
-							case DELETE:
-								slot.setItem(null);
-								break;
-							case RESET:
-								assert false;
-						}
-					}
-				}
-			})
-			.parser(new Parser<>() {
-				@Override
-				public boolean canParse(final ParseContext context) {
-					return false;
-				}
-
-				@Override
-				public String toString(Slot o, int flags) {
-					// TODO this may not be right
-					ItemStack i = o.getItem();
-					if (i == null)
-						return Material.AIR.getKey().toString();
-					return i.getType().getKey().toString();
-				}
-
-				@Override
-				public String toVariableNameString(Slot o) {
-					return "slot:" + o.toString();
-				}
-			})
-			.serializeAs(ItemStack.class));
 
 		Classes.registerClass(new ClassInfo<>(Color.class, "color")
 			.user("colou?rs?")

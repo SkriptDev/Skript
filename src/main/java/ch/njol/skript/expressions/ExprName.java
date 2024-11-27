@@ -2,7 +2,6 @@ package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.bukkitutil.InventoryUtils;
-import ch.njol.skript.bukkitutil.ItemUtils;
 import ch.njol.skript.classes.Changer.ChangeMode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -13,7 +12,6 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.chat.BungeeConverter;
 import ch.njol.skript.util.chat.ChatMessages;
-import ch.njol.skript.util.slot.Slot;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import net.kyori.adventure.text.Component;
@@ -159,12 +157,6 @@ public class ExprName extends SimplePropertyExpression<Object, String> {
 			if (inventory.getViewers().isEmpty())
 				return null;
 			return InventoryUtils.getTitle(inventory.getViewers().get(0).getOpenInventory());
-		} else if (object instanceof Slot) {
-			ItemStack is = ((Slot) object).getItem();
-			if (is != null && is.hasItemMeta()) {
-				ItemMeta m = is.getItemMeta();
-				return m.hasDisplayName() ? m.getDisplayName() : null;
-			}
 		} else if (object instanceof World) {
 			return ((World) object).getName();
 		} else if (HAS_GAMERULES && object instanceof GameRule) {
@@ -255,15 +247,6 @@ public class ExprName extends SimplePropertyExpression<Object, String> {
 				}
 				copy.setContents(inv.getContents());
 				viewers.forEach(viewer -> viewer.openInventory(copy));
-			} else if (object instanceof Slot) {
-				Slot s = (Slot) object;
-				ItemStack is = s.getItem();
-				if (is != null && !ItemUtils.isAir(is.getType())) {
-					ItemMeta m = is.hasItemMeta() ? is.getItemMeta() : Bukkit.getItemFactory().getItemMeta(is.getType());
-					m.setDisplayName(name);
-					is.setItemMeta(m);
-					s.setItem(is);
-				}
 			}
 		}
 	}
@@ -275,16 +258,11 @@ public class ExprName extends SimplePropertyExpression<Object, String> {
 
 	@Override
 	protected String getPropertyName() {
-		switch (mark) {
-			case 1:
-				return "name";
-			case 2:
-				return "display name";
-			case 3:
-				return "tablist name";
-			default:
-				return "name";
-		}
+		return switch (mark) {
+			case 2 -> "display name";
+			case 3 -> "tablist name";
+			default -> "name";
+		};
 	}
 
 }

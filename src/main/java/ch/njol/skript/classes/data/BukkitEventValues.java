@@ -1,27 +1,4 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.classes.data;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.bukkitutil.InventoryUtils;
@@ -36,16 +13,14 @@ import ch.njol.skript.util.DelayedChangeBlock;
 import ch.njol.skript.util.Direction;
 import ch.njol.skript.util.Getter;
 import ch.njol.skript.util.Timespan;
-import ch.njol.skript.util.slot.InventorySlot;
-import ch.njol.skript.util.slot.Slot;
 import com.destroystokyo.paper.event.block.AnvilDamagedEvent;
 import com.destroystokyo.paper.event.entity.EndermanAttackPlayerEvent;
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import io.papermc.paper.event.entity.EntityMoveEvent;
-import io.papermc.paper.event.player.PlayerStopUsingItemEvent;
 import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
 import io.papermc.paper.event.player.PlayerStonecutterRecipeSelectEvent;
+import io.papermc.paper.event.player.PlayerStopUsingItemEvent;
 import io.papermc.paper.event.player.PlayerTradeEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -72,6 +47,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Vehicle;
+import org.bukkit.event.block.BellResonateEvent;
+import org.bukkit.event.block.BellRingEvent;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockCanBuildEvent;
 import org.bukkit.event.block.BlockDamageEvent;
@@ -84,8 +61,6 @@ import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.block.BellRingEvent;
-import org.bukkit.event.block.BellResonateEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
@@ -173,11 +148,14 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Peter Güttinger
@@ -321,7 +299,7 @@ public final class BukkitEventValues {
 			public Direction get(final BlockPlaceEvent e) {
 				BlockFace bf = e.getBlockPlaced().getFace(e.getBlockAgainst());
 				if (bf != null) {
-					return new Direction(new double[] {bf.getModX(), bf.getModY(), bf.getModZ()});
+					return new Direction(new double[]{bf.getModX(), bf.getModY(), bf.getModZ()});
 				}
 				return Direction.ZERO;
 			}
@@ -676,6 +654,7 @@ public final class BukkitEventValues {
 		}, EventValues.TIME_NOW);
 		EventValues.registerEventValue(AreaEffectCloudApplyEvent.class, PotionEffectType.class, new Getter<PotionEffectType, AreaEffectCloudApplyEvent>() {
 			private final boolean HAS_POTION_TYPE_METHOD = Skript.methodExists(AreaEffectCloud.class, "getBasePotionType");
+
 			@Override
 			@Nullable
 			public PotionEffectType get(AreaEffectCloudApplyEvent e) {
@@ -907,7 +886,7 @@ public final class BukkitEventValues {
 			@Override
 			@Nullable
 			public Direction get(final PlayerInteractEvent e) {
-				return new Direction(new double[] {e.getBlockFace().getModX(), e.getBlockFace().getModY(), e.getBlockFace().getModZ()});
+				return new Direction(new double[]{e.getBlockFace().getModX(), e.getBlockFace().getModY(), e.getBlockFace().getModZ()});
 			}
 		}, 0);
 		// PlayerShearEntityEvent
@@ -1160,24 +1139,6 @@ public final class BukkitEventValues {
 				return e.getCurrentItem();
 			}
 		}, 0);
-		EventValues.registerEventValue(InventoryClickEvent.class, Slot.class, new Getter<Slot, InventoryClickEvent>() {
-			@SuppressWarnings("null")
-			@Override
-			@Nullable
-			public Slot get(final InventoryClickEvent e) {
-				Inventory invi = e.getClickedInventory(); // getInventory is WRONG and dangerous
-				if (invi == null)
-					return null;
-				int slotIndex = e.getSlot();
-
-				// Not all indices point to inventory slots. Equipment, for example
-				if (invi instanceof PlayerInventory && slotIndex >= 36) {
-					return new ch.njol.skript.util.slot.EquipmentSlot(((PlayerInventory) invi).getHolder(), slotIndex);
-				} else {
-					return new InventorySlot(invi, slotIndex, e.getRawSlot());
-				}
-			}
-		}, 0);
 		EventValues.registerEventValue(InventoryClickEvent.class, InventoryAction.class, new Getter<InventoryAction, InventoryClickEvent>() {
 			@Override
 			@Nullable
@@ -1233,27 +1194,6 @@ public final class BukkitEventValues {
 			@Nullable
 			public ItemStack[] get(InventoryDragEvent event) {
 				return event.getNewItems().values().toArray(new ItemStack[0]);
-			}
-		}, EventValues.TIME_NOW);
-		EventValues.registerEventValue(InventoryDragEvent.class, Slot[].class, new Getter<Slot[], InventoryDragEvent>() {
-			@Override
-			@Nullable
-			public Slot[] get(InventoryDragEvent event) {
-				List<Slot> slots = new ArrayList<>(event.getRawSlots().size());
-				InventoryView view = event.getView();
-				for (Integer rawSlot : event.getRawSlots()) {
-					Inventory inventory = InventoryUtils.getInventory(view, rawSlot);
-					Integer slot = InventoryUtils.convertSlot(view, rawSlot);
-					if (inventory == null || slot == null)
-						continue;
-					// Not all indices point to inventory slots. Equipment, for example
-					if (inventory instanceof PlayerInventory && slot >= 36) {
-						slots.add(new ch.njol.skript.util.slot.EquipmentSlot(((PlayerInventory) view.getBottomInventory()).getHolder(), slot));
-					} else {
-						slots.add(new InventorySlot(inventory, slot));
-					}
-				}
-				return slots.toArray(new Slot[0]);
 			}
 		}, EventValues.TIME_NOW);
 		EventValues.registerEventValue(InventoryDragEvent.class, ClickType.class, new Getter<ClickType, InventoryDragEvent>() {
@@ -1320,12 +1260,6 @@ public final class BukkitEventValues {
 			}
 		}, EventValues.TIME_NOW);
 		// PrepareItemCraftEvent
-		EventValues.registerEventValue(PrepareItemCraftEvent.class, Slot.class, new Getter<Slot, PrepareItemCraftEvent>() {
-			@Override
-			public Slot get(final PrepareItemCraftEvent e) {
-				return new InventorySlot(e.getInventory(), 0);
-			}
-		}, 0);
 		EventValues.registerEventValue(PrepareItemCraftEvent.class, ItemStack.class, new Getter<ItemStack, PrepareItemCraftEvent>() {
 			@Override
 			public ItemStack get(PrepareItemCraftEvent e) {
@@ -1624,20 +1558,6 @@ public final class BukkitEventValues {
 					return event.getOldItemStack();
 				}
 			}, EventValues.TIME_PAST);
-			EventValues.registerEventValue(PlayerInventorySlotChangeEvent.class, Slot.class, new Getter<Slot, PlayerInventorySlotChangeEvent>() {
-				@Override
-				@Nullable
-				public Slot get(PlayerInventorySlotChangeEvent event) {
-					PlayerInventory inv = event.getPlayer().getInventory();
-					int slotIndex = event.getSlot();
-					// Not all indices point to inventory slots. Equipment, for example
-					if (slotIndex >= 36) {
-						return new ch.njol.skript.util.slot.EquipmentSlot(event.getPlayer(), slotIndex);
-					} else {
-						return new InventorySlot(inv, slotIndex);
-					}
-				}
-			}, EventValues.TIME_NOW);
 		}
 		//PrepareItemEnchantEvent
 		EventValues.registerEventValue(PrepareItemEnchantEvent.class, Player.class, new Getter<Player, PrepareItemEnchantEvent>() {
@@ -1747,33 +1667,31 @@ public final class BukkitEventValues {
 		}
 
 		// EntityResurrectEvent
-		EventValues.registerEventValue(EntityResurrectEvent.class, Slot.class, new Getter<Slot, EntityResurrectEvent>() {
+		EventValues.registerEventValue(EntityResurrectEvent.class, ItemStack.class, new Getter<>() {
 			@Override
 			@Nullable
-			public Slot get(EntityResurrectEvent event) {
+			public ItemStack get(EntityResurrectEvent event) {
 				EquipmentSlot hand = event.getHand();
 				EntityEquipment equipment = event.getEntity().getEquipment();
 				if (equipment == null || hand == null)
 					return null;
-				return new ch.njol.skript.util.slot.EquipmentSlot(equipment,
-					(hand == EquipmentSlot.HAND) ? ch.njol.skript.util.slot.EquipmentSlot.EquipSlot.TOOL
-						: ch.njol.skript.util.slot.EquipmentSlot.EquipSlot.OFF_HAND);
+				return hand == EquipmentSlot.HAND ? equipment.getItemInMainHand() : equipment.getItemInOffHand();
 			}
 		}, EventValues.TIME_NOW);
 
 		// PlayerItemHeldEvent
-		EventValues.registerEventValue(PlayerItemHeldEvent.class, Slot.class, new Getter<Slot, PlayerItemHeldEvent>() {
+		EventValues.registerEventValue(PlayerItemHeldEvent.class, ItemStack.class, new Getter<>() {
 			@Override
 			@Nullable
-			public Slot get(PlayerItemHeldEvent event) {
-				return new InventorySlot(event.getPlayer().getInventory(), event.getNewSlot());
+			public ItemStack get(PlayerItemHeldEvent event) {
+				return event.getPlayer().getInventory().getItem(event.getNewSlot());
 			}
 		}, EventValues.TIME_NOW);
-		EventValues.registerEventValue(PlayerItemHeldEvent.class, Slot.class, new Getter<Slot, PlayerItemHeldEvent>() {
+		EventValues.registerEventValue(PlayerItemHeldEvent.class, ItemStack.class, new Getter<>() {
 			@Override
 			@Nullable
-			public Slot get(PlayerItemHeldEvent event) {
-				return new InventorySlot(event.getPlayer().getInventory(), event.getPreviousSlot());
+			public ItemStack get(PlayerItemHeldEvent event) {
+				return event.getPlayer().getInventory().getItem(event.getPreviousSlot());
 			}
 		}, EventValues.TIME_PAST);
 
@@ -1834,19 +1752,19 @@ public final class BukkitEventValues {
 		// BellRingEvent - these are BlockEvents and not EntityEvents, so they have declared methods for getEntity()
 		if (Skript.classExists("org.bukkit.event.block.BellRingEvent")) {
 			EventValues.registerEventValue(BellRingEvent.class, Entity.class, new Getter<Entity, BellRingEvent>() {
-                @Override
-                @Nullable
-                public Entity get(BellRingEvent event) {
-                    return event.getEntity();
-                }
-            }, EventValues.TIME_NOW);
+				@Override
+				@Nullable
+				public Entity get(BellRingEvent event) {
+					return event.getEntity();
+				}
+			}, EventValues.TIME_NOW);
 
 			EventValues.registerEventValue(BellRingEvent.class, Direction.class, new Getter<Direction, BellRingEvent>() {
-                @Override
-                public Direction get(BellRingEvent event) {
-                    return new Direction(event.getDirection(), 1);
-                }
-            }, EventValues.TIME_NOW);
+				@Override
+				public Direction get(BellRingEvent event) {
+					return new Direction(event.getDirection(), 1);
+				}
+			}, EventValues.TIME_NOW);
 		} else if (Skript.classExists("io.papermc.paper.event.block.BellRingEvent")) {
 			EventValues.registerEventValue(
 				io.papermc.paper.event.block.BellRingEvent.class, Entity.class,
@@ -1868,7 +1786,7 @@ public final class BukkitEventValues {
 				}
 			}, EventValues.TIME_NOW);
 		}
-    
+
 		// InventoryMoveItemEvent
 		EventValues.registerEventValue(InventoryMoveItemEvent.class, Inventory.class, new Getter<Inventory, InventoryMoveItemEvent>() {
 			@Override

@@ -1,25 +1,6 @@
-/**
- * This file is part of Skript.
- * <p>
- * Skript is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * Skript is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * <p>
- * You should have received a copy of the GNU General Public License
- * along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- * <p>
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.bukkitutil;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.util.slot.Slot;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -51,6 +32,7 @@ public class ItemUtils {
 
 	/**
 	 * Gets damage/durability of an item, or 0 if it does not have damage.
+	 *
 	 * @param itemStack Item.
 	 * @return Damage.
 	 */
@@ -60,6 +42,7 @@ public class ItemUtils {
 
 	/**
 	 * Gets damage/durability of an itemmeta, or 0 if it does not have damage.
+	 *
 	 * @param itemMeta ItemMeta.
 	 * @return Damage.
 	 */
@@ -69,8 +52,10 @@ public class ItemUtils {
 		return 0; // Non damageable item
 	}
 
-	/** Gets the max damage/durability of an item
+	/**
+	 * Gets the max damage/durability of an item
 	 * <p>NOTE: Will account for custom damageable items in MC 1.20.5+</p>
+	 *
 	 * @param itemStack Item to grab durability from
 	 * @return Max amount of damage this item can take
 	 */
@@ -102,9 +87,10 @@ public class ItemUtils {
 
 	/**
 	 * Sets damage/durability of an item if possible.
+	 *
 	 * @param itemStack Item to modify.
-	 * @param damage New damage. Note that on some Minecraft versions,
-	 * this might be truncated to short.
+	 * @param damage    New damage. Note that on some Minecraft versions,
+	 *                  this might be truncated to short.
 	 */
 	public static void setDamage(ItemStack itemStack, int damage) {
 		ItemMeta meta = itemStack.getItemMeta();
@@ -116,7 +102,8 @@ public class ItemUtils {
 
 	/**
 	 * Sets the owner of a player head.
-	 * @param skull player head item to modify
+	 *
+	 * @param skull  player head item to modify
 	 * @param player owner of the head
 	 */
 	public static void setHeadOwner(ItemStack skull, OfflinePlayer player) {
@@ -139,6 +126,7 @@ public class ItemUtils {
 	/**
 	 * Gets a block material corresponding to given item material, which might
 	 * be the given material. If no block material is found, null is returned.
+	 *
 	 * @param type Material.
 	 * @return Block version of material or null.
 	 */
@@ -154,6 +142,7 @@ public class ItemUtils {
 	/**
 	 * Gets an item material corresponding to given block material, which might
 	 * be the given material.
+	 *
 	 * @param type Material.
 	 * @return Item version of material or null.
 	 * @deprecated This just returns itself and has no use
@@ -173,10 +162,8 @@ public class ItemUtils {
 	 */
 	@Nullable
 	public static ItemStack asItemStack(Object object) {
-		if (object instanceof Slot)
-			return ((Slot) object).getItem();
-		else if (object instanceof ItemStack)
-			return ((ItemStack) object);
+		if (object instanceof ItemStack itemStack)
+			return itemStack;
 		return null;
 	}
 
@@ -273,6 +260,7 @@ public class ItemUtils {
 
 	/**
 	 * Whether the block is a fence or a wall.
+	 *
 	 * @param block the block to check.
 	 * @return whether the block is a fence/wall.
 	 */

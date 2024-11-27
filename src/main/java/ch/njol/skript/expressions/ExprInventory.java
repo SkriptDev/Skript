@@ -10,7 +10,6 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.log.SkriptLogger;
-import ch.njol.skript.util.slot.Slot;
 import ch.njol.util.Kleenean;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Container;
@@ -112,7 +111,7 @@ public class ExprInventory extends SimpleExpression<Object> {
 
 	@Override
 	public Class<?> getReturnType() {
-		return inLoop ? Slot.class : Inventory.class;
+		return inLoop ? ItemStack.class : Inventory.class;
 	}
 
 	@Override

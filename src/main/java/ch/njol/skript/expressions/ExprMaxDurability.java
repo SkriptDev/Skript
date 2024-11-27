@@ -8,7 +8,6 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.RequiredPlugins;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
-import ch.njol.skript.util.slot.Slot;
 import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
@@ -27,16 +26,16 @@ import org.jetbrains.annotations.Nullable;
 })
 @RequiredPlugins("Minecraft 1.20.5+ (custom amount)")
 @Since("2.5, 2.9.0 (change)")
-public class ExprMaxDurability extends SimplePropertyExpression<Object, Integer> {
+public class ExprMaxDurability extends SimplePropertyExpression<ItemStack, Integer> {
 
 	static {
-		register(ExprMaxDurability.class, Integer.class, "max[imum] (durabilit(y|ies)|damage)", "itemstacks/slots");
+		register(ExprMaxDurability.class, Integer.class,
+			"max[imum] (durabilit(y|ies)|damage)", "itemstacks");
 	}
 
 	@Override
 	@Nullable
-	public Integer convert(Object object) {
-		ItemStack itemStack = ItemUtils.asItemStack(object);
+	public Integer convert(ItemStack itemStack) {
 		if (itemStack == null)
 			return null;
 		return ItemUtils.getMaxDamage(itemStack);
@@ -65,8 +64,7 @@ public class ExprMaxDurability extends SimplePropertyExpression<Object, Integer>
 		if (mode == ChangeMode.REMOVE)
 			change = -change;
 
-		for (Object object : getExpr().getArray(event)) {
-			ItemStack itemStack = ItemUtils.asItemStack(object);
+		for (ItemStack itemStack : getExpr().getArray(event)) {
 			if (itemStack == null)
 				continue;
 
@@ -78,10 +76,6 @@ public class ExprMaxDurability extends SimplePropertyExpression<Object, Integer>
 			};
 
 			ItemUtils.setMaxDamage(itemStack, newValue);
-			if (object instanceof Slot)
-				((Slot) object).setItem(itemStack);
-			if (object instanceof ItemStack itemStack1)
-				itemStack1.setItemMeta(itemStack.getItemMeta());
 		}
 	}
 
