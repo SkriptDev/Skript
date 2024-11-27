@@ -1,11 +1,13 @@
 package ch.njol.skript.classes.data;
 
+import ch.njol.skript.Skript;
 import ch.njol.skript.command.Commands;
 import ch.njol.skript.util.BlockInventoryHolder;
 import ch.njol.skript.util.BlockUtils;
 import ch.njol.skript.util.Direction;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -13,22 +15,22 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.enchantments.EnchantmentOffer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.Vector;
 import org.skriptlang.skript.lang.converter.Converter;
 import org.skriptlang.skript.lang.converter.Converters;
 
 public class DefaultConverters {
-	
-	public DefaultConverters() {}
-	
+
+	public DefaultConverters() {
+	}
+
 	static {
 		// Number to subtypes converters
 		Converters.registerConverter(Number.class, Byte.class, Number::byteValue);
@@ -73,14 +75,14 @@ public class DefaultConverters {
 				return (LivingEntity) e;
 			return null;
 		});
-		
+
 		// Block - Inventory
 		Converters.registerConverter(Block.class, Inventory.class, b -> {
 			if (b.getState() instanceof InventoryHolder)
 				return ((InventoryHolder) b.getState()).getInventory();
 			return null;
 		}, Commands.CONVERTER_NO_COMMAND_ARGUMENTS);
-		
+
 		// Entity - Inventory
 		Converters.registerConverter(Entity.class, Inventory.class, e -> {
 			if (e instanceof InventoryHolder)
@@ -90,7 +92,7 @@ public class DefaultConverters {
 
 		// Block - Location
 		Converters.registerConverter(Block.class, Location.class, BlockUtils::getLocation, Commands.CONVERTER_NO_COMMAND_ARGUMENTS);
-		
+
 		// Entity - Location
 		Converters.registerConverter(Entity.class, Location.class, Entity::getLocation, Commands.CONVERTER_NO_COMMAND_ARGUMENTS);
 
@@ -142,79 +144,11 @@ public class DefaultConverters {
 
 		Converters.registerConverter(String.class, World.class, Bukkit::getWorld);
 
-//		// Entity - String (UUID) // Very slow, thus disabled for now
-//		Converters.registerConverter(String.class, Entity.class, new Converter<String, Entity>() {
-//
-//			@Override
-//			@Nullable
-//			public Entity convert(String f) {
-//				Collection<? extends Player> players = PlayerUtils.getOnlinePlayers();
-//				for (Player p : players) {
-//					if (p.getName().equals(f) || p.getUniqueId().toString().equals(f))
-//						return p;
-//				}
-//
-//				return null;
-//			}
-//
-//		});
-
-		// Number - Vector; DISABLED due to performance problems
-//		Converters.registerConverter(Number.class, Vector.class, new Converter<Number, Vector>() {
-//			@Override
-//			@Nullable
-//			public Vector convert(Number number) {
-//				return new Vector(number.doubleValue(), number.doubleValue(), number.doubleValue());
-//			}
-//		});
-
-//		// World - Time
-//		Skript.registerConverter(World.class, Time.class, new Converter<World, Time>() {
-//			@Override
-//			public Time convert(final World w) {
-//				if (w == null)
-//					return null;
-//				return new Time((int) w.getTime());
-//			}
-//		});
-
-//		// Slot - Inventory
-//		Skript.addConverter(Slot.class, Inventory.class, new Converter<Slot, Inventory>() {
-//			@Override
-//			public Inventory convert(final Slot s) {
-//				if (s == null)
-//					return null;
-//				return s.getInventory();
-//			}
-//		});
-
-//		// Item - ItemStack
-//		Converters.registerConverter(Item.class, ItemStack.class, new Converter<Item, ItemStack>() {
-//			@Override
-//			public ItemStack convert(final Item i) {
-//				return i.getItemStack();
-//			}
-//		});
-
-		// Location - World
-//		Skript.registerConverter(Location.class, World.class, new Converter<Location, World>() {
-//			private final static long serialVersionUID = 3270661123492313649L;
-//
-//			@Override
-//			public World convert(final Location l) {
-//				if (l == null)
-//					return null;
-//				return l.getWorld();
-//			}
-//		});
-
-		// Location - Block
-//		Converters.registerConverter(Location.class, Block.class, new Converter<Location, Block>() {
-//			@Override
-//			public Block convert(final Location l) {
-//				return l.getBlock();
-//			}
-//		});
+		// Material - ItemStack
+		Converters.registerConverter(Material.class, ItemStack.class, material -> {
+			Skript.warning("While Materials can be converted to ItemStacks, you should use the ItemStack expression instead.");
+			return new ItemStack(material);
+		});
 
 	}
 
