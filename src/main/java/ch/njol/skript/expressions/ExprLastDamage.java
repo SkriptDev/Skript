@@ -1,22 +1,3 @@
-/**
- * This file is part of Skript.
- *
- * Skript is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Skript is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer.ChangeMode;
@@ -25,6 +6,7 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
+import ch.njol.skript.lang.Expression;
 import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
@@ -44,37 +26,35 @@ public class ExprLastDamage extends SimplePropertyExpression<LivingEntity, Numbe
 	@Override
 	@SuppressWarnings("null")
 	public Number convert(LivingEntity livingEntity) {
-		return livingEntity.getLastDamage() / 2;
+		return livingEntity.getLastDamage();
 	}
 
 	@Nullable
 	@Override
 	public Class<?>[] acceptChange(ChangeMode mode) {
-		switch (mode) {
-			case ADD:
-			case SET:
-			case REMOVE:
-				return CollectionUtils.array(Number.class);
-			default:
-				return null;
-		}
+		return switch (mode) {
+			case ADD, SET, REMOVE -> CollectionUtils.array(Number.class);
+			default -> null;
+		};
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event e, @Nullable Object[] delta, ChangeMode mode) {
-		if (delta != null && delta[0] instanceof Number) {
-			double damage = ((Number) delta[0]).doubleValue() * 2;
+		if (delta != null && delta[0] instanceof Number number) {
+			Expression<? extends LivingEntity> expr = getExpr();
+			if (expr == null) return;
+
+			double damage = number.doubleValue();
 
 			switch (mode) {
 				case SET:
-					for (LivingEntity entity : getExpr().getArray(e))
+					for (LivingEntity entity : expr.getArray(e))
 						entity.setLastDamage(damage);
 					break;
 				case REMOVE:
 					damage = damage * -1;
 				case ADD:
-					for (LivingEntity entity : getExpr().getArray(e))
+					for (LivingEntity entity : expr.getArray(e))
 						entity.setLastDamage(damage + entity.getLastDamage());
 					break;
 				default:

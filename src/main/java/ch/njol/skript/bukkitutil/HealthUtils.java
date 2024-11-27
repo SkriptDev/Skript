@@ -39,7 +39,7 @@ public class HealthUtils {
 	public static double getHealth(Damageable e) {
 		if (e.isDead())
 			return 0;
-		return e.getHealth() / 2;
+		return e.getHealth();
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class HealthUtils {
 	 * @param health The amount of hearts to set
 	 */
 	public static void setHealth(Damageable e, double health) {
-		e.setHealth(Math2.fit(0, health, getMaxHealth(e)) * 2);
+		e.setHealth(Math2.fit(0, health, getMaxHealth(e)));
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class HealthUtils {
 	public static double getMaxHealth(Damageable e) {
 		AttributeInstance attributeInstance = ((Attributable) e).getAttribute(MAX_HEALTH);
 		assert attributeInstance != null;
-		return attributeInstance.getValue() / 2;
+		return attributeInstance.getValue();
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class HealthUtils {
 	public static void setMaxHealth(Damageable e, double health) {
 		AttributeInstance attributeInstance = ((Attributable) e).getAttribute(MAX_HEALTH);
 		assert attributeInstance != null;
-		attributeInstance.setBaseValue(health * 2);
+		attributeInstance.setBaseValue(health);
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class HealthUtils {
 			heal(e, -d);
 			return;
 		}
-		e.damage(d * 2);
+		e.damage(d);
 	}
 
 	/**
@@ -105,18 +105,18 @@ public class HealthUtils {
 	}
 
 	public static double getDamage(EntityDamageEvent e) {
-		return e.getDamage() / 2;
+		return e.getDamage();
 	}
 
 	public static double getFinalDamage(EntityDamageEvent e) {
-		return e.getFinalDamage() / 2;
+		return e.getFinalDamage();
 	}
 
 	public static void setDamage(EntityDamageEvent event, double damage) {
-		event.setDamage(damage * 2);
+		event.setDamage(damage);
 		// Set last damage manually as Bukkit doesn't appear to do that
 		if (event.getEntity() instanceof LivingEntity)
-			((LivingEntity) event.getEntity()).setLastDamage(damage * 2);
+			((LivingEntity) event.getEntity()).setLastDamage(damage);
 	}
 
 	@Nullable
