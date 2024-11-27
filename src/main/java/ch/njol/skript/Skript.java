@@ -1,7 +1,7 @@
 package ch.njol.skript;
 
 import ch.njol.skript.classes.ClassInfo;
-import ch.njol.skript.classes.data.BukkitClasses;
+import ch.njol.skript.classes.data.bukkit.BukkitClasses;
 import ch.njol.skript.classes.data.BukkitEventValues;
 import ch.njol.skript.classes.data.DefaultComparators;
 import ch.njol.skript.classes.data.DefaultConverters;
@@ -71,7 +71,6 @@ import com.google.gson.Gson;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -109,12 +108,8 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -476,7 +471,7 @@ public final class Skript extends JavaPlugin implements Listener {
 		Throwable classLoadError = null;
 		try {
 			new SkriptClasses();
-			new BukkitClasses();
+			BukkitClasses.init();
 		} catch (Throwable e) {
 			classLoadError = e;
 		}
