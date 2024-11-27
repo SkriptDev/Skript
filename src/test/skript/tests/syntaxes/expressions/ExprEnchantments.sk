@@ -1,0 +1,16 @@
+test "enchantments of itemstack":
+	set {_i} to itemstack of diamond sword
+	enchant {_i} with sharpness 10
+	enchant {_i} with unbreaking 3
+
+	assert enchantments of {_i} contains sharpness with "The item should have been enchanted with sharpness"
+	assert enchantments of {_i} contains unbreaking with "The item should have been enchanted with unbreaking"
+	assert enchantments of {_i} does not contain lure with "The item should NOT have been enchanted with lure"
+
+	remove sharpness from enchantments of {_i}
+	assert enchantments of {_i} does not contain sharpness with "The item should have had sharpness removed from enchantments"
+	assert enchantments of {_i} contains unbreaking with "The item should STILL have been enchanted with unbreaking"
+
+	clear enchantments of {_i}
+	assert enchantments of {_i} does not contain sharpness with "The item should have had sharpness cleared from enchantments"
+	assert enchantments of {_i} does not contain unbreaking with "The item should have had unbreaking cleared from enchantments"
