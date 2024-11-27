@@ -95,16 +95,14 @@ public class ExprName extends SimplePropertyExpression<Object, String> {
 
 	@Nullable
 	private static BungeeComponentSerializer serializer;
-	static final boolean HAS_GAMERULES;
 
 	static {
 		// Check for Adventure API
 		if (Skript.classExists("net.kyori.adventure.text.Component") &&
 			Skript.methodExists(Bukkit.class, "createInventory", InventoryHolder.class, int.class, Component.class))
 			serializer = BungeeComponentSerializer.get();
-		HAS_GAMERULES = Skript.classExists("org.bukkit.GameRule");
-		register(ExprName.class, String.class, "(1¦name[s]|2¦(display|nick|chat|custom)[ ]name[s])", "offlineplayers/entities/blocks/itemstacks/inventories/slots/worlds"
-			+ (HAS_GAMERULES ? "/gamerules" : ""));
+		register(ExprName.class, String.class, "(1¦name[s]|2¦(display|nick|chat|custom)[ ]name[s])",
+			"offlineplayers/entities/blocks/itemstacks/inventories/worlds/gamerules");
 		register(ExprName.class, String.class, "(3¦(player|tab)[ ]list name[s])", "players");
 	}
 
@@ -159,7 +157,7 @@ public class ExprName extends SimplePropertyExpression<Object, String> {
 			return InventoryUtils.getTitle(inventory.getViewers().get(0).getOpenInventory());
 		} else if (object instanceof World) {
 			return ((World) object).getName();
-		} else if (HAS_GAMERULES && object instanceof GameRule) {
+		} else if (object instanceof GameRule) {
 			return ((GameRule) object).getName();
 		}
 		return null;

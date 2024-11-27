@@ -27,9 +27,9 @@ public class EffHealth extends Effect {
 
 	static {
 		Skript.registerEffect(EffHealth.class,
-			"damage %livingentities/itemstacks/slots% by %number% [heart[s]] [with fake cause %-damagecause%]",
+			"damage %livingentities/itemstacks% by %number% [heart[s]] [with fake cause %-damagecause%]",
 			"heal %livingentities% [by %-number% [heart[s]]]",
-			"repair %itemstacks/slots% [by %-number%]");
+			"repair %itemstacks% [by %-number%]");
 	}
 
 	private Expression<?> damageables;
