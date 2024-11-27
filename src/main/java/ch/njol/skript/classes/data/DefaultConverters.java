@@ -147,6 +147,7 @@ public class DefaultConverters {
 		// Material - ItemStack
 		Converters.registerConverter(Material.class, ItemStack.class, material -> {
 			Skript.warning("While Materials can be converted to ItemStacks, you should use the ItemStack expression instead.");
+			if (!material.isItem()) return null;
 			return new ItemStack(material);
 		});
 
