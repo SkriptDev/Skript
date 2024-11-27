@@ -185,10 +185,10 @@ public class BukkitClasses {
 		Classes.registerClass(new ClassInfo<>(Block.class, "block")
 			.user("blocks?")
 			.name("Block")
-			.description("A block in a <a href='#world'>world</a>. It has a <a href='#location'>location</a> and a <a href='#itemstack'>type</a>, " +
-				"and can also have a <a href='#direction'>direction</a> (mostly a <a href='expressions.html#ExprFacing'>facing</a>), an <a href='#inventory'>inventory</a>, or other special properties.")
-			.usage("")
-			.examples("")
+			.description("A block in a <a href='#world'>world</a>.",
+				"It has a <a href='#location'>location</a> and a <a href='#material'>type</a>, " +
+					"and can also have a <a href='#direction'>direction</a> (mostly a <a href='expressions.html#ExprFacing'>facing</a>), " +
+					"an <a href='#inventory'>inventory</a>, or other special properties.")
 			.since("1.0")
 			.defaultExpression(new EventValueExpression<>(Block.class))
 			.parser(new Parser<>() {
@@ -1052,9 +1052,14 @@ public class BukkitClasses {
 		Classes.registerClass(new RegistryClassInfo<>(Material.class, Registry.MATERIAL, "material")
 			.user("materials?")
 			.name("Material")
+			.usage("") // Override RegistryClassInfo usage as there's too many options
 			.description("Represents the different types of items and blocks.",
-				"Patterns are auto-generated and may differ between Minecraft versions.",
-				"NOTE: Minecraft namespaces are supported, ex: 'minecraft:oak_log'."));
+				"NOTE: Minecraft namespaces are supported, ex: 'minecraft:oak_log'.")
+			.examples("if material of player's tool = diamond:",
+				"if material of target block = oak stairs:",
+				"set material of target block to diamond ore",
+				"set {_item} to itemstack of diamond axe")
+			.since("INSERT VERSION"));
 
 		Classes.registerClass(new ClassInfo<>(Metadatable.class, "metadataholder")
 			.user("metadata ?holders?")
