@@ -83,7 +83,7 @@ public class DefaultChangers {
 								}
 							} else if (d instanceof Material material) {
 								hasItem = true;
-								if (mode == ChangeMode.ADD) {
+								if (mode == ChangeMode.ADD && material.isItem()) {
 									inventory.addItem(new ItemStack(material));
 								} else if (mode == ChangeMode.REMOVE) {
 									inventory.remove(material);
