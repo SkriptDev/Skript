@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 public class ExprMaterialOf extends SimplePropertyExpression<Object, Material> {
 
 	static {
-		register(ExprMaterialOf.class, Material.class, "material",
+		register(ExprMaterialOf.class, Material.class, "material[s]",
 			"itemstacks/blocks/blockdatas");
 	}
 
