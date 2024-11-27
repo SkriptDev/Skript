@@ -3,7 +3,6 @@ package ch.njol.skript.classes.data;
 import ch.njol.skript.Skript;
 import ch.njol.skript.command.Commands;
 import ch.njol.skript.util.BlockInventoryHolder;
-import ch.njol.skript.util.BlockUtils;
 import ch.njol.skript.util.Direction;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -91,7 +90,7 @@ public class DefaultConverters {
 		}, Commands.CONVERTER_NO_COMMAND_ARGUMENTS);
 
 		// Block - Location
-		Converters.registerConverter(Block.class, Location.class, BlockUtils::getLocation, Commands.CONVERTER_NO_COMMAND_ARGUMENTS);
+		Converters.registerConverter(Block.class, Location.class, Block::getLocation, Commands.CONVERTER_NO_COMMAND_ARGUMENTS);
 
 		// Entity - Location
 		Converters.registerConverter(Entity.class, Location.class, Entity::getLocation, Commands.CONVERTER_NO_COMMAND_ARGUMENTS);
@@ -127,13 +126,13 @@ public class DefaultConverters {
 			if (holder instanceof Block)
 				return ((Block) holder).getLocation();
 			if (holder instanceof BlockState)
-				return BlockUtils.getLocation(((BlockState) holder).getBlock());
+				return ((BlockState) holder).getBlock().getLocation();
 			if (holder instanceof DoubleChest) {
 				DoubleChest doubleChest = (DoubleChest) holder;
 				if (doubleChest.getLeftSide() != null) {
-					return BlockUtils.getLocation(((BlockState) doubleChest.getLeftSide()).getBlock());
+					return ((BlockState) doubleChest.getLeftSide()).getBlock().getLocation();
 				} else if (((DoubleChest) holder).getRightSide() != null) {
-					return BlockUtils.getLocation(((BlockState) doubleChest.getRightSide()).getBlock());
+					return ((BlockState) doubleChest.getRightSide()).getBlock().getLocation();
 				}
 			}
 			return null;
