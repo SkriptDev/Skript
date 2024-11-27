@@ -225,7 +225,7 @@ public class DefaultChangers {
 			if (mode == ChangeMode.RESET)
 				return null; // REMIND regenerate?
 			if (mode == ChangeMode.SET)
-				return CollectionUtils.array(ItemStack.class, BlockData.class);
+				return CollectionUtils.array(Material.class, ItemStack.class, BlockData.class);
 			return CollectionUtils.array(ItemStack[].class, Inventory[].class);
 		}
 
@@ -237,10 +237,12 @@ public class DefaultChangers {
 					case SET:
 						assert delta != null;
 						Object object = delta[0];
-						if (object instanceof ItemStack itemStack && itemStack.getType().isBlock()) {
+						if (object instanceof Material material && material.isBlock()) {
+							block.setType(material);
+						} else if (object instanceof ItemStack itemStack && itemStack.getType().isBlock()) {
 							block.setType(itemStack.getType());
-						} else if (object instanceof BlockData) {
-							block.setBlockData(((BlockData) object));
+						} else if (object instanceof BlockData blockData) {
+							block.setBlockData(blockData);
 						}
 						break;
 					case DELETE:
