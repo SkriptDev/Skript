@@ -2,6 +2,7 @@ package ch.njol.skript.classes.data;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptConfig;
+import ch.njol.skript.bukkitutil.EntityCategory;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.util.BlockUtils;
 import ch.njol.skript.util.Date;
@@ -20,6 +21,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.EnchantmentOffer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -82,6 +84,12 @@ public class DefaultComparators {
 
 		// EntityType - EntityType
 		Comparators.registerComparator(EntityType.class, EntityType.class, (o1, o2) -> Relation.get(o1.equals(o2)));
+
+		// Entity - EntityType
+		Comparators.registerComparator(Entity.class, EntityType.class, (o1, o2) -> Relation.get(o1.getType() == o2));
+
+		// Entity - EntityCategory
+		Comparators.registerComparator(Entity.class, EntityCategory.class, (o1, o2) -> Relation.get(o2.isOfType(o1)));
 
 		// OfflinePlayer - OfflinePlayer
 		Comparators.registerComparator(OfflinePlayer.class, OfflinePlayer.class, (p1, p2) -> Relation.get(Objects.equals(p1.getName(), p2.getName())));

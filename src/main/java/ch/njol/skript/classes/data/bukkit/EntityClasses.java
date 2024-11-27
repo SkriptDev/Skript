@@ -3,6 +3,7 @@ package ch.njol.skript.classes.data.bukkit;
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.bukkitutil.BukkitUtils;
+import ch.njol.skript.bukkitutil.EntityCategory;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.classes.EnumClassInfo;
 import ch.njol.skript.classes.Parser;
@@ -96,6 +97,17 @@ public class EntityClasses {
 				}
 			})
 			.changer(DefaultChangers.entityChanger));
+
+		Classes.registerClass(new EnumClassInfo<>(EntityCategory.class, "entitycategory", "entity categories")
+			.user("entity ?categor(y|ies)")
+			.name("Entity Category")
+			.description("Represents different categories of entities."));
+
+		Classes.registerClass(new RegistryClassInfo<>(EntityType.class, Registry.ENTITY_TYPE, "entitytype")
+			.user("entity ?types?")
+			.name("Entity Type")
+			.description("Represents different types of entities.")
+			.since("INSERT VERSION"));
 
 		Classes.registerClass(new ClassInfo<>(CommandSender.class, "commandsender")
 			.user("((commands?)? ?)?(sender|executor)s?")
@@ -354,12 +366,6 @@ public class EntityClasses {
 				.requiredPlugins("Minecraft 1.14 or newer")
 				.documentationId("CatType"));
 		}
-
-		Classes.registerClass(new RegistryClassInfo<>(EntityType.class, Registry.ENTITY_TYPE, "entitytype")
-			.user("entity ?types?")
-			.name("Entity Type")
-			.description("Represents different types of entities.")
-			.since("INSERT VERSION"));
 
 		Classes.registerClass(new EnumClassInfo<>(Panda.Gene.class, "gene", "genes")
 			.user("(panda )?genes?")
