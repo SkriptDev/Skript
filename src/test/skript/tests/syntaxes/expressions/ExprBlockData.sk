@@ -1,4 +1,5 @@
 test "block data" when running minecraft "1.14.4":
+	# BlockData of Block
 	set {_b} to block at spawn of world "world"
 	set block at {_b} to campfire[lit=false;waterlogged=true]
 	assert material of block at {_b} is campfire with "block at spawn should be a campfire"
@@ -12,3 +13,13 @@ test "block data" when running minecraft "1.14.4":
 	assert "%{_data}%" contains "campfire", "lit=false" and "waterlogged=true" with "block data for campfire did not match"
 
 	set block at {_b} to air
+
+	# BlockData of BlockDisplay
+	spawn block display at location(1,1,1)
+	set {_e} to last spawned entity
+	assert blockdata of {_e} = air[] with "BlockData of entity should be air"
+
+	set blockdata of {_e} to stone[]
+	assert blockdata of {_e} = stone[] with "BlockData of entity should be stone"
+	delete entity within {_e}
+

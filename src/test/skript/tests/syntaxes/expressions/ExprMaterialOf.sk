@@ -1,0 +1,28 @@
+test "material of expression":
+	# Material of ItemStack
+	set {_i} to itemstack of diamond sword
+	assert material of {_i} = diamond sword with "Material of item should have been diamond sword"
+
+	# Material of Block
+	set {_mat} to material of block at location(1,1,1)
+	set material of block at location(1,1,1) to oak planks
+	assert material of block at location(1,1,1) = oak planks with "Material of block should have been oak planks"
+	set material of block at location(1,1,1) to {_mat}
+
+	# Material of ItemDisplay
+	spawn item display at location(1,1,1)
+	set {_e} to last spawned entity
+	set material of {_e} to diamond
+	assert material of {_e} = diamond with "Material of entity should have been diamond"
+	set material of {_e} to air
+	assert material of {_e} = air with "Material of entity should have been air"
+	delete entity within {_e}
+
+	# Material of BlockDisplay
+	spawn block display at location(1,1,1)
+	set {_e} to last spawned entity
+	set material of {_e} to diamond ore
+	assert material of {_e} = diamond ore with "Material of entity should have been diamond ore"
+	set material of {_e} to air
+	assert material of {_e} = air with "Material of entity should have been air"
+	delete entity within {_e}

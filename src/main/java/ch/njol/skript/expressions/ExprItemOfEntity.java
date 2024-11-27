@@ -10,6 +10,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.ThrowableProjectile;
 import org.bukkit.event.Event;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 	"For dropped item entities, it gets the item that was dropped.",
 	"For item frames, the item inside the frame is returned.",
 	"For throwable projectiles (snowballs, enderpearls etc.) it gets the displayed item.",
+	"For ItemDisplay entities it gets the item show on display.",
 	"Other entities do not have items associated with them.",
 	"Deleting the item of an ItemFrame will just remove the ItemStack from the frame but deleting the item of " +
 		"a dropped item or projectile will remove the entity itself."})
@@ -44,6 +46,8 @@ public class ExprItemOfEntity extends SimplePropertyExpression<Entity, ItemStack
 			itemStack = item.getItemStack();
 		} else if (entity instanceof ThrowableProjectile projectile) {
 			itemStack = projectile.getItem();
+		} else if (entity instanceof ItemDisplay itemDisplay) {
+			itemStack = itemDisplay.getItemStack();
 		}
 		if (itemStack != null && itemStack.getType().isAir()) return null;
 		return itemStack;
@@ -80,6 +84,8 @@ public class ExprItemOfEntity extends SimplePropertyExpression<Entity, ItemStack
 				} else {
 					projectile.setItem(itemStack);
 				}
+			} else if (entity instanceof ItemDisplay itemDisplay) {
+				itemDisplay.setItemStack(itemStack);
 			}
 		}
 	}

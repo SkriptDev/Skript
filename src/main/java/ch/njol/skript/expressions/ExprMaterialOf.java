@@ -12,15 +12,17 @@ import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.BlockDisplay;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Material Of")
-@Description({"Get the material of an ItemStack/Block/BlockData.",
+@Description({"Get the material of an ItemStack/Block/BlockData/BlockDisplay/ItemDisplay.",
 	"Setting the material of an ItemStack is not supported and may result in weird behaviour.",
 	"Setting the material of a BlockData is not supported.",
-	"Setting the material of a Block will act normally."})
+	"Setting the material of a Block/BlockDisplay/ItemDisplay will act normally."})
 @Examples({"if material of player's tool = diamond:",
 	"set {_mat} to material of player's tool",
 	"set {_mat} to material of target block of player",
@@ -28,9 +30,11 @@ import org.jetbrains.annotations.Nullable;
 @Since("INSERT VERSION")
 public class ExprMaterialOf extends SimplePropertyExpression<Object, Material> {
 
+	private static final BlockData AIR = Material.AIR.createBlockData();
+
 	static {
 		register(ExprMaterialOf.class, Material.class, "material[s]",
-			"itemstacks/blocks/blockdatas");
+			"itemstacks/blocks/blockdatas/entities");
 	}
 
 	@Override
@@ -41,6 +45,10 @@ public class ExprMaterialOf extends SimplePropertyExpression<Object, Material> {
 			return block.getType();
 		} else if (from instanceof BlockData blockData) {
 			return blockData.getMaterial();
+		} else if (from instanceof BlockDisplay blockDisplay) {
+			return blockDisplay.getBlock().getMaterial();
+		} else if (from instanceof ItemDisplay itemDisplay) {
+			return itemDisplay.getItemStack().getType();
 		}
 		return null;
 	}
@@ -51,7 +59,7 @@ public class ExprMaterialOf extends SimplePropertyExpression<Object, Material> {
 			Skript.warning("The material of an ItemStack cannot properly be set and may result in issues." +
 				"Instead you should set the ItemStack to a new ItemStack.");
 		}
-		if (mode == ChangeMode.SET) {
+		if (mode == ChangeMode.SET || mode == ChangeMode.DELETE) {
 			return CollectionUtils.array(Material.class);
 		}
 		return null;
@@ -63,15 +71,21 @@ public class ExprMaterialOf extends SimplePropertyExpression<Object, Material> {
 		Expression<?> expr = getExpr();
 		if (expr == null) return;
 
-		if (delta != null && delta[0] instanceof Material material) {
-			for (Object object : expr.getArray(event)) {
-				if (object instanceof ItemStack itemStack) {
-					itemStack.setType(material);
-				} else if (object instanceof Block block) {
-					block.setType(material);
-				}
+		Material material = delta != null && delta[0] instanceof Material mat ? mat : null;
+
+		for (Object object : expr.getArray(event)) {
+			if (object instanceof ItemStack itemStack) {
+				if (material == null) continue;
+				itemStack.setType(material);
+			} else if (object instanceof Block block) {
+				block.setType(material != null ? material : Material.AIR);
+			} else if (object instanceof BlockDisplay blockDisplay) {
+				blockDisplay.setBlock(material != null ? material.createBlockData() : AIR);
+			} else if (object instanceof ItemDisplay itemDisplay) {
+				itemDisplay.setItemStack(material != null ? new ItemStack(material) : null);
 			}
 		}
+
 	}
 
 	@Override
