@@ -9,6 +9,7 @@ import ch.njol.skript.util.GameruleValue;
 import ch.njol.skript.util.Time;
 import ch.njol.skript.util.Timeperiod;
 import ch.njol.skript.util.Timespan;
+import ch.njol.skript.util.Timespan.TimePeriod;
 import ch.njol.skript.util.WeatherType;
 import ch.njol.util.StringUtils;
 import org.bukkit.Location;
@@ -65,56 +66,16 @@ public class DefaultComparators {
 		});
 
 		// Block - BlockData
-		Comparators.registerComparator(Block.class, BlockData.class, new Comparator<>() {
-			@Override
-			public Relation compare(Block block, BlockData data) {
-				return Relation.get(block.getBlockData().matches(data));
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-		});
+		Comparators.registerComparator(Block.class, BlockData.class, (block, data) -> Relation.get(block.getBlockData().matches(data)));
 
 		// BlockData - BlockData
-		Comparators.registerComparator(BlockData.class, BlockData.class, new Comparator<>() {
-			@Override
-			public Relation compare(BlockData data1, BlockData data2) {
-				return Relation.get(data1.matches(data2));
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-		});
+		Comparators.registerComparator(BlockData.class, BlockData.class, (data1, data2) -> Relation.get(data1.matches(data2)));
 
 		// Block - Block
-		Comparators.registerComparator(Block.class, Block.class, new Comparator<>() {
-			@Override
-			public Relation compare(Block b1, Block b2) {
-				return Relation.get(BlockUtils.extractBlock(b1).equals(BlockUtils.extractBlock(b2)));
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-		});
+		Comparators.registerComparator(Block.class, Block.class, (b1, b2) -> Relation.get(BlockUtils.extractBlock(b1).equals(BlockUtils.extractBlock(b2))));
 
 		// CommandSender - CommandSender
-		Comparators.registerComparator(CommandSender.class, CommandSender.class, new Comparator<>() {
-			@Override
-			public Relation compare(CommandSender s1, CommandSender s2) {
-				return Relation.get(s1.equals(s2));
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-		});
+		Comparators.registerComparator(CommandSender.class, CommandSender.class, (s1, s2) -> Relation.get(s1.equals(s2)));
 
 		// ItemStack - ItemStack
 		Comparators.registerComparator(ItemStack.class, ItemStack.class, (o1, o2) -> Relation.get(o1.equals(o2)));
@@ -123,57 +84,19 @@ public class DefaultComparators {
 		Comparators.registerComparator(EntityType.class, EntityType.class, (o1, o2) -> Relation.get(o1.equals(o2)));
 
 		// OfflinePlayer - OfflinePlayer
-		Comparators.registerComparator(OfflinePlayer.class, OfflinePlayer.class, new Comparator<>() {
-			@Override
-			public Relation compare(OfflinePlayer p1, OfflinePlayer p2) {
-				return Relation.get(Objects.equals(p1.getName(), p2.getName()));
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-		});
+		Comparators.registerComparator(OfflinePlayer.class, OfflinePlayer.class, (p1, p2) -> Relation.get(Objects.equals(p1.getName(), p2.getName())));
 
 		// OfflinePlayer - String
-		Comparators.registerComparator(OfflinePlayer.class, String.class, new Comparator<>() {
-			@Override
-			public Relation compare(OfflinePlayer p, String name) {
-				String offlineName = p.getName();
-				return offlineName == null ? Relation.NOT_EQUAL : Relation.get(offlineName.equalsIgnoreCase(name));
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
+		Comparators.registerComparator(OfflinePlayer.class, String.class, (p, name) -> {
+			String offlineName = p.getName();
+			return offlineName == null ? Relation.NOT_EQUAL : Relation.get(offlineName.equalsIgnoreCase(name));
 		});
 
 		// World - String
-		Comparators.registerComparator(World.class, String.class, new Comparator<>() {
-			@Override
-			public Relation compare(World w, String name) {
-				return Relation.get(w.getName().equalsIgnoreCase(name));
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-		});
+		Comparators.registerComparator(World.class, String.class, (w, name) -> Relation.get(w.getName().equalsIgnoreCase(name)));
 
 		// String - String
-		Comparators.registerComparator(String.class, String.class, new Comparator<>() {
-			@Override
-			public Relation compare(String s1, String s2) {
-				return Relation.get(StringUtils.equals(s1, s2, SkriptConfig.caseSensitive.value()));
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-		});
+		Comparators.registerComparator(String.class, String.class, (s1, s2) -> Relation.get(StringUtils.equals(s1, s2, SkriptConfig.caseSensitive.value())));
 
 		// Date - Date
 		Comparators.registerComparator(Date.class, Date.class, new Comparator<>() {
@@ -205,7 +128,7 @@ public class DefaultComparators {
 		Comparators.registerComparator(Timespan.class, Timespan.class, new Comparator<>() {
 			@Override
 			public Relation compare(Timespan t1, Timespan t2) {
-				return Relation.get(t1.getMilliSeconds() - t2.getMilliSeconds());
+				return Relation.get(t1.getAs(TimePeriod.MILLISECOND) - t2.getAs(TimePeriod.MILLISECOND));
 			}
 
 			@Override
@@ -215,62 +138,21 @@ public class DefaultComparators {
 		});
 
 		// Time - Timeperiod
-		Comparators.registerComparator(Time.class, Timeperiod.class, new Comparator<>() {
-			@Override
-			public Relation compare(Time t, Timeperiod p) {
-				return Relation.get(p.contains(t));
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-		});
+		Comparators.registerComparator(Time.class, Timeperiod.class, (t, p) -> Relation.get(p.contains(t)));
 
 		// TreeType - TreeType
-		Comparators.registerComparator(TreeType.class, TreeType.class, new Comparator<>() {
-			@Override
-			public Relation compare(TreeType s1, TreeType s2) {
-				return Relation.get(s1.equals(s2));
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-		});
+		Comparators.registerComparator(TreeType.class, TreeType.class, (s1, s2) -> Relation.get(s1.equals(s2)));
 
 		// Object - ClassInfo
-		Comparators.registerComparator(Object.class, ClassInfo.class, new Comparator<>() {
-			@Override
-			public Relation compare(Object o, ClassInfo c) {
-				return Relation.get(c.getC().isInstance(o) || o instanceof ClassInfo && c.getC().isAssignableFrom(((ClassInfo<?>) o).getC()));
-			}
+		Comparators.registerComparator(Object.class, ClassInfo.class, (o, c) -> Relation.get(c.getC().isInstance(o) || o instanceof ClassInfo && c.getC().isAssignableFrom(((ClassInfo<?>) o).getC())));
 
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-		});
-
-		Comparators.registerComparator(GameruleValue.class, GameruleValue.class, new Comparator<>() {
-			@Override
-			public Relation compare(GameruleValue o1, GameruleValue o2) {
-				return Relation.get(o1.equals(o2));
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-		});
+		Comparators.registerComparator(GameruleValue.class, GameruleValue.class, (o1, o2) -> Relation.get(o1.equals(o2)));
 
 		Comparators.registerComparator(GameruleValue.class, Number.class, new Comparator<>() {
 			@Override
 			public Relation compare(GameruleValue o1, Number o2) {
-				if (!(o1.getGameruleValue() instanceof Number))
+				if (!(o1.getGameruleValue() instanceof Number gameruleValue))
 					return Relation.NOT_EQUAL;
-				Number gameruleValue = (Number) o1.getGameruleValue();
 				return Comparators.compare(gameruleValue, o2);
 			}
 
@@ -280,80 +162,32 @@ public class DefaultComparators {
 			}
 		});
 
-		Comparators.registerComparator(GameruleValue.class, Boolean.class, new Comparator<>() {
-			@Override
-			public Relation compare(GameruleValue o1, Boolean o2) {
-				if (!(o1.getGameruleValue() instanceof Boolean))
-					return Relation.NOT_EQUAL;
-				return Relation.get(o2.equals(o1.getGameruleValue()));
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
+		Comparators.registerComparator(GameruleValue.class, Boolean.class, (o1, o2) -> {
+			if (!(o1.getGameruleValue() instanceof Boolean))
+				return Relation.NOT_EQUAL;
+			return Relation.get(o2.equals(o1.getGameruleValue()));
 		});
 
 		// EnchantmentOffer Comparators
 		// EnchantmentOffer - Number
-		Comparators.registerComparator(EnchantmentOffer.class, Number.class, new Comparator<>() {
-			@Override
-			public Relation compare(EnchantmentOffer eo, Number exp) {
-				return Relation.get(eo.getCost() == exp.intValue());
-			}
+		Comparators.registerComparator(EnchantmentOffer.class, Number.class, (eo, exp) -> Relation.get(eo.getCost() == exp.intValue()));
 
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-		});
-
-		Comparators.registerComparator(Inventory.class, InventoryType.class, new Comparator<>() {
-			@Override
-			public Relation compare(Inventory inventory, InventoryType inventoryType) {
-				return Relation.get(inventory.getType() == inventoryType);
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-		});
+		Comparators.registerComparator(Inventory.class, InventoryType.class, (inventory, inventoryType) -> Relation.get(inventory.getType() == inventoryType));
 
 		// World - WeatherType
-		Comparators.registerComparator(World.class, WeatherType.class, new Comparator<>() {
-			@Override
-			public Relation compare(World world, WeatherType weatherType) {
-				return Relation.get(WeatherType.fromWorld(world) == weatherType);
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-		});
+		Comparators.registerComparator(World.class, WeatherType.class, (world, weatherType) -> Relation.get(WeatherType.fromWorld(world) == weatherType));
 
 		// Location - Location
-		Comparators.registerComparator(Location.class, Location.class, new Comparator<>() {
-			@Override
-			public Relation compare(Location first, Location second) {
-				return Relation.get(
-					// compare worlds
-					Objects.equals(first.getWorld(), second.getWorld()) &&
-						// compare xyz coords
-						first.toVector().equals(second.toVector()) &&
-						// normalize yaw and pitch to [-180, 180) and [-90, 90] respectively
-						// before comparing them
-						Location.normalizeYaw(first.getYaw()) == Location.normalizeYaw(second.getYaw()) &&
-						Location.normalizePitch(first.getPitch()) == Location.normalizePitch(second.getPitch())
-				);
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return false;
-			}
-		});
+		Comparators.registerComparator(Location.class, Location.class, (first, second) -> Relation.get(
+			// compare worlds
+			Objects.equals(first.getWorld(), second.getWorld()) &&
+				// compare xyz coords
+				first.toVector().equals(second.toVector()) &&
+				// normalize yaw and pitch to [-180, 180) and [-90, 90] respectively
+				// before comparing them
+				Location.normalizeYaw(first.getYaw()) == Location.normalizeYaw(second.getYaw()) &&
+				Location.normalizePitch(first.getPitch()) == Location.normalizePitch(second.getPitch())
+		));
 
 		// Potion Effect Type
 		Comparators.registerComparator(PotionEffectType.class, PotionEffectType.class, (one, two) -> Relation.get(one.equals(two)));
