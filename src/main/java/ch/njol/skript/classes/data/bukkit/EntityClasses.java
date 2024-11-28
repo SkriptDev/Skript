@@ -101,7 +101,8 @@ public class EntityClasses {
 		Classes.registerClass(new EnumClassInfo<>(EntityCategory.class, "entitycategory", "entity categories")
 			.user("entity ?categor(y|ies)")
 			.name("Entity Category")
-			.description("Represents different categories of entities."));
+			.description("Represents different categories of entities.")
+			.since("INSERT VERSION"));
 
 		Classes.registerClass(new RegistryClassInfo<>(EntityType.class, Registry.ENTITY_TYPE, "entitytype")
 			.user("entity ?types?")
