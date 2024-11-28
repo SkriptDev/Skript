@@ -18,14 +18,11 @@
  */
 package ch.njol.skript.test.runner;
 
-import ch.njol.skript.conditions.CondCompare;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.VerboseAssert;
-import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.LiteralUtils;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
-import org.skriptlang.skript.lang.comparator.Relation;
 import org.skriptlang.skript.lang.script.Script;
 
 import ch.njol.skript.Skript;
