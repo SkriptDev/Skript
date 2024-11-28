@@ -463,7 +463,7 @@ public class HTMLGenerator {
 
 		// Description
 		Description description = c.getAnnotation(Description.class);
-		desc = desc.replace("${element.desc}", Joiner.on("\n").join(getDefaultIfNullOrEmpty((description != null ? description.value() : null), "Unknown description.")).replace("\n\n", "<p>"));
+		desc = desc.replace("${element.desc}", Joiner.on("<br>").join(getDefaultIfNullOrEmpty((description != null ? description.value() : null), "Unknown description.")).replace("\n\n", "<p>"));
 		desc = desc.replace("${element.desc-safe}", Joiner.on("\n").join(getDefaultIfNullOrEmpty((description != null ? description.value() : null), "Unknown description."))
 				.replace("\\", "\\\\").replace("\"", "\\\"").replace("\t", "    "));
 
@@ -588,7 +588,7 @@ public class HTMLGenerator {
 
 		// Description
 		String[] description = getDefaultIfNullOrEmpty(info.getDescription(), "Missing description.");
-		desc = desc.replace("${element.desc}", Joiner.on("\n").join(description).replace("\n\n", "<p>"));
+		desc = desc.replace("${element.desc}", Joiner.on("<br>").join(description).replace("\n\n", "<p>"));
 		desc = desc
 				.replace("${element.desc-safe}", Joiner.on("\\n").join(description)
 				.replace("\\", "\\\\").replace("\"", "\\\"").replace("\t", "    "));
