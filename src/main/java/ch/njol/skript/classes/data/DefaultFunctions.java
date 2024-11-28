@@ -618,7 +618,7 @@ public class DefaultFunctions {
 		Functions.registerFunction(new SimpleJavaFunction<>("enchantmentOffer", new Parameter[]{
 				new Parameter<>("enchantment", DefaultClasses.ENCHANTMENT, true, null),
 				new Parameter<>("level", DefaultClasses.NUMBER, true, null),
-				new Parameter<>("cost", DefaultClasses.NUMBER, true, new SimpleLiteral<Number>(0, true))
+				new Parameter<>("cost", DefaultClasses.NUMBER, true, new SimpleLiteral<Number>(1, true))
 			}, DefaultClasses.ENCHANTMENT_OFFER, true) {
 				@Override
 				public @Nullable EnchantmentOffer[] executeSimple(Object[][] params) {
@@ -627,8 +627,13 @@ public class DefaultFunctions {
 					int cost = ((Number) params[2][0]).intValue();
 					return new EnchantmentOffer[]{new EnchantmentOffer(enchantment, level, cost)};
 				}
-			}).description("")
-			.examples("")
+			})
+			.description("Create an enchantment offer to be used in the enchantment prepare event.",
+				"Cost is optional and will default to 1.")
+			.examples("on enchant prepare:",
+				"\tset enchantment offer 1 to enchantmentOffer(sharpness, 5, 10)",
+				"\tset enchantment offer 2 to enchantmentOffer(unbreaking, 1)",
+				"\tset enchantment offer 3 to enchantmentOffer(custom:fancy_enchantment, 2, 2)")
 			.since("INSERT VERSION");
 
 	}
