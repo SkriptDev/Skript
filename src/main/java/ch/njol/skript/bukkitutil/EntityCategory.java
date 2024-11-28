@@ -1,7 +1,6 @@
 package ch.njol.skript.bukkitutil;
 
 import io.papermc.paper.entity.Bucketable;
-import io.papermc.paper.entity.Leashable;
 import io.papermc.paper.entity.SchoolableFish;
 import io.papermc.paper.entity.Shearable;
 import org.bukkit.entity.AbstractArrow;
@@ -56,7 +55,6 @@ public enum EntityCategory {
 	GOLEM(Golem.class),
 	HANGING(Hanging.class),
 	ILLAGER(Illager.class),
-	LEASHABLE(Leashable.class),
 	MINECART(Minecart.class),
 	MOB(Mob.class),
 	MONSTER(Monster.class),
