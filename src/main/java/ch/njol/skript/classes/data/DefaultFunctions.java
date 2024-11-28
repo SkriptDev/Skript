@@ -634,7 +634,7 @@ public class DefaultFunctions {
 				"\tset enchantment offer 1 to enchantmentOffer(sharpness, 5, 10)",
 				"\tset enchantment offer 2 to enchantmentOffer(unbreaking, 1)",
 				"\tset enchantment offer 3 to enchantmentOffer(custom:fancy_enchantment, 2, 2)")
-			.since("INSERT VERSION");
+			.since("3.0.0");
 
 	}
 

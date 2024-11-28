@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 @Description("Get the EntityType of an entity.")
 @Examples({"set {_type} to entity type of target entity",
 	"if entity type of target = pig:"})
-@Since("INSERT VERSION")
+@Since("3.0.0")
 public class ExprEntityTypeOf extends SimplePropertyExpression<Entity, EntityType> {
 
 	static {

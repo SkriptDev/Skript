@@ -102,13 +102,13 @@ public class EntityClasses {
 			.user("entity ?categor(y|ies)")
 			.name("Entity Category")
 			.description("Represents different categories of entities.")
-			.since("INSERT VERSION"));
+			.since("3.0.0"));
 
 		Classes.registerClass(new RegistryClassInfo<>(EntityType.class, Registry.ENTITY_TYPE, "entitytype")
 			.user("entity ?types?")
 			.name("Entity Type")
 			.description("Represents different types of entities.")
-			.since("INSERT VERSION"));
+			.since("3.0.0"));
 
 		Classes.registerClass(new ClassInfo<>(CommandSender.class, "commandsender")
 			.user("((commands?)? ?)?(sender|executor)s?")

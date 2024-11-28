@@ -29,7 +29,7 @@ import java.util.Set;
 	"if {_i} partially matches itemstack of diamond sword: # This will pass as only the components of the second item are checked.",
 	"if player's tool matches {_i}:"})
 @RequiredPlugins("Paper 1.21.3+ for Partial Matching")
-@Since("INSERT VERSION")
+@Since("3.0.0")
 public class CondItemStackMatches extends Condition {
 
 	private static final boolean HAS_DATA_COMP = Skript.classExists("io.papermc.paper.datacomponent.DataComponentType");

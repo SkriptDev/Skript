@@ -59,7 +59,7 @@ public class InventoryClasses {
 			.user("equipment ?slots?")
 			.name("Equipment Slot")
 			.description("Represents the different slot types of an entity.")
-			.since("INSERT VERSION"));
+			.since("3.0.0"));
 
 		Classes.registerClass(new EnumClassInfo<>(FireworkEffect.Type.class, "fireworktype", "firework types")
 			.user("firework ?types?")
@@ -210,7 +210,7 @@ public class InventoryClasses {
 				"set {_item} to itemstack of diamond axe",
 				"set {_item} to itemstack of diamond_axe",
 				"set {_item} to itemstack of minecraft:diamond_axe")
-			.since("INSERT VERSION"));
+			.since("3.0.0"));
 
 		Classes.registerClass(new ClassInfo<>(ItemStack.class, "itemstack")
 			.user("items?", "itemstacks?")

@@ -187,7 +187,7 @@ public class ServerClasses {
 			.user("tree ?types?")
 			.name("Tree Type")
 			.description("Represents different types of trees that can be grown.")
-			.since("INSERT VERSION"));
+			.since("3.0.0"));
 	}
 
 }

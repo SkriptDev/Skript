@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 	"set block at player to {data}",
 	"set block data of target block to oak_stairs[facing=south;waterlogged=true]"})
 @RequiredPlugins("Minecraft 1.13+")
-@Since("2.5, 2.5.2 (set), INSERT VERSION (BlockDisplays)")
+@Since("2.5, 2.5.2 (set), 3.0.0 (BlockDisplays)")
 public class ExprBlockData extends SimplePropertyExpression<Object, BlockData> {
 
 	private static final BlockData AIR = Material.AIR.createBlockData();

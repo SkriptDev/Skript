@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 	"set {_mat} to material of player's tool",
 	"set {_mat} to material of target block of player",
 	"set material of target block of player to oak log"})
-@Since("INSERT VERSION")
+@Since("3.0.0")
 public class ExprMaterialOf extends SimplePropertyExpression<Object, Material> {
 
 	private static final BlockData AIR = Material.AIR.createBlockData();

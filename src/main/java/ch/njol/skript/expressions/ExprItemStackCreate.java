@@ -22,7 +22,7 @@ import java.util.List;
 @Description("Create a new item stack.")
 @Examples({"set {_i} to itemstack of 10 of diamond",
 	"set {_i} to itemstack of netherite shovel"})
-@Since("INSERT VERSION")
+@Since("3.0.0")
 public class ExprItemStackCreate extends SimpleExpression<ItemStack> {
 
 	static {
