@@ -1,0 +1,36 @@
+test "entity type":
+	spawn a sheep at spawn of world "world":
+		set {_e} to entity
+
+	assert entity type of {_e} = sheep with "Type of entity should be a sheep"
+	assert entity type of {_e} != pig with "Type of entity should not be a pig"
+
+	assert {_e} is a sheep with "Entity should be a sheep"
+	assert {_e} is not a pig with "Entity should not be a pig"
+
+	delete entity within {_e}
+
+test "entity category":
+	spawn a sheep at spawn of world "world":
+		set {_e} to entity
+
+	assert {_e} is a mob with "A sheep should be a mob"
+	assert {_e} is a living entity with "A sheep should be a living entity"
+	assert {_e} is an animal with "A sheep should be an animal"
+	assert {_e} is not a monster with "A sheep should not be a monster"
+	assert {_e} is not an enemy with "A sheep should not be an enemy"
+
+	delete entity within {_e}
+
+	spawn a pillager at spawn of world "world":
+		set {_e} to entity
+
+	assert {_e} is a mob with "A pillager should be a mob"
+	assert {_e} is a living entity with "A pillager should be a living entity"
+	assert {_e} is not an animal with "A pillager should not be an animal"
+	assert {_e} is an illager with "A pillager should be an illager"
+	assert {_e} is a raider with "A pillager should be a raider"
+	assert {_e} is a monster with "A pillager should be a monster"
+	assert {_e} is an enemy with "A pillager should be an enemy"
+
+	delete entity within {_e}
