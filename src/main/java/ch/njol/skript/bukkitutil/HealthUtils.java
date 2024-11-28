@@ -77,6 +77,17 @@ public class HealthUtils {
 	}
 
 	/**
+	 * Reset max health of an entity
+	 *
+	 * @param entity Entity to reset max health
+	 */
+	public static void resetMaxHealth(Damageable entity) {
+		AttributeInstance attributeInstance = ((Attributable) entity).getAttribute(MAX_HEALTH);
+		assert attributeInstance != null;
+		attributeInstance.setBaseValue(attributeInstance.getDefaultValue());
+	}
+
+	/**
 	 * Apply damage to an entity
 	 *
 	 * @param e Entity to apply damage to
