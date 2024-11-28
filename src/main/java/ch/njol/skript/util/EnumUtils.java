@@ -6,6 +6,7 @@ import ch.njol.util.NonNullPair;
 import ch.njol.util.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -54,6 +55,13 @@ public final class EnumUtils<E extends Enum<E>> {
 					String tempName = constant.name().toLowerCase(Locale.ENGLISH).replace("_", " ");
 					names[ordinal] = tempName;
 					parseMap.put(tempName, constant);
+
+					// Create articles for entries
+					String start = switch (tempName.charAt(0)) {
+						case 'a', 'e', 'i', 'o', 'u' -> "an";
+						default -> "a";
+					};
+					parseMap.put(start + " " + tempName, constant);
 					continue;
 				}
 
@@ -92,6 +100,7 @@ public final class EnumUtils<E extends Enum<E>> {
 	 * @param flags      not currently used
 	 * @return A string representation of the enumerator.
 	 */
+	@SuppressWarnings("unused")
 	public String toString(E enumerator, int flags) {
 		String s = names[enumerator.ordinal()];
 		return s != null ? s : enumerator.name();
@@ -102,7 +111,7 @@ public final class EnumUtils<E extends Enum<E>> {
 	 * Note that some entries may represent the same enumerator.
 	 */
 	public String getAllNames() {
-		return StringUtils.join(parseMap.keySet(), ", ");
+		return StringUtils.join(Arrays.stream(names).sorted().toList(), ", ");
 	}
 
 }
