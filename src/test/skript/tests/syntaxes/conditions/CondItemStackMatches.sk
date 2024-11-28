@@ -1,0 +1,22 @@
+test "item stack matching":
+	set {_i} to itemstack of diamond sword named "BOB"
+
+	assert {_i} matches itemstack of diamond sword named "BOB" with "The two items should match"
+	assert {_i} matches itemstack of 10 of diamond sword named "BOB" with "The two items should match"
+	assert {_i} doesn't match itemstack of diamond sword with "The two items shouldn't match"
+
+	set {_i} to itemstack of 25 of iron ingot named "BOB"
+
+	assert {_i} matches itemstack of iron ingot named "BOB" with "The two items should match"
+	assert {_i} doesn't match itemstack of iron ingot with "The twwo items shouldn't match"
+
+test "item stack partial matching" when running minecraft "1.21.3":
+	set {_i} to itemstack of diamond sword named "BOB" with lore "omg lore"
+
+	assert {_i} partially matches itemstack of diamond sword with "The two items should partially match"
+	assert {_i} partially matches itemstack of diamond sword named "BOB" with "The two items should partially match"
+	assert {_i} partially matches itemstack of diamond sword with lore "omg lore" with "The two items should partially match"
+
+	set {_i2} to itemstack of diamond sword named "BOB" with lore "omg lore" with custom model data 10
+
+	assert {_i} doesn't partially match {_i2} with "The two items shouldn't match"
