@@ -227,7 +227,7 @@ public final class Skript extends JavaPlugin implements Listener {
 	public static ServerPlatform getServerPlatform() {
 		if (classExists("net.glowstone.GlowServer")) {
 			return ServerPlatform.BUKKIT_GLOWSTONE; // Glowstone has timings too, so must check for it first
-		} else if (classExists("co.aikar.timings.Timings")) {
+		} else if (classExists("io.papermc.paper.ServerBuildInfo")) {
 			return ServerPlatform.BUKKIT_PAPER; // Could be Sponge, but it doesn't work at all at the moment
 		} else if (classExists("org.spigotmc.SpigotConfig")) {
 			return ServerPlatform.BUKKIT_SPIGOT;
@@ -237,17 +237,6 @@ public final class Skript extends JavaPlugin implements Listener {
 		} else { // Probably some ancient Bukkit implementation
 			return ServerPlatform.BUKKIT_UNKNOWN;
 		}
-	}
-
-	/**
-	 * Returns true if the underlying installed Java/JVM is 32-bit, false otherwise.
-	 * Note that this depends on a internal system property and these can always be overridden by user using -D JVM options,
-	 * more specifically, this method will return false on non OracleJDK/OpenJDK based JVMs, that don't include bit information in java.vm.name system property.
-	 * @return Whether the installed Java/JVM is 32-bit or not.
-	 */
-	private static boolean using32BitJava() {
-		// Property returned should either be "Java HotSpot(TM) 32-Bit Server VM" or "OpenJDK 32-Bit Server VM" if 32-bit and using OracleJDK/OpenJDK
-		return System.getProperty("java.vm.name").contains("32");
 	}
 
 	/**
@@ -268,11 +257,11 @@ public final class Skript extends JavaPlugin implements Listener {
 		Skript.debug("Loading for Minecraft " + minecraftVersion);
 
 		// Check that MC version is supported
-		if (!isRunningMinecraft(1, 9)) {
+		if (!isRunningMinecraft(1, 20, 6)) {
 			// Prevent loading when not running at least Minecraft 1.9
-			Skript.error("This version of Skript does not work with Minecraft " + minecraftVersion + " and requires Minecraft 1.9.4+");
-			Skript.error("You probably want Skript 2.2 or 2.1 (Google to find where to get them)");
-			Skript.error("Note that those versions are, of course, completely unsupported!");
+			Skript.error("This version of Skript does not work with Minecraft " + minecraftVersion + " and requires Minecraft 1.20.6+");
+			Skript.error("You probably want Skript 2.x from SkriptLang (Google to find where to get it)");
+			Skript.error("Note that those versions are, of course, completely unsupported by SkriptDev!");
 			return false;
 		}
 
