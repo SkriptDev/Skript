@@ -11,6 +11,7 @@ import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.StringMode;
 import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Registry;
 import org.bukkit.block.BlockState;
@@ -44,6 +45,7 @@ public class InventoryClasses {
 			.examples("")
 			.since("2.2-dev16b, 2.2-dev35 (renamed to click type)"));
 
+		//noinspection deprecation
 		Classes.registerClass(new RegistryClassInfo<>(Enchantment.class, Registry.ENCHANTMENT, "enchantment")
 			.user("enchantments?")
 			.name("Enchantment")
@@ -160,18 +162,24 @@ public class InventoryClasses {
 					return false;
 				}
 
+				@SuppressWarnings("IfCanBeSwitch")
 				@Override
 				public String toString(InventoryHolder holder, int flags) {
-					if (holder instanceof BlockState) {
-						return Classes.toString(((BlockState) holder).getBlock());
+					if (holder instanceof BlockState blockState) {
+						return Classes.toString(blockState.getBlock());
 					} else if (holder instanceof DoubleChest) {
-						return Classes.toString(holder.getInventory().getLocation().getBlock());
-					} else if (holder instanceof BlockInventoryHolder) {
-						return Classes.toString(((BlockInventoryHolder) holder).getBlock());
-					} else if (Classes.getSuperClassInfo(holder.getClass()).getC() == InventoryHolder.class) {
-						return holder.getClass().getSimpleName(); // an inventory holder and only that
+						Location location = holder.getInventory().getLocation();
+						if (location == null) return null;
+						return Classes.toString(location.getBlock());
+					} else if (holder instanceof BlockInventoryHolder blockHolder) {
+						return Classes.toString(blockHolder.getBlock());
 					} else {
-						return Classes.toString(holder);
+						ClassInfo<?> superClassInfo = Classes.getSuperClassInfo(holder.getClass());
+						if (superClassInfo != null && superClassInfo.getC() == InventoryHolder.class) {
+							return holder.getClass().getSimpleName();
+						} else {
+							return Classes.toString(holder);
+						}
 					}
 				}
 
