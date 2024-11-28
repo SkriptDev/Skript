@@ -505,38 +505,6 @@ operators:
 	divide: division
 	exponentiate: exponentiation
 
-# -- Entity Categories --
-entity categories:
-	abstract_arrow: abstract arrow @an
-	ageable: ageable @an, ageable entity @an
-	ambient: ambient @an, ambient entity @an
-	animal: animal @an
-	boat: boat @a
-	boss: boss @a
-	breedable: breedable @a
-	chest_boat: chest boat @a
-	creature: creature @a
-	damageable: damageable @a
-	display: display @a
-	enemy: enemy @an
-	entity: entity @an
-	explosive: explosive @an
-	fish: fish @a
-	flying: flying @a
-	golem: golem @a
-	hanging: hanging @a, hanging entity @a
-	illager: illager @an
-	minecart: minecart @a
-	mob: mob @a
-	monster: monster @a
-	projectile: projectile @a
-	raider: raider @a
-	spellcaster: spellcaster @a
-	tameable: tameable @a, tameable entity @a
-	throwable_projectile: throwable projectile @a
-	vehicle: vehicle @a
-	water_mob: water mob @a
-
 # -- Types --
 types:
 	# Java
