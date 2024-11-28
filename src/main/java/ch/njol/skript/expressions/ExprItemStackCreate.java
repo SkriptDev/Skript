@@ -23,11 +23,11 @@ import java.util.List;
 @Examples({"set {_i} to itemstack of 10 of diamond",
 	"set {_i} to itemstack of netherite shovel"})
 @Since("INSERT VERSION")
-public class ExprItemStackOf extends SimpleExpression<ItemStack> {
+public class ExprItemStackCreate extends SimpleExpression<ItemStack> {
 
 	static {
-		Skript.registerExpression(ExprItemStackOf.class, ItemStack.class, ExpressionType.COMBINED,
-			"[new] item[ ]stack[s] of [%number% of] %materials%");
+		Skript.registerExpression(ExprItemStackCreate.class, ItemStack.class, ExpressionType.COMBINED,
+			"[new] item[ ]stack[s] (of|from) [%number% [of]] %materials%");
 	}
 
 	private Expression<Material> materials;
