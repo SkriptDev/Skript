@@ -3,45 +3,42 @@
 ---
 
 # Skript
-**Skript** is a Minecraft plugin for Paper/Spigot, which allows server owners and other people
+**Skript** is a Minecraft plugin for Paper, which allows server owners and other people
 to modify their servers without learning Java. It can also be useful if you
 *do* know Java; some tasks are quicker to do with Skript, and so it can be used
 for prototyping etc.
 
-This Github fork of Skript is based on Mirreski's improvements which was built
+This Github fork of Skript is based on [**SkriptLang's**](https://github.com/SkriptLang/Skript) improvements which was built
 on Njol's original Skript.
 
 ## Requirements
-Skript requires **Spigot** to work. You heard it right, **CraftBukkit** does *not* work.
-**Paper**, which is a fork of Spigot, is recommended; it is required for some
-parts of Skript to be available.
+Skript requires **Paper** to work. You heard it right, **CraftBukkit/Spigot** does *not* work.
 
-Skript supports only the **latest** patch versions of Minecraft 1.13+.
-For example, this means that 1.16.5 is supported, but 1.16.4 is *not*.
+Skript supports only the **latest** patch versions of Minecraft 1.20+.
+For example, this means that 1.20.6 is supported, but 1.20.1 is *not*.
 Testing with all old patch versions is not feasible for us.
 
-Minecraft 1.12 and earlier are not, and will not be supported. New Minecraft
-versions will be supported as soon as possible.
-
 ## Download
-You can find the downloads for each version with their release notes in the [releases page](https://github.com/SkriptLang/Skript/releases).
-
-Two major feature updates are expected each year in January and July, with monthly patches occurring in between. For full details, please review our [release model](CLOCKWORK_RELEASE_MODEL.md).
+You can find the downloads for each version with their release notes in the [releases page](https://github.com/SkriptDev/Skript/releases).
 
 ## Documentation
-Documentation is available [here](https://docs.skriptlang.org/) for the
+Documentation is available [**HERE**](https://shanebeee.github.io/docs/Skript/latest) for the
 latest version of Skript.
 
 ## Reporting Issues
-Please see our [contribution guidelines](https://github.com/SkriptLang/Skript/blob/master/.github/contributing.md)
+Please see our [contribution guidelines](https://github.com/SkriptDev/Skript/blob/master/.github/contributing.md)
 before reporting issues.
 
-## Help Us Test
-Wanting to help test Skript's new features and releases?
-You can head on over to our [Official Testing Discord](https://discord.gg/ZPsZAg6ygu), and whenever we start testing new features/releases you will be the first to know.
+[//]: # (## Help Us Test)
 
-Please note this is not a help Discord.
-If you require assistance with how to use Skript please check out the [Relevant Links](https://github.com/SkriptLang/Skript#relevant-links) section for a list of available resources to assist you.
+[//]: # (Wanting to help test Skript's new features and releases?)
+
+[//]: # (You can head on over to our [Official Testing Discord]&#40;https://discord.gg/ZPsZAg6ygu&#41;, and whenever we start testing new features/releases you will be the first to know.)
+
+[//]: # ()
+[//]: # (Please note this is not a help Discord.)
+
+[//]: # (If you require assistance with how to use Skript please check out the [Relevant Links]&#40;https://github.com/SkriptLang/Skript#relevant-links&#41; section for a list of available resources to assist you.)
 
 ## A Note About Add-ons
 We don't support add-ons here, even though some of Skript developers have also
@@ -57,33 +54,19 @@ and package Skript for you:
 gradlew clean build # on Windows
 ```
 
-You can get source code from the [releases page](https://github.com/SkriptLang/Skript/releases).
+You can get source code from the [releases page](https://github.com/SkriptDev/Skript/releases).
 You may also clone this repository, but that code may or may not be stable.
-
-### Compiling Modules
-Parts of Skript are provided as Gradle subprojects. They require Skript, so
-they are compiled *after* it has been built. For this reason, if you want them
-embedded in Skript jar, you must re-package it after compiling once. For example:
-
-```
-./gradlew jar
-```
-
-Note that modules are not necessary for Skript to work. Currently, they are
-only used to provide compatibility with old WorldGuard versions.
 
 ### Testing
 Skript has some tests written in Skript. Running them requires a Minecraft
 server, but our build script will create one for you. Running the tests is easy:
 
 ```
-./gradlew (quickTest|skriptTest|skriptTestJava11|skriptTestJava17|skriptTestJava21)
+./gradlew (quickTest|skriptTest|skriptTestJava21)
 ```
 
 <code>quickTest</code> runs the test suite on newest supported server version.
 <code>skriptTestJava21</code> (1.20.6+) runs the tests on Java 21 supported versions.
-<code>skriptTestJava17</code> (1.17-1.20.4) runs the tests on Java 17 supported versions.
-<code>skriptTestJava11</code> (1.13-1.16) runs the tests on Java 11 supported versions.
 <code>skriptTest</code> runs the tests on all versions.
 That is, it runs skriptTestJava11, skriptTestJava17, and skriptTestJava21.
 
@@ -113,11 +96,16 @@ Available flavors are github and spigot. Please do not abuse flavors by
 compiling your own test builds as releases.
 
 ## Contributing
-Please review our [contribution guidelines](https://github.com/SkriptLang/Skript/blob/master/.github/contributing.md).
+Please review our [contribution guidelines](https://github.com/SkriptDev/Skript/blob/master/.github/contributing.md).
 In addition to that, if you are contributing Java code, check our
-[coding conventions](https://github.com/SkriptLang/Skript/blob/master/code-conventions.md).
+[coding conventions](https://github.com/SkriptDev/Skript/blob/master/code-conventions.md).
 
 ## Maven Repository
+
+[//]: # (TODO)
+> [!WARNING]
+> This needs to be updated
+
 If you use Skript as (soft) dependency for your plugin, and use maven or Gradle,
 this is for you.
 
@@ -179,18 +167,15 @@ Or, if you use Maven:
 ```
 
 ## Relevant Links
-* [skUnity forums](https://forums.skunity.com)
-* [skUnity addon releases](https://forums.skunity.com/forums/addon-releases)
-* [skUnity Discord invite](https://discord.gg/0l3WlzBPKX7WNjkf)
-* [Skript Chat Discord invite](https://discord.gg/0lx4QhQvwelCZbEX)
 * [Skript Hub](https://skripthub.net)
+* [SkriptLang's Skript](https://github.com/SkriptLang/Skript)
 * [Original Skript at Bukkit](https://dev.bukkit.org/bukkit-plugins/skript) (inactive)
 
 Note that these resources are not maintained by Skript's developers. Don't
 contact us about any problems you might have with them.
 
 ## Developers
-You can find all contributors [here](https://github.com/SkriptLang/Skript/graphs/contributors).
+You can find all contributors [here](https://github.com/SkriptDev/Skript/graphs/contributors).
 
 All code is owned by its writer, licensed for others under GPLv3 (see LICENSE)
 unless otherwise specified.
