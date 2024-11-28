@@ -1,0 +1,15 @@
+test "itemstack create expression":
+	set {_item} to itemstack of diamond sword
+	set {_item} to itemstack of diamond_sword
+	set {_item} to itemstack of minecraft:diamond_sword
+	assert material of {_item} is diamond sword with "Material should be diamond sword"
+
+	set {_item} to itemstack of cooked chicken
+	set {_item} to itemstack of 10 of cooked chicken
+	set {_item} to itemstack of 10 cooked chicken
+	assert material of {_item} is cooked chicken with "Material should be cooked chicken"
+
+test "itemstack create expression for creaking update" when running minecraft "1.21.3":
+	# Test to make sure new items get added correctly
+	set {_item} to itemstack of pale oak log
+	assert material of {_item} is pale oak log with "Material should be pale oak log"
