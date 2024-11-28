@@ -1,32 +1,13 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.events;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.entity.EntityData;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.coll.CollectionUtils;
 import io.papermc.paper.event.entity.EntityMoveEvent;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.jetbrains.annotations.Nullable;
@@ -42,9 +23,9 @@ public class EvtMove extends SkriptEvent {
 		else
 			events = CollectionUtils.array(PlayerMoveEvent.class);
 		Skript.registerEvent("Move / Rotate", EvtMove.class, events,
-				"%entitydata% (move|walk|step|rotate:(turn[ing] around|rotate))",
-				"%entitydata% (move|walk|step) or (turn[ing] around|rotate)",
-				"%entitydata% (turn[ing] around|rotate) or (move|walk|step)")
+				"(entity|%-entitytype%) (move|walk|step|rotate:(turn[ing] around|rotate))",
+				"(entity|%-entitytype%) (move|walk|step) or (turn[ing] around|rotate)",
+				"(entity|%-entitytype%) (turn[ing] around|rotate) or (move|walk|step)")
 				.description(
 						"Called when a player or entity moves or rotates their head.",
 						"NOTE: Move event will only be called when the entity/player moves position, keyword 'turn around' is for orientation (ie: looking around), and the combined syntax listens for both.",
@@ -62,7 +43,7 @@ public class EvtMove extends SkriptEvent {
 				.since("2.6, 2.8.0 (turn around)");
 	}
 
-	private EntityData<?> entityData;
+	private EntityType entityType;
 	private boolean isPlayer;
 	private Move moveType;
 
@@ -88,8 +69,10 @@ public class EvtMove extends SkriptEvent {
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean init(Literal<?>[] args, int matchedPattern, ParseResult parseResult) {
-		entityData = ((Literal<EntityData<?>>) args[0]).getSingle();
-		isPlayer = Player.class.isAssignableFrom(entityData.getType());
+		Literal<EntityType> arg = (Literal<EntityType>) args[0];
+		if (arg != null) entityType = arg.getSingle();
+
+		isPlayer = entityType != null && entityType == EntityType.PLAYER;
 		if (!HAS_ENTITY_MOVE && !isPlayer) {
 			Skript.error("Entity move event requires Paper 1.16.5+");
 			return false;
@@ -107,13 +90,11 @@ public class EvtMove extends SkriptEvent {
 	@Override
 	public boolean check(Event event) {
 		Location from, to;
-		if (isPlayer && event instanceof PlayerMoveEvent) {
-			PlayerMoveEvent playerEvent = (PlayerMoveEvent) event;
+		if (isPlayer && event instanceof PlayerMoveEvent playerEvent) {
 			from = playerEvent.getFrom();
 			to = playerEvent.getTo();
-		} else if (HAS_ENTITY_MOVE && event instanceof EntityMoveEvent) {
-			EntityMoveEvent entityEvent = (EntityMoveEvent) event;
-			if (!(entityData.isInstance(entityEvent.getEntity())))
+		} else if (HAS_ENTITY_MOVE && event instanceof EntityMoveEvent entityEvent) {
+			if (entityType != null && entityType != entityEvent.getEntityType())
 				return false;
 			from = entityEvent.getFrom();
 			to = entityEvent.getTo();
@@ -144,7 +125,7 @@ public class EvtMove extends SkriptEvent {
 
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
-		return entityData + " " + moveType;
+		return entityType + " " + moveType;
 	}
 
 	private static boolean hasChangedPosition(Location from, Location to) {

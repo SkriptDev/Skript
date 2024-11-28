@@ -1,34 +1,4 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.sections;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
-
-import ch.njol.skript.doc.RequiredPlugins;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.SectionNode;
@@ -36,7 +6,6 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.entity.EntityType;
 import ch.njol.skript.lang.EffectSection;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -47,10 +16,21 @@ import ch.njol.skript.util.Direction;
 import ch.njol.skript.util.Getter;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 @Name("Spawn")
-@Description({
-	"Spawn a creature. This can be used as an effect and as a section.",
+@Description({"Spawn a creature. This can be used as an effect and as a section.",
 	"If it is used as a section, the section is run before the entity is added to the world.",
 	"You can modify the entity in this section, using for example 'event-entity' or 'cow'. ",
 	"Do note that other event values, such as 'player', won't work in this section."
@@ -59,7 +39,7 @@ import ch.njol.util.Kleenean;
 	"spawn 3 creepers at the targeted block",
 	"spawn a ghast 5 meters above the player",
 	"spawn a zombie at the player:",
-		"\tset name of the zombie to \"\""
+	"\tset name of the zombie to \"\""
 })
 @Since("1.0, 2.6.1 (with section), 2.8.6 (dropped items)")
 public class EffSecSpawn extends EffectSection {
@@ -85,9 +65,9 @@ public class EffSecSpawn extends EffectSection {
 	static {
 		Skript.registerSection(EffSecSpawn.class,
 			"(spawn|summon) %entitytypes% [%directions% %locations%]",
-			"(spawn|summon) %number% of %entitytypes% [%directions% %locations%]"
+			"(spawn|summon) %number% [of] %entitytypes%[s] [%directions% %locations%]"
 		);
-		EventValues.registerEventValue(SpawnEvent.class, Entity.class, new Getter<Entity, SpawnEvent>() {
+		EventValues.registerEventValue(SpawnEvent.class, Entity.class, new Getter<>() {
 			@Override
 			public Entity get(SpawnEvent spawnEvent) {
 				return spawnEvent.getEntity();
@@ -95,10 +75,7 @@ public class EffSecSpawn extends EffectSection {
 		}, EventValues.TIME_NOW);
 	}
 
-	@SuppressWarnings("NotNullFieldNotInitialized")
 	private Expression<Location> locations;
-
-	@SuppressWarnings("NotNullFieldNotInitialized")
 	private Expression<EntityType> types;
 
 	@Nullable
@@ -141,6 +118,35 @@ public class EffSecSpawn extends EffectSection {
 	protected TriggerItem walk(Event event) {
 		lastSpawned = null;
 
+		Consumer<? extends Entity> consumer = getConsumer(event);
+
+		Number numberAmount = amount != null ? amount.getSingle(event) : 1;
+		if (numberAmount != null) {
+			double amount = numberAmount.doubleValue();
+			EntityType[] types = this.types.getArray(event);
+			for (Location location : locations.getArray(event)) {
+				World world = location.getWorld();
+				if (world == null) continue;
+
+				for (EntityType type : types) {
+					Class<? extends Entity> entityClass = type.getEntityClass();
+					if (entityClass == null) continue;
+
+					for (int i = 0; i < amount; i++) {
+						if (consumer != null) {
+							lastSpawned = world.spawn(location, entityClass, (Consumer) consumer);
+						} else {
+							lastSpawned = world.spawn(location, entityClass);
+						}
+					}
+				}
+			}
+		}
+
+		return super.walk(event, false);
+	}
+
+	private @Nullable Consumer<? extends Entity> getConsumer(Event event) {
 		Consumer<? extends Entity> consumer;
 		if (trigger != null) {
 			consumer = o -> {
@@ -157,26 +163,7 @@ public class EffSecSpawn extends EffectSection {
 		} else {
 			consumer = null;
 		}
-
-		Number numberAmount = amount != null ? amount.getSingle(event) : 1;
-		if (numberAmount != null) {
-			double amount = numberAmount.doubleValue();
-			EntityType[] types = this.types.getArray(event);
-			for (Location location : locations.getArray(event)) {
-				for (EntityType type : types) {
-					double typeAmount = amount * type.getAmount();
-					for (int i = 0; i < typeAmount; i++) {
-						if (consumer != null) {
-							type.data.spawn(location, (Consumer) consumer); // lastSpawned set within Consumer
-						} else {
-							lastSpawned = type.data.spawn(location);
-						}
-					}
-				}
-			}
-		}
-
-		return super.walk(event, false);
+		return consumer;
 	}
 
 	@Override

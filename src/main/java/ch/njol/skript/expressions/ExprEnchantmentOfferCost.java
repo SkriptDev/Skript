@@ -1,26 +1,4 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.expressions;
-
-import org.bukkit.enchantments.EnchantmentOffer;
-import org.bukkit.event.Event;
-import org.jetbrains.annotations.Nullable;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer.ChangeMode;
@@ -30,12 +8,13 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.RequiredPlugins;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
-import ch.njol.skript.util.Experience;
 import ch.njol.util.coll.CollectionUtils;
+import org.bukkit.enchantments.EnchantmentOffer;
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.Nullable;
 
 @Name("Enchantment Offer Cost")
-@Description({
-	"The cost of an enchantment offer. This is displayed to the right of an enchantment offer.",
+@Description({"The cost of an enchantment offer. This is displayed to the right of an enchantment offer.",
 	"If the cost is changed, it will always be at least 1.",
 	"This changes how many levels are required to enchant, but does not change the number of levels removed.",
 	"To change the number of levels removed, use the enchant event."
@@ -60,7 +39,7 @@ public class ExprEnchantmentOfferCost extends SimplePropertyExpression<Enchantme
 	public Class<?>[] acceptChange(ChangeMode mode) {
 		if (mode == ChangeMode.REMOVE || mode == ChangeMode.REMOVE_ALL || mode == ChangeMode.RESET)
 			return null;
-		return CollectionUtils.array(Number.class, Experience.class);
+		return CollectionUtils.array(Number.class);
 	}
 
 	@Override
@@ -69,8 +48,8 @@ public class ExprEnchantmentOfferCost extends SimplePropertyExpression<Enchantme
 		if (offers.length == 0 || delta == null)
 			return;
 		Object c = delta[0];
-		int cost = c instanceof Number ? ((Number) c).intValue() : ((Experience) c).getXP();
-		if (cost < 1) 
+		int cost = ((Number) c).intValue();
+		if (cost < 1)
 			return;
 		int change;
 		switch (mode) {
@@ -81,7 +60,7 @@ public class ExprEnchantmentOfferCost extends SimplePropertyExpression<Enchantme
 			case ADD:
 				for (EnchantmentOffer offer : offers) {
 					change = offer.getCost() + cost;
-					if (change < 1) 
+					if (change < 1)
 						return;
 					offer.setCost(change);
 				}
@@ -89,7 +68,7 @@ public class ExprEnchantmentOfferCost extends SimplePropertyExpression<Enchantme
 			case REMOVE:
 				for (EnchantmentOffer offer : offers) {
 					change = offer.getCost() - cost;
-					if (change < 1) 
+					if (change < 1)
 						return;
 					offer.setCost(change);
 				}

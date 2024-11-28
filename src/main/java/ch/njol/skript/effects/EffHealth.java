@@ -1,25 +1,6 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.bukkitutil.HealthUtils;
 import ch.njol.skript.bukkitutil.ItemUtils;
 import ch.njol.skript.doc.Description;
@@ -29,7 +10,6 @@ import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.util.slot.Slot;
 import ch.njol.util.Kleenean;
 import ch.njol.util.Math2;
 import org.bukkit.entity.Damageable;
@@ -39,19 +19,17 @@ import org.jetbrains.annotations.Nullable;
 
 @Name("Damage/Heal/Repair")
 @Description("Damage/Heal/Repair an entity, or item.")
-@Examples({
-	"damage player by 5 hearts",
+@Examples({"damage player by 5 hearts",
 	"heal the player",
-	"repair tool of player"
-})
+	"repair tool of player"})
 @Since("1.0")
 public class EffHealth extends Effect {
 
 	static {
 		Skript.registerEffect(EffHealth.class,
-			"damage %livingentities/itemtypes/slots% by %number% [heart[s]] [with fake cause %-damagecause%]",
+			"damage %livingentities/itemstacks% by %number% [heart[s]] [with fake cause %-damagecause%]",
 			"heal %livingentities% [by %-number% [heart[s]]]",
-			"repair %itemtypes/slots% [by %-number%]");
+			"repair %itemstacks% [by %-number%]");
 	}
 
 	private Expression<?> damageables;
@@ -84,32 +62,16 @@ public class EffHealth extends Effect {
 		}
 
 		for (Object obj : this.damageables.getArray(event)) {
-			if (obj instanceof ItemType) {
-				ItemType itemType = (ItemType) obj;
-
-				if (this.amount == null) {
-					ItemUtils.setDamage(itemType, 0);
-				} else {
-					ItemUtils.setDamage(itemType, (int) Math2.fit(0, (ItemUtils.getDamage(itemType) + (isHealing ? -amount : amount)), ItemUtils.getMaxDamage(itemType)));
-				}
-
-			} else if (obj instanceof Slot) {
-				Slot slot = (Slot) obj;
-				ItemStack itemStack = slot.getItem();
-
-				if (itemStack == null)
-					continue;
+			if (obj instanceof ItemStack itemStack) {
 
 				if (this.amount == null) {
 					ItemUtils.setDamage(itemStack, 0);
 				} else {
-					int damageAmt = (int) Math2.fit(0, (ItemUtils.getDamage(itemStack) + (isHealing ? -amount : amount)), ItemUtils.getMaxDamage(itemStack));
-					ItemUtils.setDamage(itemStack, damageAmt);
+					ItemUtils.setDamage(itemStack, (int) Math2.fit(0, (ItemUtils.getDamage(itemStack) + (isHealing ? -amount : amount)), ItemUtils.getMaxDamage(itemStack)));
 				}
 
-				slot.setItem(itemStack);
-
-			} else if (obj instanceof Damageable) {
+			}
+			if (obj instanceof Damageable) {
 				Damageable damageable = (Damageable) obj;
 
 				if (this.amount == null) {

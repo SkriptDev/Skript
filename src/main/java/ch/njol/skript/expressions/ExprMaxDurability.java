@@ -1,24 +1,5 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.expressions;
 
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.bukkitutil.ItemUtils;
 import ch.njol.skript.classes.Changer.ChangeMode;
 import ch.njol.skript.doc.Description;
@@ -27,7 +8,6 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.RequiredPlugins;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
-import ch.njol.skript.util.slot.Slot;
 import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
@@ -46,16 +26,16 @@ import org.jetbrains.annotations.Nullable;
 })
 @RequiredPlugins("Minecraft 1.20.5+ (custom amount)")
 @Since("2.5, 2.9.0 (change)")
-public class ExprMaxDurability extends SimplePropertyExpression<Object, Integer> {
+public class ExprMaxDurability extends SimplePropertyExpression<ItemStack, Integer> {
 
 	static {
-		register(ExprMaxDurability.class, Integer.class, "max[imum] (durabilit(y|ies)|damage)", "itemtypes/itemstacks/slots");
+		register(ExprMaxDurability.class, Integer.class,
+			"max[imum] (durabilit(y|ies)|damage)", "itemstacks");
 	}
 
 	@Override
 	@Nullable
-	public Integer convert(Object object) {
-		ItemStack itemStack = ItemUtils.asItemStack(object);
+	public Integer convert(ItemStack itemStack) {
 		if (itemStack == null)
 			return null;
 		return ItemUtils.getMaxDamage(itemStack);
@@ -84,32 +64,18 @@ public class ExprMaxDurability extends SimplePropertyExpression<Object, Integer>
 		if (mode == ChangeMode.REMOVE)
 			change = -change;
 
-		for (Object object : getExpr().getArray(event)) {
-			ItemStack itemStack = ItemUtils.asItemStack(object);
+		for (ItemStack itemStack : getExpr().getArray(event)) {
 			if (itemStack == null)
 				continue;
 
-			int newValue;
-			switch (mode) {
-				case ADD:
-				case REMOVE:
-					newValue = ItemUtils.getMaxDamage(itemStack) + change;
-					break;
-				case SET:
-					newValue = change;
-					break;
-				case DELETE:
-					newValue = 0;
-					break;
-				default:
-					newValue = itemStack.getType().getMaxDurability();
-			}
+			int newValue = switch (mode) {
+				case ADD, REMOVE -> ItemUtils.getMaxDamage(itemStack) + change;
+				case SET -> change;
+				case DELETE -> 0;
+				default -> itemStack.getType().getMaxDurability();
+			};
 
 			ItemUtils.setMaxDamage(itemStack, newValue);
-			if (object instanceof Slot)
-				((Slot) object).setItem(itemStack);
-			if (object instanceof ItemType)
-				((ItemType) object).setItemMeta(itemStack.getItemMeta());
 		}
 	}
 

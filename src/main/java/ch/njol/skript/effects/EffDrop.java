@@ -1,26 +1,6 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.aliases.ItemType;
-import ch.njol.skript.bukkitutil.ItemUtils;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -28,13 +8,11 @@ import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.sections.EffSecSpawn;
 import ch.njol.skript.util.Direction;
-import ch.njol.skript.util.Experience;
 import ch.njol.util.Kleenean;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Item;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
@@ -44,12 +22,13 @@ import org.jetbrains.annotations.Nullable;
 @Name("Drop")
 @Description("Drops one or more items.")
 @Examples({"on death of creeper:",
-		"	drop 1 TNT"})
+	"\tdrop tnt"})
 @Since("1.0")
 public class EffDrop extends Effect {
-
+//TODO this class needs some love
 	static {
-		Skript.registerEffect(EffDrop.class, "drop %itemtypes/experiences% [%directions% %locations%] [(1¦without velocity)]");
+		Skript.registerEffect(EffDrop.class,
+			"drop %materials/itemstacks% [%directions% %locations%] [(1¦without velocity)]");
 	}
 
 	@Nullable
@@ -73,30 +52,27 @@ public class EffDrop extends Effect {
 
 	@Override
 	public void execute(Event e) {
-		Object[] os = drops.getArray(e);
-		for (Location l : locations.getArray(e)) {
-			Location itemDropLoc = l.clone().subtract(0.5, 0.5, 0.5); // dropItemNaturally adds 0.15 to 0.85 randomly to all coordinates
-			for (Object o : os) {
-				if (o instanceof Experience) {
-					ExperienceOrb orb = l.getWorld().spawn(l, ExperienceOrb.class);
-					orb.setExperience(((Experience) o).getXP() + orb.getExperience()); // ensure we maintain previous experience, due to spigot xp merging behavior
-					EffSecSpawn.lastSpawned = orb;
-				} else {
-					if (o instanceof ItemStack)
-						o = new ItemType((ItemStack) o);
-					for (ItemStack is : ((ItemType) o).getItem().getAll()) {
-						if (!ItemUtils.isAir(is.getType()) && is.getAmount() > 0) {
-							if (useVelocity) {
-								lastSpawned = l.getWorld().dropItemNaturally(itemDropLoc, is);
-							} else {
-								Item item = l.getWorld().dropItem(l, is);
-								item.teleport(l);
-								item.setVelocity(new Vector(0, 0, 0));
-								lastSpawned = item;
-							}
-						}
-					}
+		for (Location location : locations.getArray(e)) {
+			Location itemDropLoc = location.clone().subtract(0.5, 0.5, 0.5); // dropItemNaturally adds 0.15 to 0.85 randomly to all coordinates
+			for (Object object : this.drops.getArray(e)) {
+				if (object instanceof ItemStack itemStack) {
+					dropItemstack(itemStack, location, itemDropLoc);
+				} else if (object instanceof Material material) {
+					dropItemstack(new ItemStack(material), location, itemDropLoc);
 				}
+			}
+		}
+	}
+
+	private void dropItemstack(ItemStack itemStack, Location location, Location dropLocation) {
+		if (!itemStack.getType().isAir() && itemStack.getAmount() > 0) {
+			if (useVelocity) {
+				lastSpawned = location.getWorld().dropItemNaturally(dropLocation, itemStack);
+			} else {
+				Item item = location.getWorld().dropItem(location, itemStack);
+				item.teleport(location);
+				item.setVelocity(new Vector(0, 0, 0));
+				lastSpawned = item;
 			}
 		}
 	}

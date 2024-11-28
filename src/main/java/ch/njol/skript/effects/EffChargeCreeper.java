@@ -29,6 +29,7 @@ import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
 
 import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
@@ -61,7 +62,7 @@ public class EffChargeCreeper extends Effect {
 
 	@Override
 	protected void execute(Event e) {
-		for (LivingEntity le : entities.getArray(e)) {
+		for (Entity le : entities.getArray(e)) {
 			if (le instanceof Creeper)
 				((Creeper) le).setPowered(charge);
 		}

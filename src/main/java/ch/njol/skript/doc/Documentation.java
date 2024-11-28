@@ -20,7 +20,7 @@ package ch.njol.skript.doc;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.ClassInfo;
-import ch.njol.skript.conditions.CondCompare;
+import ch.njol.skript.conditions.CondZCompare;
 import ch.njol.skript.lang.ExpressionInfo;
 import ch.njol.skript.lang.SkriptEventInfo;
 import ch.njol.skript.lang.SyntaxElementInfo;
@@ -317,7 +317,7 @@ public class Documentation {
 			Skript.warning("" + elementClass.getSimpleName() + "'s description or 'since' is invalid");
 			return;
 		}
-		final String patterns = cleanPatterns(StringUtils.join(info.patterns, "\n", 0, elementClass == CondCompare.class ? 8 : info.patterns.length));
+		final String patterns = cleanPatterns(StringUtils.join(info.patterns, "\n", 0, elementClass == CondZCompare.class ? 8 : info.patterns.length));
 		insertOnDuplicateKeyUpdate(pw, "syntax_elements",
 				"id, name, type, patterns, description, examples, since",
 				"patterns = TRIM(LEADING '\n' FROM CONCAT(patterns, '\n', '" + escapeSQL(patterns) + "'))",

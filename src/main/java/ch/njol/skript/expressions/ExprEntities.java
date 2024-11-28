@@ -1,75 +1,52 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.bukkitutil.EntityCategory;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.entity.EntityData;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
-import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
-import ch.njol.skript.log.BlockingLogHandler;
-import ch.njol.skript.log.LogHandler;
+import ch.njol.skript.util.LiteralUtils;
 import ch.njol.util.Kleenean;
-import ch.njol.util.StringUtils;
-import ch.njol.util.coll.iterator.CheckedIterator;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 @Name("Entities")
 @Description("All entities in all worlds, in a specific world, in a chunk or in a radius around a certain location, " +
-		"e.g. <code>all players</code>, <code>all creepers in the player's world</code>, or <code>players in radius 100 of the player</code>.")
+	"e.g. <code>all players</code>, <code>all creepers in the player's world</code>, or <code>players in radius 100 of the player</code>.")
 @Examples({"kill all creepers in the player's world",
-		"send \"Psst!\" to all players within 100 meters of the player",
-		"give a diamond to all ops",
-		"heal all tamed wolves in radius 2000 around {town center}",
-		"delete all monsters in chunk at player"})
+	"send \"Psst!\" to all players within 100 meters of the player",
+	"give a diamond to all ops",
+	"heal all tamed wolves in radius 2000 around {town center}",
+	"delete all monsters in chunk at player"})
 @Since("1.2.1, 2.5 (chunks)")
 public class ExprEntities extends SimpleExpression<Entity> {
 
 	static {
 		Skript.registerExpression(ExprEntities.class, Entity.class, ExpressionType.PATTERN_MATCHES_EVERYTHING,
-				"[(all [[of] the]|the)] %*entitydatas% [(in|of) ([world[s]] %-worlds%|1¦%-chunks%)]",
-				"[(all [[of] the]|the)] entities of type[s] %entitydatas% [(in|of) ([world[s]] %-worlds%|1¦%-chunks%)]",
-				"[(all [[of] the]|the)] %*entitydatas% (within|[with]in radius) %number% [(block[s]|met(er|re)[s])] (of|around) %location%",
-				"[(all [[of] the]|the)] entities of type[s] %entitydatas% in radius %number% (of|around) %location%");
+			"[(all [[of] the]|the)] entities [(in|of) ([world[s]] %-worlds%|1¦%-chunks%)]",
+			"[(all [[of] the]|the)] entities of type[s] %*-entitytypes/entitycategories% [(in|of) ([world[s]] %-worlds%|1¦%-chunks%)]",
+			"[(all [[of] the]|the)] entities (within|[with]in radius) %number% [(block[s]|met(er|re)[s])] (of|around) %location%",
+			"[(all [[of] the]|the)] entities of type[s] %-entitytypes/entitycategories% in radius %number% (of|around) %location%");
 	}
 
 	@SuppressWarnings("null")
-	Expression<? extends EntityData<?>> types;
+	Expression<?> types;
 
 	@Nullable
 	private Expression<World> worlds;
@@ -80,52 +57,26 @@ public class ExprEntities extends SimpleExpression<Entity> {
 	@Nullable
 	private Expression<Location> center;
 
-	private Class<? extends Entity> returnType = Entity.class;
 	private boolean isUsingRadius;
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
-		types = (Expression<? extends EntityData<?>>) exprs[0];
-		if (matchedPattern % 2 == 0) {
-			for (EntityData<?> d : ((Literal<EntityData<?>>) types).getAll()) {
-				if (d.isPlural().isFalse() || d.isPlural().isUnknown() && !StringUtils.startsWithIgnoreCase(parseResult.expr, "all"))
-					return false;
-			}
+		if (matchedPattern == 1 || matchedPattern == 3) {
+			types = LiteralUtils.defendExpression(exprs[0]);
 		}
 		isUsingRadius = matchedPattern >= 2;
 		if (isUsingRadius) {
-			radius = (Expression<Number>) exprs[exprs.length - 2];
-			center = (Expression<Location>) exprs[exprs.length - 1];
+			radius = (Expression<Number>) exprs[matchedPattern - 2];
+			center = (Expression<Location>) exprs[matchedPattern - 1];
 		} else {
 			if (parseResult.mark == 1) {
-				chunks = (Expression<Chunk>) exprs[2];
+				chunks = (Expression<Chunk>) exprs[matchedPattern];
 			} else {
-				worlds = (Expression<World>) exprs[1];
+				worlds = (Expression<World>) exprs[matchedPattern];
 			}
 		}
-		if (types instanceof Literal && ((Literal<EntityData<?>>) types).getAll().length == 1)
-			returnType = ((Literal<EntityData<?>>) types).getSingle().getType();
 		return true;
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public boolean isLoopOf(String s) {
-		if (!(types instanceof Literal<?>))
-			return false;
-		try (LogHandler ignored = new BlockingLogHandler().start()) {
-			EntityData<?> d = EntityData.parseWithoutIndefiniteArticle(s);
-			if (d != null) {
-				for (EntityData<?> t : ((Literal<EntityData<?>>) types).getAll()) {
-					assert t != null;
-					if (!d.isSupertypeOf(t))
-						return false;
-				}
-				return true;
-			}
-		}
-		return false;
 	}
 
 	@Override
@@ -133,58 +84,51 @@ public class ExprEntities extends SimpleExpression<Entity> {
 	@SuppressWarnings("null")
 	protected Entity[] get(Event e) {
 		if (isUsingRadius) {
-			Iterator<? extends Entity> iter = iterator(e);
-			if (iter == null || !iter.hasNext())
-				return null;
+			if (this.center == null || this.radius == null) return null;
 
-			List<Entity> l = new ArrayList<>();
-			while (iter.hasNext())
-				l.add(iter.next());
-			return l.toArray((Entity[]) Array.newInstance(returnType, l.size()));
-		} else {
-			if (chunks != null) {
-				return EntityData.getAll(types.getArray(e), returnType, chunks.getArray(e));
-			} else {
-				return EntityData.getAll(types.getAll(e), returnType, worlds != null ? worlds.getArray(e) : null);
+			Object[] types = this.types.getArray(e);
+
+			Location center = this.center.getSingle(e);
+			Number radiusNum = this.radius.getSingle(e);
+			if (center == null || radiusNum == null) return null;
+
+			int radius = radiusNum.intValue();
+			World world = center.getWorld();
+			if (world == null) return null;
+
+			int radiusSquared = radius * radius;
+			List<Entity> entities = new ArrayList<>();
+			for (Entity entity : center.getNearbyEntities(radius, radius, radius)) {
+				if (entity.getLocation().distanceSquared(center) <= radiusSquared) {
+					if (isOfType(entity, types)) entities.add(entity);
+				}
 			}
-		}
-	}
-
-	@Override
-	@Nullable
-	@SuppressWarnings("null")
-	public Iterator<? extends Entity> iterator(Event e) {
-		if (isUsingRadius) {
-			assert center != null;
-			Location l = center.getSingle(e);
-			if (l == null)
-				return null;
-			assert radius != null;
-			Number n = radius.getSingle(e);
-			if (n == null)
-				return null;
-			double d = n.doubleValue();
-
-			if (l.getWorld() == null) // safety
-				return null;
-
-			Collection<Entity> es = l.getWorld().getNearbyEntities(l, d, d, d);
-			double radiusSquared = d * d * Skript.EPSILON_MULT;
-			EntityData<?>[] ts = types.getAll(e);
-			return new CheckedIterator<>(es.iterator(), e1 -> {
-					if (e1 == null || e1.getLocation().distanceSquared(l) > radiusSquared)
-						return false;
-					for (EntityData<?> t : ts) {
-						if (t.isInstance(e1))
-							return true;
-					}
-					return false;
-				});
+			return entities.toArray(new Entity[0]);
 		} else {
-			if (chunks == null || returnType == Player.class)
-				return super.iterator(e);
-
-			return Arrays.stream(EntityData.getAll(types.getArray(e), returnType, chunks.getArray(e))).iterator();
+			List<Entity> entities = new ArrayList<>();
+			if (this.chunks != null) {
+				for (Chunk chunk : this.chunks.getArray(e)) {
+					for (@NotNull Entity entity : chunk.getEntities()) {
+						if (this.types != null) {
+							if (isOfType(entity, this.types.getArray(e))) entities.add(entity);
+						} else {
+							entities.add(entity);
+						}
+					}
+				}
+			} else {
+				List<World> worlds = this.worlds != null ? Arrays.asList(this.worlds.getArray(e)) : Bukkit.getWorlds();
+				for (World world : worlds) {
+					for (@NotNull Entity entity : world.getEntities()) {
+						if (this.types != null) {
+							if (isOfType(entity, this.types.getArray(e))) entities.add(entity);
+						} else {
+							entities.add(entity);
+						}
+					}
+				}
+			}
+			return entities.toArray(new Entity[0]);
 		}
 	}
 
@@ -195,14 +139,30 @@ public class ExprEntities extends SimpleExpression<Entity> {
 
 	@Override
 	public Class<? extends Entity> getReturnType() {
-		return returnType;
+		return Entity.class;
 	}
 
 	@Override
 	@SuppressWarnings("null")
 	public String toString(@Nullable Event e, boolean debug) {
-		return "all entities of type " + types.toString(e, debug) + (worlds != null ? " in " + worlds.toString(e, debug) :
-				radius != null && center != null ? " in radius " + radius.toString(e, debug) + " around " + center.toString(e, debug) : "");
+		String types = this.types != null ? "of type " + this.types.toString(e, debug) : "";
+		String worlds = this.worlds != null ? " in " + this.worlds.toString(e, debug) : this.chunks != null ? " in " + this.chunks.toString(e, debug) : null;
+		return "all entities " + types + (worlds != null ? worlds :
+			radius != null && center != null ? " in radius " + radius.toString(e, debug) + " around " + center.toString(e, debug) : "");
+	}
+
+	private boolean isOfType(Entity entity, Object[] types) {
+		if (types != null) {
+			for (Object type : types) {
+				if (type instanceof EntityType entityType) {
+					if (entityType == entity.getType()) return true;
+				} else if (type instanceof EntityCategory entityCategory) {
+					if (entityCategory.isOfType(entity)) return true;
+				}
+			}
+			return false;
+		}
+		return true;
 	}
 
 }

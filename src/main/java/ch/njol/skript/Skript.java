@@ -1,9 +1,7 @@
 package ch.njol.skript;
 
-import ch.njol.skript.aliases.Aliases;
-import ch.njol.skript.bukkitutil.BurgerHelper;
 import ch.njol.skript.classes.ClassInfo;
-import ch.njol.skript.classes.data.BukkitClasses;
+import ch.njol.skript.classes.data.bukkit.BukkitClasses;
 import ch.njol.skript.classes.data.BukkitEventValues;
 import ch.njol.skript.classes.data.DefaultComparators;
 import ch.njol.skript.classes.data.DefaultConverters;
@@ -73,7 +71,6 @@ import com.google.gson.Gson;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -111,12 +108,8 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -234,7 +227,7 @@ public final class Skript extends JavaPlugin implements Listener {
 	public static ServerPlatform getServerPlatform() {
 		if (classExists("net.glowstone.GlowServer")) {
 			return ServerPlatform.BUKKIT_GLOWSTONE; // Glowstone has timings too, so must check for it first
-		} else if (classExists("co.aikar.timings.Timings")) {
+		} else if (classExists("io.papermc.paper.ServerBuildInfo")) {
 			return ServerPlatform.BUKKIT_PAPER; // Could be Sponge, but it doesn't work at all at the moment
 		} else if (classExists("org.spigotmc.SpigotConfig")) {
 			return ServerPlatform.BUKKIT_SPIGOT;
@@ -244,17 +237,6 @@ public final class Skript extends JavaPlugin implements Listener {
 		} else { // Probably some ancient Bukkit implementation
 			return ServerPlatform.BUKKIT_UNKNOWN;
 		}
-	}
-
-	/**
-	 * Returns true if the underlying installed Java/JVM is 32-bit, false otherwise.
-	 * Note that this depends on a internal system property and these can always be overridden by user using -D JVM options,
-	 * more specifically, this method will return false on non OracleJDK/OpenJDK based JVMs, that don't include bit information in java.vm.name system property.
-	 * @return Whether the installed Java/JVM is 32-bit or not.
-	 */
-	private static boolean using32BitJava() {
-		// Property returned should either be "Java HotSpot(TM) 32-Bit Server VM" or "OpenJDK 32-Bit Server VM" if 32-bit and using OracleJDK/OpenJDK
-		return System.getProperty("java.vm.name").contains("32");
 	}
 
 	/**
@@ -275,11 +257,11 @@ public final class Skript extends JavaPlugin implements Listener {
 		Skript.debug("Loading for Minecraft " + minecraftVersion);
 
 		// Check that MC version is supported
-		if (!isRunningMinecraft(1, 9)) {
+		if (!isRunningMinecraft(1, 20, 6)) {
 			// Prevent loading when not running at least Minecraft 1.9
-			Skript.error("This version of Skript does not work with Minecraft " + minecraftVersion + " and requires Minecraft 1.9.4+");
-			Skript.error("You probably want Skript 2.2 or 2.1 (Google to find where to get them)");
-			Skript.error("Note that those versions are, of course, completely unsupported!");
+			Skript.error("This version of Skript does not work with Minecraft " + minecraftVersion + " and requires Minecraft 1.20.6+");
+			Skript.error("You probably want Skript 2.x from SkriptLang (Google to find where to get it)");
+			Skript.error("Note that those versions are, of course, completely unsupported by SkriptDev!");
 			return false;
 		}
 
@@ -478,7 +460,7 @@ public final class Skript extends JavaPlugin implements Listener {
 		Throwable classLoadError = null;
 		try {
 			new SkriptClasses();
-			new BukkitClasses();
+			BukkitClasses.init();
 		} catch (Throwable e) {
 			classLoadError = e;
 		}
@@ -497,20 +479,6 @@ public final class Skript extends JavaPlugin implements Listener {
 			assert console != null;
 			assert updater != null;
 			updater.updateCheck(console);
-		}
-
-		try {
-			Aliases.load(); // Loaded before anything that might use them
-		} catch (StackOverflowError e) {
-			if (using32BitJava()) {
-				Skript.error("");
-				Skript.error("There was a StackOverflowError that occured while loading aliases.");
-				Skript.error("As you are currently using 32-bit Java, please update to 64-bit Java to resolve the error.");
-				Skript.error("Please report this issue to our GitHub only if updating to 64-bit Java does not fix the issue.");
-				Skript.error("");
-			} else {
-				throw e; // Uh oh, this shouldn't happen. Re-throw the error.
-			}
 		}
 
 		// If loading can continue (platform ok), check for potentially thrown error
@@ -864,62 +832,7 @@ public final class Skript extends JavaPlugin implements Listener {
 	 * Handles -Dskript.stuff command line arguments.
 	 */
 	private void handleJvmArguments() {
-		Path folder = getDataFolder().toPath();
-
-		/*
-		 * Burger is a Python application that extracts data from Minecraft.
-		 * Datasets for most common versions are available for download.
-		 * Skript uses them to provide minecraft:material to Bukkit
-		 * Material mappings on Minecraft 1.12 and older.
-		 */
-		String burgerEnabled = System.getProperty("skript.burger.enable");
-		if (burgerEnabled != null) {
-			tainted = true;
-			String version = System.getProperty("skript.burger.version");
-			String burgerInput;
-			if (version == null) { // User should have provided JSON file path
-				String inputFile = System.getProperty("skript.burger.file");
-				if (inputFile == null) {
-					Skript.exception("burger enabled but skript.burger.file not provided");
-					return;
-				}
-				try {
-					burgerInput = new String(Files.readAllBytes(Paths.get(inputFile)), StandardCharsets.UTF_8);
-				} catch (IOException e) {
-					Skript.exception(e);
-					return;
-				}
-			} else { // Try to download Burger dataset for this version
-				try {
-					Path data = folder.resolve("burger-" + version + ".json");
-					if (!Files.exists(data)) {
-						URL url = new URL("https://pokechu22.github.io/Burger/" + version + ".json");
-						try (InputStream is = url.openStream()) {
-							Files.copy(is, data);
-						}
-					}
-					burgerInput = new String(Files.readAllBytes(data), StandardCharsets.UTF_8);
-				} catch (IOException e) {
-					Skript.exception(e);
-					return;
-				}
-			}
-
-			// Use BurgerHelper to create some mappings, then dump them as JSON
-			try {
-				BurgerHelper burger = new BurgerHelper(burgerInput);
-				Map<String,Material> materials = burger.mapMaterials();
-				Map<Integer,Material> ids = BurgerHelper.mapIds();
-
-				Gson gson = new Gson();
-				Files.write(folder.resolve("materials_mappings.json"), gson.toJson(materials)
-						.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE);
-				Files.write(folder.resolve("id_mappings.json"), gson.toJson(ids)
-						.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE);
-			} catch (IOException e) {
-				Skript.exception(e);
-			}
-		}
+		// Unused
 	}
 
 	public static Version getMinecraftVersion() {

@@ -19,9 +19,7 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.classes.Arithmetic;
-import ch.njol.skript.classes.ClassInfo;
-import ch.njol.skript.conditions.CondCompare;
+import ch.njol.skript.conditions.CondZCompare;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -30,7 +28,6 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
-import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.LiteralUtils;
 import ch.njol.skript.util.Utils;
 import ch.njol.util.Kleenean;
@@ -139,7 +136,7 @@ public class ExprDifference extends SimpleExpression<Object> {
 		}
 
 		if (fail) {
-			Skript.error("Can't get the difference of " + CondCompare.f(first) + " and " + CondCompare.f(second));
+			Skript.error("Can't get the difference of " + CondZCompare.f(first) + " and " + CondZCompare.f(second));
 			return false;
 		}
 

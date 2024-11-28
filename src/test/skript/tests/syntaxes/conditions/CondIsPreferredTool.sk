@@ -11,7 +11,7 @@ test "CondIsPreferredTool - BlockData" when running minecraft "1.19.2":
 test "CondIsPreferredTool - Block" when running minecraft "1.16.5":
 	set {_block} to block at location(0,0,0, "world")
 	set {_temp} to {_block}'s type
-	set block at {_block} to grass
+	set block at {_block} to grass block
 	assert wooden axe is preferred tool for {_block} with "failed wooden axe for grass"
 	assert wooden pickaxe is preferred tool for {_block} with "failed wooden pickaxe for grass"
 	assert diamond pickaxe is preferred tool for {_block} with "failed diamond pickaxe for grass"

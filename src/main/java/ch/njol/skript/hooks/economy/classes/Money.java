@@ -51,7 +51,7 @@ public class Money {
 						"set the victim's money to 0",
 						"increase the attacker's balance by the level of the victim * 100")
 				.since("2.0")
-				.before("itemtype", "itemstack")
+				.before("itemstack")
 				.requiredPlugins("Vault", "an economy plugin that supports Vault")
 				.parser(new Parser<Money>() {
 					@Override

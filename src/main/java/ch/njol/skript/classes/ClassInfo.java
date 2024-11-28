@@ -276,7 +276,6 @@ public class ClassInfo<T> implements Debuggable {
 	 * @return This ClassInfo object
 	 */
 	public ClassInfo<T> usage(final String... usage) {
-		assert this.usage == null;
 		this.usage = usage;
 		return this;
 	}

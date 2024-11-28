@@ -1,29 +1,6 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.expressions;
 
-import org.bukkit.event.Event;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.Nullable;
-
 import ch.njol.skript.Skript;
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -32,6 +9,10 @@ import ch.njol.skript.doc.RequiredPlugins;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
+import org.bukkit.event.Event;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
 
 @Name("Custom Model Data")
 @Description("Get/set the CustomModelData tag for an item. (Value is an integer between 0 and 99999999)")
@@ -39,16 +20,16 @@ import ch.njol.util.coll.CollectionUtils;
 	"set {_model} to custom model data of player's tool"})
 @RequiredPlugins("1.14+")
 @Since("2.5")
-public class ExprCustomModelData extends SimplePropertyExpression<ItemType, Long> {
-	
+public class ExprCustomModelData extends SimplePropertyExpression<ItemStack, Long> {
+
 	static {
 		if (Skript.methodExists(ItemMeta.class, "hasCustomModelData")) {
-			register(ExprCustomModelData.class, Long.class, "[custom] model data", "itemtypes");
+			register(ExprCustomModelData.class, Long.class, "[custom] model data", "itemstacks");
 		}
 	}
-	
+
 	@Override
-	public Long convert(ItemType item) {
+	public Long convert(ItemStack item) {
 		ItemMeta meta = item.getItemMeta();
 		assert meta != null;
 		if (meta.hasCustomModelData())
@@ -56,51 +37,45 @@ public class ExprCustomModelData extends SimplePropertyExpression<ItemType, Long
 		else
 			return 0L;
 	}
-	
+
 	@Override
 	public Class<? extends Long> getReturnType() {
 		return Long.class;
 	}
-	
+
 	@Override
 	public Class<?>[] acceptChange(Changer.ChangeMode mode) {
 		return CollectionUtils.array(Number.class);
 	}
-	
+
 	@Override
 	protected String getPropertyName() {
 		return "custom model data";
 	}
-	
+
 	@Override
 	public void change(Event e, @Nullable Object[] delta, Changer.ChangeMode mode) {
 		long data = delta == null ? 0 : ((Number) delta[0]).intValue();
 		if (data > 99999999 || data < 0) data = 0;
-		for (ItemType item : getExpr().getArray(e)) {
+		for (ItemStack item : getExpr().getArray(e)) {
 			long oldData = 0;
 			ItemMeta meta = item.getItemMeta();
 			if (meta.hasCustomModelData())
 				oldData = meta.getCustomModelData();
-			switch (mode) {
-				case ADD:
-					data = oldData + data;
-					break;
-				case REMOVE:
-					data = oldData - data;
-					break;
-				case DELETE:
-				case RESET:
-				case REMOVE_ALL:
-					data = 0;
-			}
+			data = switch (mode) {
+				case ADD -> oldData + data;
+				case REMOVE -> oldData - data;
+				case DELETE, RESET, REMOVE_ALL -> 0;
+				default -> data;
+			};
 			meta.setCustomModelData((int) data);
 			item.setItemMeta(meta);
 		}
 	}
-	
+
 	@Override
 	public String toString(@Nullable Event e, boolean d) {
 		return "custom model data of " + getExpr().toString(e, d);
 	}
-	
+
 }

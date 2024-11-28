@@ -1,33 +1,4 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.expressions;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-
-import ch.njol.skript.aliases.ItemType;
-import org.bukkit.event.Event;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
@@ -39,13 +10,18 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.Variable;
 import ch.njol.skript.lang.util.SimpleExpression;
-import ch.njol.skript.util.slot.InventorySlot;
-import ch.njol.skript.util.slot.Slot;
 import ch.njol.util.Kleenean;
+import org.bukkit.Material;
+import org.bukkit.event.Event;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Name("Items In")
-@Description({
-	"All items or specific type(s) of items in an inventory. Useful for looping or storing in a list variable.",
+@Description({"All items or specific type(s) of items in an inventory. Useful for looping or storing in a list variable.",
 	"Please note that the positions of the items in the inventory are not saved, only their order is preserved."
 })
 @Examples({
@@ -55,20 +31,19 @@ import ch.njol.util.Kleenean;
 	"set {inventory::%uuid of player%::*} to items in the player's inventory"
 })
 @Since("2.0, 2.8.0 (specific types of items)")
-public class ExprItemsIn extends SimpleExpression<Slot> {
+public class ExprItemsIn extends SimpleExpression<ItemStack> {
 
 	static {
-		Skript.registerExpression(ExprItemsIn.class, Slot.class, ExpressionType.PROPERTY,
+		Skript.registerExpression(ExprItemsIn.class, ItemStack.class, ExpressionType.PROPERTY,
 			"[all [[of] the]] items ([with]in|of|contained in|out of) [1:inventor(y|ies)] %inventories%",
-			"all [[of] the] %itemtypes% ([with]in|of|contained in|out of) [1:inventor(y|ies)] %inventories%"
+			"all [[of] the] %materials% ([with]in|of|contained in|out of) [1:inventor(y|ies)] %inventories%"
 		);
 	}
 
-	@SuppressWarnings("NotNullFieldNotInitialized")
 	private Expression<Inventory> inventories;
 
 	@Nullable
-	private Expression<ItemType> types;
+	private Expression<Material> types;
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -80,7 +55,7 @@ public class ExprItemsIn extends SimpleExpression<Slot> {
 		if (matchedPattern == 0) {
 			inventories = (Expression<Inventory>) exprs[0];
 		} else {
-			types = (Expression<ItemType>) exprs[0];
+			types = (Expression<Material>) exprs[0];
 			inventories = (Expression<Inventory>) exprs[1];
 		}
 		if (inventories instanceof Variable && !inventories.isSingle() && parseResult.mark != 1)
@@ -89,67 +64,23 @@ public class ExprItemsIn extends SimpleExpression<Slot> {
 	}
 
 	@Override
-	protected Slot[] get(Event event) {
-		List<Slot> itemSlots = new ArrayList<>();
-		ItemType[] types = this.types == null ? null : this.types.getArray(event);
+	protected ItemStack[] get(Event event) {
+		List<ItemStack> itemStacks = new ArrayList<>();
+		Material[] types = this.types == null ? null : this.types.getArray(event);
 		for (Inventory inventory : inventories.getArray(event)) {
-			for (int i = 0; i < inventory.getSize(); i++) {
-				if (isAllowedItem(types, inventory.getItem(i)))
-					itemSlots.add(new InventorySlot(inventory, i));
+			for (ItemStack itemStack : inventory) {
+				if (types != null) {
+					for (Material type : types) {
+						if (itemStack.getType() == type) {
+							itemStacks.add(itemStack);
+						}
+					}
+				} else {
+					itemStacks.add(itemStack);
+				}
 			}
 		}
-		return itemSlots.toArray(new Slot[itemSlots.size()]);
-	}
-
-	@Override
-	@Nullable
-	public Iterator<Slot> iterator(Event event) {
-		Iterator<? extends Inventory> inventoryIterator = inventories.iterator(event);
-		ItemType[] types = this.types == null ? null : this.types.getArray(event);
-		if (inventoryIterator == null || !inventoryIterator.hasNext())
-			return null;
-		return new Iterator<Slot>() {
-			Inventory currentInventory = inventoryIterator.next();
-
-			int next = 0;
-
-			@Override
-			public boolean hasNext() {
-				while (next < currentInventory.getSize() && !isAllowedItem(types, currentInventory.getItem(next)))
-					next++;
-				while (next >= currentInventory.getSize() && inventoryIterator.hasNext()) {
-					currentInventory = inventoryIterator.next();
-					next = 0;
-					while (next < currentInventory.getSize() && !isAllowedItem(types, currentInventory.getItem(next)))
-						next++;
-				}
-				return next < currentInventory.getSize();
-			}
-
-			@Override
-			public Slot next() {
-				if (!hasNext())
-					throw new NoSuchElementException();
-				return new InventorySlot(currentInventory, next++);
-			}
-
-			@Override
-			public void remove() {
-				throw new UnsupportedOperationException();
-			}
-		};
-	}
-
-	@Override
-	public boolean isLoopOf(String s) {
-		return s.equalsIgnoreCase("item");
-	}
-
-	@Override
-	public String toString(@Nullable Event event, boolean debug) {
-		if (types == null)
-			return "items in " + inventories.toString(event, debug);
-		return "all " + types.toString(event, debug) + " in " + inventories.toString(event, debug);
+		return itemStacks.toArray(new ItemStack[0]);
 	}
 
 	@Override
@@ -158,23 +89,15 @@ public class ExprItemsIn extends SimpleExpression<Slot> {
 	}
 
 	@Override
-	public Class<Slot> getReturnType() {
-		return Slot.class;
+	public Class<ItemStack> getReturnType() {
+		return ItemStack.class;
 	}
 
-	private boolean isAllowedItem(@Nullable ItemType[] types, @Nullable ItemStack item) {
+	@Override
+	public String toString(@Nullable Event event, boolean debug) {
 		if (types == null)
-			return item != null;
-		if (item == null)
-			return false;
-
-		ItemType potentiallyAllowedItem = new ItemType(item);
-		for (ItemType type : types) {
-			if (potentiallyAllowedItem.isSimilar(type))
-				return true;
-		}
-
-		return false;
+			return "items in " + inventories.toString(event, debug);
+		return "all " + types.toString(event, debug) + " in " + inventories.toString(event, debug);
 	}
 
 }

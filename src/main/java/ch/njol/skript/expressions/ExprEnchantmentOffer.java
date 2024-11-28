@@ -1,32 +1,4 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.expressions;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
-import org.bukkit.enchantments.EnchantmentOffer;
-import org.bukkit.event.Event;
-import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
-import org.jetbrains.annotations.Nullable;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer.ChangeMode;
@@ -41,35 +13,39 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.log.ErrorQuality;
-import ch.njol.skript.util.EnchantmentType;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
+import org.bukkit.enchantments.EnchantmentOffer;
+import org.bukkit.event.Event;
+import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Name("Enchantment Offer")
-@Description("The enchantment offer in enchant prepare events.")
+@Description({"The enchantment offer in enchant prepare events.",
+	"These can be changed using the 'enchantmentOffer' function."})
 @Examples({"on enchant prepare:",
-			"\tsend \"Your enchantment offers are: %the enchantment offers%\" to player"})
+	"\tsend \"Your enchantment offers are: %the enchantment offers%\" to player",
+	"set enchantment offer 3 to enchantmentOffer(sharpness, 10, 20)"})
 @Since("2.5")
 @Events("enchant prepare")
 @RequiredPlugins("1.11 or newer")
 public class ExprEnchantmentOffer extends SimpleExpression<EnchantmentOffer> {
 
 	static {
-		if (Skript.classExists("org.bukkit.enchantments.EnchantmentOffer")) {
-			Skript.registerExpression(ExprEnchantmentOffer.class, EnchantmentOffer.class, ExpressionType.SIMPLE, 
-					"[all [of]] [the] enchant[ment] offers",
-					"enchant[ment] offer[s] %numbers%",
-					"[the] %number%(st|nd|rd|th) enchant[ment] offer");
-		}
+		Skript.registerExpression(ExprEnchantmentOffer.class, EnchantmentOffer.class, ExpressionType.SIMPLE,
+			"[all [of]] [the] enchant[ment] offers",
+			"enchant[ment] offer[s] %numbers%",
+			"[the] %number%(st|nd|rd|th) enchant[ment] offer");
 	}
 
 	@SuppressWarnings("null")
 	private Expression<Number> exprOfferNumber;
 
 	private boolean all;
-
-	// Used for getCost()
-	private final Random rand = new Random();
 
 	@SuppressWarnings({"null", "unchecked"})
 	@Override
@@ -121,7 +97,7 @@ public class ExprEnchantmentOffer extends SimpleExpression<EnchantmentOffer> {
 	@Nullable
 	public Class<?>[] acceptChange(ChangeMode mode) {
 		if (mode == ChangeMode.SET || mode == ChangeMode.DELETE)
-			return CollectionUtils.array(EnchantmentType.class);
+			return CollectionUtils.array(EnchantmentOffer.class);
 		return null;
 	}
 
@@ -130,42 +106,29 @@ public class ExprEnchantmentOffer extends SimpleExpression<EnchantmentOffer> {
 	public void change(Event event, @Nullable Object[] delta, ChangeMode mode) {
 		if (delta == null && mode != ChangeMode.DELETE)
 			return;
-		EnchantmentType et = mode != ChangeMode.DELETE ? (EnchantmentType) delta[0] : null;
-		if (event instanceof PrepareItemEnchantEvent) {
-			PrepareItemEnchantEvent e = (PrepareItemEnchantEvent) event;
+		EnchantmentOffer offer = mode != ChangeMode.DELETE ? (EnchantmentOffer) delta[0] : null;
+		if (event instanceof PrepareItemEnchantEvent prepareEvent) {
 			switch (mode) {
 				case SET:
 					if (all) {
 						for (int i = 0; i <= 2; i++) {
-							EnchantmentOffer eo = e.getOffers()[i];
-							if (eo == null) {
-								eo = new EnchantmentOffer(et.getType(), et.getLevel(), getCost(i + 1, e.getEnchantmentBonus()));
-								e.getOffers()[i] = eo;
-							} else {
-								eo.setEnchantment(et.getType());
-								eo.setEnchantmentLevel(et.getLevel());
-							}
+							prepareEvent.getOffers()[i] = offer;
 						}
 					} else {
-						for (Number n : exprOfferNumber.getArray(e)) {
+						for (Number n : exprOfferNumber.getArray(prepareEvent)) {
 							int slot = n.intValue() - 1;
-							EnchantmentOffer eo = e.getOffers()[slot];
-							if (eo == null) {
-								eo = new EnchantmentOffer(et.getType(), et.getLevel(), getCost(slot + 1, e.getEnchantmentBonus()));
-								e.getOffers()[slot] = eo;
-							} else {
-								eo.setEnchantment(et.getType());
-								eo.setEnchantmentLevel(et.getLevel());
-							}
+							if (slot < 0 || slot > 2) continue;
+
+							prepareEvent.getOffers()[slot] = offer;
 						}
 					}
 					break;
 				case DELETE:
 					if (all) {
-						Arrays.fill(e.getOffers(), null);
+						Arrays.fill(prepareEvent.getOffers(), null);
 					} else {
-						for (Number n : exprOfferNumber.getArray(e))
-							e.getOffers()[n.intValue() - 1] = null;
+						for (Number n : exprOfferNumber.getArray(prepareEvent))
+							prepareEvent.getOffers()[n.intValue() - 1] = null;
 					}
 					break;
 				case ADD:
@@ -190,23 +153,6 @@ public class ExprEnchantmentOffer extends SimpleExpression<EnchantmentOffer> {
 	@Override
 	public String toString(@Nullable Event e, boolean debug) {
 		return all ? "the enchantment offers" : "enchantment offer(s) " + exprOfferNumber.toString(e, debug);
-	}
-
-	/**
-	 * Returns an enchantment cost from an enchantment button and number of bookshelves.
-	 * @param slot The enchantment button slot (1, 2, or 3).
-	 * @param bookshelves The number of bookshelves around the enchantment table.
-	 * @return A cost for that enchantment button with the number of bookshelves, or 1 if 'slot' is not an integer from 1 to 3.
-	 */
-	public int getCost(int slot, int bookshelves) {
-		// (from 1 to 8) + floor(bookshelves / 2) + (from 0 to bookshelves)
-		int base = (int) ((rand.nextInt(7) + 1) + Math.floor(bookshelves / 2) + (rand.nextInt(bookshelves + 1)));
-		switch (slot) {
-			case 1: return Math.max(base / 3, 1);
-			case 2: return (base * 2) / 3 + 1;
-			case 3: return Math.max(base, bookshelves * 2);
-			default: return 1;
-		}
 	}
 
 }

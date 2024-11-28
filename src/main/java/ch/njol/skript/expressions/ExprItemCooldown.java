@@ -1,25 +1,6 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.classes.Changer.ChangeMode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -37,53 +18,46 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Name("Item Cooldown")
 @Description("Change the cooldown of a specific material to a certain amount of <a href='./classes.html#timespan'>Timespan</a>.")
 @Examples({
 	"on right click using stick:",
-		"\tset item cooldown of player's tool for player to 1 minute",
-		"\tset item cooldown of stone and grass for all players to 20 seconds",
-		"\treset item cooldown of cobblestone and dirt for all players"
+	"\tset item cooldown of player's tool for player to 1 minute",
+	"\tset item cooldown of stone and grass for all players to 20 seconds",
+	"\treset item cooldown of cobblestone and dirt for all players"
 })
 @Since("2.8.0")
 public class ExprItemCooldown extends SimpleExpression<Timespan> {
-	
+
 	static {
-		Skript.registerExpression(ExprItemCooldown.class, Timespan.class, ExpressionType.COMBINED, 
-				"[the] [item] cooldown of %itemtypes% for %players%",
-				"%players%'[s] [item] cooldown for %itemtypes%");
+		Skript.registerExpression(ExprItemCooldown.class, Timespan.class, ExpressionType.COMBINED,
+			"[the] [item] cooldown of %materials% for %players%",
+			"%players%'[s] [item] cooldown for %materials%");
 	}
-	
+
 	@SuppressWarnings("NotNullFieldNotInitialized")
 	private Expression<Player> players;
 	@SuppressWarnings("NotNullFieldNotInitialized")
-	private Expression<ItemType> itemtypes;
-	
+	private Expression<Material> materials;
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
 		players = (Expression<Player>) exprs[matchedPattern ^ 1];
-		itemtypes = (Expression<ItemType>) exprs[matchedPattern];
+		materials = (Expression<Material>) exprs[matchedPattern];
 		return true;
 	}
-	
+
 	@Override
 	protected Timespan[] get(Event event) {
 		Player[] players = this.players.getArray(event);
 
-		List<ItemType> itemTypes = this.itemtypes.stream(event)
-				.filter(ItemType::hasType)
-				.collect(Collectors.toList());
+		Timespan[] timespan = new Timespan[players.length * this.materials.getArray(event).length];
 
-		Timespan[] timespan = new Timespan[players.length * itemTypes.size()];
-		
 		int i = 0;
 		for (Player player : players) {
-			for (ItemType itemType : itemTypes) {
-				timespan[i++] = Timespan.fromTicks_i(player.getCooldown(itemType.getMaterial()));
+			for (Material material : this.materials.getArray(event)) {
+				timespan[i++] = Timespan.fromTicks_i(player.getCooldown(material));
 			}
 		}
 		return timespan;
@@ -99,16 +73,12 @@ public class ExprItemCooldown extends SimpleExpression<Timespan> {
 	public void change(Event event, Object @Nullable [] delta, ChangeMode mode) {
 		if (mode != ChangeMode.RESET && mode != ChangeMode.DELETE && delta == null)
 			return;
-		
+
 		int ticks = delta != null ? (int) ((Timespan) delta[0]).getTicks_i() : 0; // 0 for DELETE/RESET
 		Player[] players = this.players.getArray(event);
-		List<ItemType> itemTypes = this.itemtypes.stream(event)
-				.filter(ItemType::hasType)
-				.collect(Collectors.toList());
 
 		for (Player player : players) {
-			for (ItemType itemtype : itemTypes) {
-				Material material = itemtype.getMaterial();
+			for (Material material : this.materials.getArray(event)) {
 				switch (mode) {
 					case RESET:
 					case DELETE:
@@ -128,17 +98,17 @@ public class ExprItemCooldown extends SimpleExpression<Timespan> {
 
 	@Override
 	public boolean isSingle() {
-		return players.isSingle() && itemtypes.isSingle();
+		return players.isSingle() && materials.isSingle();
 	}
 
 	@Override
 	public Class<? extends Timespan> getReturnType() {
 		return Timespan.class;
 	}
-	
+
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
-		return "cooldown of " + itemtypes.toString(event, debug) + " for " + players.toString(event, debug);
+		return "cooldown of " + materials.toString(event, debug) + " for " + players.toString(event, debug);
 	}
 
 }

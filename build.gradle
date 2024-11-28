@@ -4,7 +4,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import java.time.LocalTime
 
 plugins {
-	id 'com.github.johnrengelman.shadow' version '8.1.1'
+	id 'com.gradleup.shadow' version '8.3.5'
 	id 'maven-publish'
 	id 'java'
 	id 'checkstyle'
@@ -48,26 +48,10 @@ checkstyle {
 	sourceSets = [] // disables checkstyle after build task
 }
 
-task checkAliases {
-	description 'Checks for the existence of the aliases.'
-	doLast {
-		def aliasFolder = project.file('skript-aliases')
-		if (!aliasFolder.exists() || aliasFolder.listFiles().length == 0) {
-			throw new InvalidUserDataException('Aliases are missing from \'skript-aliases\' folder. Consider fetching submodules with \'git submodule update --init\'.')
-		}
-	}
-}
-
 task testJar(type: ShadowJar) {
 	dependsOn(compileTestJava)
 	archiveFileName = 'Skript-JUnit.jar'
 	from sourceSets.test.output, sourceSets.main.output, project.configurations.testShadow
-}
-
-task jar(overwrite: true, type: ShadowJar) {
-	dependsOn checkAliases
-	archiveFileName = jarName ? 'Skript-' + project.version + '.jar' : jarName
-	from sourceSets.main.output
 }
 
 task build(overwrite: true, type: ShadowJar) {
@@ -104,9 +88,6 @@ tasks.withType(ShadowJar) {
 			'Automatic-Module-Name': 'ch.njol.skript',
 			'Sealed': 'true'
 		)
-	}
-	from 'skript-aliases', {
-		into 'aliases-english' // Change this if we get aliases in other languages
 	}
 }
 
@@ -237,12 +218,10 @@ void createTestTask(String name, String desc, String environments, int javaVersi
 }
 
 def java21 = 21
-def java17 = 17
-def java11 = 11
 
 def latestEnv = 'java21/paper-1.21.3.json'
 def latestJava = java21
-def oldestJava = java11
+def oldestJava = java21
 
 def latestJUnitEnv = latestEnv
 def latestJUnitJava = latestJava
@@ -264,24 +243,20 @@ String env = project.property('testEnv') == null ? latestEnv : project.property(
 int envJava = project.property('testEnvJavaVersion') == null ? latestJava : Integer.parseInt(project.property('testEnvJavaVersion') as String)
 createTestTask('quickTest', 'Runs tests on one environment being the latest supported Java and Minecraft.', environments + latestEnv, latestJava, 0)
 createTestTask('skriptTestJava21', 'Runs tests on all Java 21 environments.', environments + 'java21', java21, 0)
-createTestTask('skriptTestJava17', 'Runs tests on all Java 17 environments.', environments + 'java17', java17, 0)
-createTestTask('skriptTestJava11', 'Runs tests on all Java 11 environments.', environments + 'java11', java11, 0)
 createTestTask('skriptTestDev', 'Runs testing server and uses \'system.in\' for command input, stop server to finish.', environments + env, envJava, 0, Modifiers.DEV_MODE, Modifiers.DEBUG)
 createTestTask('skriptProfile', 'Starts the testing server with JProfiler support.', environments + latestEnv, latestJava, -1, Modifiers.PROFILE)
 createTestTask('genNightlyDocs', 'Generates the Skript documentation website html files.', environments + env, envJava, 0, Modifiers.GEN_NIGHTLY_DOCS)
 createTestTask('genReleaseDocs', 'Generates the Skript documentation website html files for a release.', environments + env, envJava, 0, Modifiers.GEN_RELEASE_DOCS)
 tasks.register('skriptTest') {
 	description = 'Runs tests on all environments.'
-	dependsOn skriptTestJava11, skriptTestJava17, skriptTestJava21
+	dependsOn skriptTestJava21
 }
 
 createTestTask('JUnitQuick', 'Runs JUnit tests on one environment being the latest supported Java and Minecraft.', environments + latestJUnitEnv, latestJUnitJava, 0, Modifiers.JUNIT)
 createTestTask('JUnitJava21', 'Runs JUnit tests on all Java 21 environments.', environments + 'java21', java21, 0, Modifiers.JUNIT)
-createTestTask('JUnitJava17', 'Runs JUnit tests on all Java 17 environments.', environments + 'java17', java17, 0, Modifiers.JUNIT)
-createTestTask('JUnitJava11', 'Runs JUnit tests on all Java 11 environments.', environments + 'java11', java11, 0, Modifiers.JUNIT)
 tasks.register('JUnit') {
 	description = 'Runs JUnit tests on all environments.'
-	dependsOn JUnitJava11, JUnitJava17, JUnitJava21
+	dependsOn JUnitJava21
 }
 
 // Build flavor configurations

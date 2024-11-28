@@ -1,0 +1,21 @@
+test "item of entity":
+	spawn item frame at location(1,1,1)
+	set {_e} to last spawned entity
+
+	set item of {_e} to itemstack of diamond
+	assert item of {_e} is set with "Item of frame should have been set"
+	assert material of item of {_e} = diamond with "Item of frame should have been a diamond"
+
+	delete item of {_e}
+	assert item of {_e} is not set with "Item of frame should have been removed"
+	delete entity within {_e}
+
+	spawn item at location(1,1,1)
+	set {_e} to last spawned entity
+
+	set item of {_e} to itemstack of iron ingot
+	assert item of {_e} is set with "Item of dropped item should have been set"
+	assert material of item of {_e} = iron ingot with "Item of dropped item should have been an iron ingot"
+
+	delete item of {_e}
+	assert {_e} is not valid with "Dropped item should have been removed after deleting item"

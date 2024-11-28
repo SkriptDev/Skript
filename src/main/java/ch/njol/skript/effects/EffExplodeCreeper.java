@@ -19,6 +19,7 @@
 package ch.njol.skript.effects;
 
 import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
@@ -85,7 +86,7 @@ public class EffExplodeCreeper extends Effect {
 
 	@Override
 	protected void execute(final Event e) {
-		for (final LivingEntity le : entities.getArray(e)) {
+		for (final Entity le : entities.getArray(e)) {
 			if (le instanceof Creeper) {
 				if (instant) {
 					((Creeper) le).explode();

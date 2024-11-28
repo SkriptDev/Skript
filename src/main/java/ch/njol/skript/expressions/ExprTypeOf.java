@@ -1,34 +1,17 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.expressions;
 
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.entity.EntityData;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
-import ch.njol.skript.lang.util.ConvertedExpression;
-import org.skriptlang.skript.lang.converter.Converters;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
@@ -47,7 +30,9 @@ import org.jetbrains.annotations.Nullable;
 public class ExprTypeOf extends SimplePropertyExpression<Object, Object> {
 
 	static {
-		register(ExprTypeOf.class, Object.class, "type", "entitydatas/itemtypes/inventories/potioneffects/blockdatas");
+		// TODO this one needs some love
+		register(ExprTypeOf.class, Object.class, "type",
+			"entities/itemstacks/inventories/potioneffects/blocks/blockdatas");
 	}
 
 	@Override
@@ -58,16 +43,18 @@ public class ExprTypeOf extends SimplePropertyExpression<Object, Object> {
 	@Override
 	@Nullable
 	public Object convert(Object o) {
-		if (o instanceof EntityData) {
-			return ((EntityData<?>) o).getSuperType();
-		} else if (o instanceof ItemType) {
-			return ((ItemType) o).getBaseType();
+		if (o instanceof Entity entity) {
+			return entity.getType();
 		} else if (o instanceof Inventory) {
 			return ((Inventory) o).getType();
 		} else if (o instanceof PotionEffect) {
 			return ((PotionEffect) o).getType();
-		} else if (o instanceof BlockData) {
-			return new ItemType(((BlockData) o).getMaterial());
+		} else if (o instanceof Block block) {
+			return block.getType();
+		} else if (o instanceof BlockData blockData) {
+			return blockData.getMaterial();
+		} else if (o instanceof ItemStack itemStack) {
+			return itemStack.getType();
 		}
 		assert false;
 		return null;
@@ -76,17 +63,11 @@ public class ExprTypeOf extends SimplePropertyExpression<Object, Object> {
 	@Override
 	public Class<?> getReturnType() {
 		Class<?> returnType = getExpr().getReturnType();
-		return EntityData.class.isAssignableFrom(returnType) ? EntityData.class
-			: ItemType.class.isAssignableFrom(returnType) ? ItemType.class
+		return Entity.class.isAssignableFrom(returnType) ? EntityType.class
 			: PotionEffectType.class.isAssignableFrom(returnType) ? PotionEffectType.class
-			: BlockData.class.isAssignableFrom(returnType) ? ItemType.class : Object.class;
+			: ItemStack.class.isAssignableFrom(returnType) ? Material.class
+			: Block.class.isAssignableFrom(returnType) ? Material.class
+			: BlockData.class.isAssignableFrom(returnType) ? Material.class : Object.class;
 	}
 
-	@Override
-	@Nullable
-	protected <R> ConvertedExpression<Object, ? extends R> getConvertedExpr(final Class<R>... to) {
-		if (!Converters.converterExists(EntityData.class, to) && !Converters.converterExists(ItemType.class, to))
-			return null;
-		return super.getConvertedExpr(to);
-	}
 }
