@@ -42,17 +42,26 @@ public class RegistryParser<R extends Keyed> extends Parser<R> {
 
 			String namespacedKeyString = namespacedKey.toString();
 			// Put the full namespaced key as a pattern
-			parseMap.put(namespacedKeyString, registryObject);
+			putInMapWithArticle(namespacedKeyString, registryObject);
 
 			// If the object is a vanilla Minecraft object, we'll add the key with spaces as a pattern
 			if (namespace.equalsIgnoreCase(NamespacedKey.MINECRAFT)) {
-				parseMap.put(keyWithSpaces, registryObject);
-				parseMap.put(key, registryObject);
+				putInMapWithArticle(keyWithSpaces, registryObject);
+				putInMapWithArticle(key, registryObject);
 				names.put(registryObject, keyWithSpaces);
 			} else {
 				names.put(registryObject, namespacedKeyString);
 			}
 		}
+	}
+
+	private void putInMapWithArticle(String key, R object) {
+		this.parseMap.put(key, object);
+		String article = switch (key.charAt(0)) {
+			case 'a', 'e', 'i', 'o', 'u' -> "an";
+			default -> "a";
+		};
+		this.parseMap.put(article + " " + key, object);
 	}
 
 	/**
