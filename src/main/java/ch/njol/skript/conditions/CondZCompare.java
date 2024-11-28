@@ -1,21 +1,3 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.conditions;
 
 import ch.njol.skript.lang.VerboseAssert;
@@ -63,7 +45,8 @@ import org.skriptlang.skript.lang.util.Cyclical;
 		"time in the player's world is greater than 8:00",
 		"the creature is not an enderman or an ender dragon"})
 @Since("1.0")
-public class CondCompare extends Condition implements VerboseAssert {
+// Renamed with a Z to register after all other conditions
+public class CondZCompare extends Condition implements VerboseAssert {
 	
 	private final static Patterns<Relation> patterns = new Patterns<>(new Object[][]{
 			{"(1¦neither|) %objects% ((is|are)(|2¦(n't| not|4¦ neither)) ((greater|more|higher|bigger|larger) than|above)|\\>) %objects%", Relation.GREATER},
@@ -95,7 +78,7 @@ public class CondCompare extends Condition implements VerboseAssert {
 	});
 	
 	static {
-		Skript.registerCondition(CondCompare.class, patterns.getPatterns());
+		Skript.registerCondition(CondZCompare.class, patterns.getPatterns());
 	}
 	
 	private Expression<?> first;
@@ -406,9 +389,9 @@ public class CondCompare extends Condition implements VerboseAssert {
 
 	/**
 	 * Used to directly compare two lists for equality.
-	 * This method assumes that {@link CondCompare#first} and {@link CondCompare#second} are both non-single.
-	 * @param event the event with which to evaluate {@link CondCompare#first} and {@link CondCompare#second}.
-	 * @return Whether every element in {@link CondCompare#first} is equal to its counterpart in {@link CondCompare#second}.
+	 * This method assumes that {@link CondZCompare#first} and {@link CondZCompare#second} are both non-single.
+	 * @param event the event with which to evaluate {@link CondZCompare#first} and {@link CondZCompare#second}.
+	 * @return Whether every element in {@link CondZCompare#first} is equal to its counterpart in {@link CondZCompare#second}.
 	 * 		e.g. (1,2,3) = (1,2,3), but (1,2,3) != (3,2,1)
 	 */
 	private boolean compareLists(Event event) {
