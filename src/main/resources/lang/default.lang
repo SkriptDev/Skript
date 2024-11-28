@@ -521,68 +521,69 @@ types:
 	chunk: chunk¦s @a
 
 	# Bukkit
+	attributetype: attribute type¦s @a
+	block: block¦s @a
+	blockdata: block data¦s @a
+	biome: biome¦s @a
+	cachedservericon: server icon¦s @a
+	cattype: cat type¦s @a
+	clicktype: click type¦s @a
+	commandsender: command sender¦s @a
+	damagecause: damage cause¦s @a
+	difficulty: difficult¦y¦ies @a
+	equipmentslot: equipment slot¦s @an
+	enchantment: enchantment¦s @an
+	enchantmentoffer: enchantment offer¦s @an
 	entity: entit¦y¦ies @an
 	entitycategory: entity categor¦y¦ies @an
 	entitytype: entity type¦s @an
-	livingentity: living entit¦y¦ies @a
-	projectile: projectile¦s @a
-	block: block¦s @a
-	location: location¦s @a
-	world: world¦s @a
-	inventory: inventor¦y¦ies @an
-	player: player¦s @a
-	offlineplayer: offline player¦s @a
-	commandsender: command sender¦s @a
-	inventoryholder: inventory holder¦s @an
-	gamemode: gamemode¦s @a
-	material: material¦s @a
-	itemstack: item stack¦s @an
-	itementity: dropped item¦s @a # same as entities.dropped item.name
-	biome: biome¦s @a
-	potioneffecttype: potion effect type¦s @a
-	potioneffect: potion effect¦s @a
-	enchantment: enchantment¦s @an
-	enchantmentoffer: enchantment offer¦s @an
-	damagecause: damage cause¦s @a
-	teleportcause: teleport cause¦s @a
-	inventoryaction: inventory action¦s @a
-	clicktype: click type¦s @a
-	vector: vector¦s @a
-	inventorytype: inventory type¦s @an
-	metadataholder: metadata holder¦s @a
-	spawnreason: spawn reason¦s @a
-	cachedservericon: server icon¦s @a
-	difficulty: difficult¦y¦ies @a
+	environment: environment¦s @an
 	fireworkeffect: firework effect¦s @a
 	fireworktype: firework type¦s @a
-	soundcategory: sound categor¦y¦ies @a
-	blockdata: block data¦s @a
-	healreason: heal reason¦s @a
-	cattype: cat type¦s @a
+	gamemode: gamemode¦s @a
 	gamerule: gamerule¦s @a
-	attributetype: attribute type¦s @a
-	environment: environment¦s @an
-	moonphase: moonphase¦s @a
-	resourcepackstate: resource pack state¦s @a
-	gene: panda gene¦s @a
 	gamerulevalue: gamerule value¦s @a
-	quitreason: quit reason¦s @a
+	gene: panda gene¦s @a
+	healreason: heal reason¦s @a
+	inventory: inventor¦y¦ies @an
+	inventoryaction: inventory action¦s @a
 	inventoryclosereason: inventory close reason¦s @an
+	inventoryholder: inventory holder¦s @an
+	inventorytype: inventory type¦s @an
+	itementity: dropped item¦s @a # same as entities.dropped item.name
+	itemstack: item stack¦s @an
+	livingentity: living entit¦y¦ies @a
+	location: location¦s @a
+	material: material¦s @a
+	metadataholder: metadata holder¦s @a
+	moonphase: moonphase¦s @a
+	offlineplayer: offline player¦s @a
+	player: player¦s @a
+	potioneffect: potion effect¦s @a
+	potioneffecttype: potion effect type¦s @a
+	projectile: projectile¦s @a
+	quitreason: quit reason¦s @a
+	resourcepackstate: resource pack state¦s @a
+	soundcategory: sound categor¦y¦ies @a
+	spawnreason: spawn reason¦s @a
+	teleportcause: teleport cause¦s @a
 	transformreason: transform reason¦s @a
 	treetype: tree type¦s @a
+	vector: vector¦s @a
+	world: world¦s @a
 
 	# Skript
-	weathertype: weather type¦s @a
+	classinfo: type¦s @a
+	color: color¦s @a
+	date: date¦s @a
+	direction: direction¦s @a
+	experience: experience point¦s @an
+	experience.pattern: (e?xp|experience( points?)?)
 	time: time¦s @a
 	timespan: time span¦s @a
 	timeperiod: time period¦s @a
-	date: date¦s @a
-	direction: direction¦s @a
-	color: color¦s @a
-	experience: experience point¦s @an
-	experience.pattern: (e?xp|experience( points?)?)
-	classinfo: type¦s @a
 	visualeffect: visual effect¦s @a
+	weathertype: weather type¦s @a
 
 	# Hooks
 	money: money
