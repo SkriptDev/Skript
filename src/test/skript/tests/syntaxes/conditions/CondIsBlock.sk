@@ -1,8 +1,10 @@
-#test "block condition":
-	#assert emerald isn't a block with "emerald is a block"
+test "block condition":
+	# Materials that are not Blocks
+	assert emerald isn't a block with "emerald shouldn't be a block"
+	assert stick isn't a block with "stick shouldn't be a block"
 
-#test "block condition 2" when minecraft version is not "1.9.4": #These test glitch out on MC 1.9
-	#assert air is a block with "air is not a block"
-	#assert sand is a block with "sand is not a block"
-
-# TODO for some reason this is not using the condition but rather comparing to Block ClassInfo
+	# Materials that are Blocks
+	assert diamond ore is a block with "diamond ore should be a block"
+	assert air is a block with "air should be a block"
+	assert cave air is a block with "cave air should be a block"
+	assert oak stairs is a block with "oak stairs should be a block"
