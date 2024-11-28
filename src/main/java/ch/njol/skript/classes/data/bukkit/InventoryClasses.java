@@ -191,13 +191,17 @@ public class InventoryClasses {
 		Classes.registerClass(new RegistryClassInfo<>(Material.class, Registry.MATERIAL, "material")
 			.user("materials?")
 			.name("Material")
-			.usage("") // Override RegistryClassInfo usage as there's too many options
+			.usage("Patterns were removed as there are too many.",
+				"All materials follow Minecraft's keys.") // Override RegistryClassInfo usage as there's too many options
 			.description("Represents the different types of items and blocks.",
-				"NOTE: Minecraft namespaces are supported, ex: 'minecraft:oak_log'.")
+				"Materials are auto-generated based on Minecraft keys and may change between MC versions.",
+				"NOTE: Minecraft namespaces and underscores are supported, ex: 'minecraft:oak_log'.")
 			.examples("if material of player's tool = diamond:",
 				"if material of target block = oak stairs:",
 				"set material of target block to diamond ore",
-				"set {_item} to itemstack of diamond axe")
+				"set {_item} to itemstack of diamond axe",
+				"set {_item} to itemstack of diamond_axe",
+				"set {_item} to itemstack of minecraft:diamond_axe")
 			.since("INSERT VERSION"));
 
 		Classes.registerClass(new ClassInfo<>(ItemStack.class, "itemstack")
