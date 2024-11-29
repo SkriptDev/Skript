@@ -39,13 +39,10 @@ public class ExprEntities extends SimpleExpression<Entity> {
 
 	static {
 		Skript.registerExpression(ExprEntities.class, Entity.class, ExpressionType.PATTERN_MATCHES_EVERYTHING,
-			"[(all [[of] the]|the)] entities [(in|of) ([world[s]] %-worlds%|1¦%-chunks%)]",
-			"[(all [[of] the]|the)] entities of type[s] %*-entitytypes/entitycategories% [(in|of) ([world[s]] %-worlds%|1¦%-chunks%)]",
-			"[(all [[of] the]|the)] entities (within|[with]in radius) %number% [(block[s]|met(er|re)[s])] (of|around) %location%",
-			"[(all [[of] the]|the)] entities of type[s] %-entitytypes/entitycategories% in radius %number% (of|around) %location%");
+			"all [[of] the] [entities of type[s]] %*-entitytypes/entitycategories% [(in|of) ([world[s]] %-worlds%|chunk:%-chunks%)]",
+			"all [[of] the] [entities of type[s]] %-entitytypes/entitycategories% in radius %number% (of|around) %location%");
 	}
 
-	@SuppressWarnings("null")
 	Expression<?> types;
 
 	@Nullable
@@ -62,18 +59,17 @@ public class ExprEntities extends SimpleExpression<Entity> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
-		if (matchedPattern == 1 || matchedPattern == 3) {
-			types = LiteralUtils.defendExpression(exprs[0]);
-		}
-		isUsingRadius = matchedPattern >= 2;
+		types = LiteralUtils.defendExpression(exprs[0]);
+
+		isUsingRadius = matchedPattern == 1;
 		if (isUsingRadius) {
-			radius = (Expression<Number>) exprs[matchedPattern - 2];
-			center = (Expression<Location>) exprs[matchedPattern - 1];
+			radius = (Expression<Number>) exprs[1];
+			center = (Expression<Location>) exprs[2];
 		} else {
-			if (parseResult.mark == 1) {
-				chunks = (Expression<Chunk>) exprs[matchedPattern];
+			if (parseResult.hasTag("chunk")) {
+				chunks = (Expression<Chunk>) exprs[1];
 			} else {
-				worlds = (Expression<World>) exprs[matchedPattern];
+				worlds = (Expression<World>) exprs[1];
 			}
 		}
 		return true;
@@ -81,7 +77,6 @@ public class ExprEntities extends SimpleExpression<Entity> {
 
 	@Override
 	@Nullable
-	@SuppressWarnings("null")
 	protected Entity[] get(Event e) {
 		if (isUsingRadius) {
 			if (this.center == null || this.radius == null) return null;
