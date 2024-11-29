@@ -16,6 +16,7 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Enemy;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Explosive;
 import org.bukkit.entity.Fish;
 import org.bukkit.entity.Flying;
@@ -33,6 +34,10 @@ import org.bukkit.entity.ThrowableProjectile;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.WaterMob;
 
+/**
+ * Categories for different types of {@link Entity Entities}
+ */
+@SuppressWarnings("unused")
 public enum EntityCategory {
 
 	ABSTRACT_ARROW(AbstractArrow.class),
@@ -75,8 +80,33 @@ public enum EntityCategory {
 		this.entityClass = entityClass;
 	}
 
+	/**
+	 * Get the Entity class of this Category
+	 *
+	 * @return Entity class of this category
+	 */
+	public Class<? extends Entity> getEntityClass() {
+		return this.entityClass;
+	}
+
+	/**
+	 * Check if an {@link Entity} is an instance of this Category
+	 *
+	 * @param entity Entity to check
+	 * @return True if entity is instance of this category
+	 */
 	public boolean isOfType(Entity entity) {
 		return this.entityClass.isInstance(entity);
+	}
+
+	/**
+	 * Check if an {@link EntityType} is an instance of this Category
+	 *
+	 * @param entityType EntityType to check
+	 * @return True if entity is instance of this category
+	 */
+	public boolean isOfType(EntityType entityType) {
+		return this.entityClass.isInstance(entityType.getEntityClass());
 	}
 
 }
