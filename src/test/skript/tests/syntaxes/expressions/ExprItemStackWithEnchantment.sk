@@ -1,0 +1,4 @@
+test "Itemstack with enchantment":
+	set {_i} to itemstack of diamond sword enchanted with unbreaking 3
+	assert {_i} is enchanted with unbreaking with "Item should have been enchanted with unbreaking"
+	assert enchantment level of unbreaking of {_i} is 3 with "Level of sharpness of item should have been 3"
