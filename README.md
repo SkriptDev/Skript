@@ -22,7 +22,7 @@ Testing with all old patch versions is not feasible for us.
 You can find the downloads for each version with their release notes in the [releases page](https://github.com/SkriptDev/Skript/releases).
 
 ## Documentation
-Documentation is available [**HERE**](https://shanebeee.github.io/docs/Skript/latest) for the
+Documentation is available [**HERE**](https://skriptdev.github.io/docs/Skript/latest) for the
 latest version of Skript.
 
 ## Reporting Issues
