@@ -98,9 +98,11 @@ public class EntityClasses {
 			})
 			.changer(DefaultChangers.entityChanger));
 
-		Classes.registerClass(new EnumClassInfo<>(EntityCategory.class, "entitycategory", "entity categories")
+		Classes.registerClass(new ClassInfo<>(EntityCategory.class, "entitycategory")
 			.user("entity ?categor(y|ies)")
 			.name("Entity Category")
+			.usage(EntityCategory.getAllNames())
+			.parser(EntityCategory.getParser())
 			.description("Represents different categories of entities.")
 			.since("3.0.0"));
 
