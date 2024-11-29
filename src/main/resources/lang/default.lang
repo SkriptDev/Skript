@@ -521,7 +521,7 @@ types:
 	chunk: chunk¦s @a
 
 	# Bukkit
-	attributetype: attribute type¦s @a
+	attribute: attribute¦s @an
 	block: block¦s @a
 	blockdata: block data¦s @a
 	biome: biome¦s @a

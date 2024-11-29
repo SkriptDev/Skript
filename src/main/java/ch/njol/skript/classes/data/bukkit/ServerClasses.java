@@ -36,12 +36,14 @@ public class ServerClasses {
 	}
 
 	public static void init() {
-		Classes.registerClass(new RegistryClassInfo<>(Attribute.class, Registry.ATTRIBUTE, "attributetype")
-			.user("attribute ?types?")
-			.name("Attribute Type")
-			.description("Represents the type of an attribute. Note that this type does not contain any numerical values."
-					+ "See <a href='https://minecraft.wiki/w/Attribute#Attributes'>attribute types</a> for more info.",
-				"NOTE: Minecraft namespaces are supported, ex: 'minecraft:generic.attack_damage'.")
+		Classes.registerClass(new RegistryClassInfo<>(Attribute.class, Registry.ATTRIBUTE, "attribute")
+			.user("attributes?")
+			.name("Attribute")
+			.description("Represents an attribute.",
+				"Note that this type does not contain any numerical values.",
+				"See <a href='https://minecraft.wiki/w/Attribute#Attributes'>attributes</a> for more info.",
+				"These are auto-generated and may differ between MC versions.",
+				"NOTE: Minecraft namespaces and underscores are supported, ex: 'minecraft:attack_damage'.")
 			.since("2.5"));
 
 		Classes.registerClass(new EnumClassInfo<>(EntityDamageEvent.DamageCause.class, "damagecause", "damage causes", new ExprDamageCause())

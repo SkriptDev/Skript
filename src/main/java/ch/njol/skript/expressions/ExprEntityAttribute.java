@@ -1,21 +1,3 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
@@ -41,26 +23,22 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 @Name("Entity Attribute")
-@Description({
-	"The numerical value of an entity's particular attribute.",
+@Description({"The numerical value of an entity's particular attribute.",
 	"Note that the movement speed attribute cannot be reliably used for players. For that purpose, use the speed expression instead.",
-	"Resetting an entity's attribute is only available in Minecraft 1.11 and above."
-})
-@Examples({
-	"on damage of player:",
-		"\tsend \"You are wounded!\" to victim",
-		"\tset victim's attack speed attribute to 2"
+	"Resetting an entity's attribute is only available in Minecraft 1.11 and above."})
+@Examples({"on damage of player:",
+	"\tsend \"You are wounded!\" to victim",
+	"\tset victim's attack speed attribute to 2"
 })
 @Since("2.5, 2.6.1 (final attribute value)")
 public class ExprEntityAttribute extends PropertyExpression<Entity, Number> {
-	
+
 	static {
 		Skript.registerExpression(ExprEntityAttribute.class, Number.class, ExpressionType.COMBINED,
-				"[the] %attributetype% [(1:(total|final|modified))] attribute [value] of %entities%",
-				"%entities%'[s] %attributetype% [(1:(total|final|modified))] attribute [value]");
+			"[the] %attribute% [(1:(total|final|modified))] attribute [value] of %entities%",
+			"%entities%'[s] %attribute% [(1:(total|final|modified))] attribute [value]");
 	}
 
-	@Nullable
 	private Expression<Attribute> attributes;
 	private boolean withModifiers;
 
@@ -78,10 +56,10 @@ public class ExprEntityAttribute extends PropertyExpression<Entity, Number> {
 	protected Number[] get(Event event, Entity[] entities) {
 		Attribute attribute = attributes.getSingle(event);
 		return Stream.of(entities)
-		    .map(ent -> getAttribute(ent, attribute))
+			.map(ent -> getAttribute(ent, attribute))
 			.filter(Objects::nonNull)
-		    .map(att -> withModifiers ? att.getValue() : att.getBaseValue())
-		    .toArray(Number[]::new);
+			.map(att -> withModifiers ? att.getValue() : att.getBaseValue())
+			.toArray(Number[]::new);
 	}
 
 	@Override
@@ -100,7 +78,7 @@ public class ExprEntityAttribute extends PropertyExpression<Entity, Number> {
 		for (Entity entity : getExpr().getArray(event)) {
 			AttributeInstance instance = getAttribute(entity, attribute);
 			if (instance != null) {
-				switch(mode) {
+				switch (mode) {
 					case ADD:
 						instance.setBaseValue(instance.getBaseValue() + deltaValue);
 						break;
@@ -133,13 +111,13 @@ public class ExprEntityAttribute extends PropertyExpression<Entity, Number> {
 	public String toString(@Nullable Event event, boolean debug) {
 		return "entity " + getExpr().toString(event, debug) + "'s " + (attributes == null ? "" : attributes.toString(event, debug)) + "attribute";
 	}
-	
+
 	@Nullable
 	private static AttributeInstance getAttribute(Entity entity, @Nullable Attribute attribute) {
-	    if (attribute != null && entity instanceof Attributable) {
-	        return ((Attributable) entity).getAttribute(attribute);
-	    }
-	   return null;
+		if (attribute != null && entity instanceof Attributable attributable) {
+			return attributable.getAttribute(attribute);
+		}
+		return null;
 	}
 
 }
