@@ -26,7 +26,6 @@ allprojects {
 }
 
 dependencies {
-	shadow group: 'io.papermc', name: 'paperlib', version: '1.0.8'
 	shadow group: 'org.bstats', name: 'bstats-bukkit', version: '3.0.2'
 	shadow group: 'net.kyori', name: 'adventure-text-serializer-bungeecord', version: '4.3.2'
 
@@ -75,12 +74,10 @@ tasks.withType(ShadowJar) {
 		project.configurations.shadow
 	]
 	dependencies {
-		include(dependency('io.papermc:paperlib'))
 		include(dependency('org.bstats:bstats-bukkit'))
 		include(dependency('org.bstats:bstats-base'))
 		include(dependency('net.kyori:adventure-text-serializer-bungeecord'))
 	}
-	relocate 'io.papermc.lib', 'ch.njol.skript.paperlib'
 	relocate 'org.bstats', 'ch.njol.skript.bstats'
 	manifest {
 		attributes(
