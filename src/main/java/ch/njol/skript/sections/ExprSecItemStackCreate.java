@@ -35,8 +35,8 @@ import java.util.List;
 	"",
 	"# Section",
 	"set {_i} to itemstack of diamond sword",
-	"\tset name of event-itemstack to \"My Sword\"",
-	"\tset custom model data of event-itemstack to 1010",
+	"\tset name of item to \"My Sword\"",
+	"\tset custom model data of item to 1010",
 	"give {_i} to player"})
 @Since("3.0.0")
 public class ExprSecItemStackCreate extends SectionExpression<ItemStack> {
