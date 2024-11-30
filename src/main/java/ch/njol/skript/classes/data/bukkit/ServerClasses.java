@@ -14,6 +14,7 @@ import ch.njol.yggdrasil.Fields;
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.GameRule;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.SoundCategory;
 import org.bukkit.TreeType;
@@ -27,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.StreamCorruptedException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+
 /**
  * Represents {@link ClassInfo ClassInfos} relating to general server objects
  */
@@ -64,11 +66,10 @@ public class ServerClasses {
 
 		Classes.registerClass(new ClassInfo<>(GameRule.class, "gamerule")
 			.user("gamerules?")
-			.name("Gamerule")
-			.description("A gamerule")
+			.name("GameRule")
+			.description("Represents a GameRule for a world.")
 			.usage(Arrays.stream(GameRule.values()).map(GameRule::getName).sorted().collect(Collectors.joining(", ")))
 			.since("2.5")
-			.requiredPlugins("Minecraft 1.13 or newer")
 			.supplier(GameRule.values())
 			.parser(new Parser<GameRule<?>>() {
 				@Override
@@ -78,13 +79,13 @@ public class ServerClasses {
 				}
 
 				@Override
-				public String toString(GameRule<?> o, int flags) {
-					return o.getName();
+				public String toString(GameRule<?> gameRule, int flags) {
+					return gameRule.getName();
 				}
 
 				@Override
-				public String toVariableNameString(GameRule<?> o) {
-					return o.getName();
+				public String toVariableNameString(GameRule<?> gameRule) {
+					return gameRule.getName();
 				}
 			})
 		);
@@ -129,28 +130,32 @@ public class ServerClasses {
 
 			}).serializer(new Serializer<>() {
 				@Override
-				public Fields serialize(PotionEffect o) {
+				public Fields serialize(PotionEffect potionEffect) {
 					Fields fields = new Fields();
-					fields.putObject("type", o.getType().getName());
-					fields.putPrimitive("amplifier", o.getAmplifier());
-					fields.putPrimitive("duration", o.getDuration());
-					fields.putPrimitive("particles", o.hasParticles());
-					fields.putPrimitive("ambient", o.isAmbient());
+					fields.putObject("type", potionEffect.getType().getKey().toString());
+					fields.putPrimitive("amplifier", potionEffect.getAmplifier());
+					fields.putPrimitive("duration", potionEffect.getDuration());
+					fields.putPrimitive("particles", potionEffect.hasParticles());
+					fields.putPrimitive("ambient", potionEffect.isAmbient());
 					return fields;
 				}
 
 				@Override
-				public void deserialize(PotionEffect o, Fields f) {
-					assert false;
-				}
-
-				@Override
 				protected PotionEffect deserialize(Fields fields) throws StreamCorruptedException {
-					String typeName = fields.getObject("type", String.class);
-					assert typeName != null;
-					PotionEffectType type = PotionEffectType.getByName(typeName);
+					String keyString = fields.getObject("type", String.class);
+					assert keyString != null;
+					NamespacedKey key;
+					try {
+						key = NamespacedKey.fromString(keyString);
+					} catch (IllegalArgumentException e) {
+						throw new StreamCorruptedException("Invalid namespace key: " + keyString);
+					}
+					if (key == null) {
+						throw new StreamCorruptedException("Invalid namespace key: " + keyString);
+					}
+					PotionEffectType type = Registry.POTION_EFFECT_TYPE.get(key);
 					if (type == null)
-						throw new StreamCorruptedException("Invalid PotionEffectType " + typeName);
+						throw new StreamCorruptedException("Invalid PotionEffectType: " + keyString);
 					int amplifier = fields.getPrimitive("amplifier", int.class);
 					int duration = fields.getPrimitive("duration", int.class);
 					boolean particles = fields.getPrimitive("particles", boolean.class);
@@ -170,7 +175,7 @@ public class ServerClasses {
 			}));
 
 		Classes.registerClass(new RegistryClassInfo<>(PotionEffectType.class, Registry.POTION_EFFECT_TYPE, "potioneffecttype")
-			.user("potion( ?effect)? ?types?") // "type" had to be made non-optional to prevent clashing with potion effects
+			.user("potion ?effect ?types?")
 			.name("Potion Effect Type")
 			.description("A potion effect type, e.g. 'strength' or 'swiftness'.")
 			.examples("apply swiftness 5 to the player",

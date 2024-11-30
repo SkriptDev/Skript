@@ -89,11 +89,6 @@ public class WorldClasses {
 				}
 
 				@Override
-				public void deserialize(final Location o, final Fields f) {
-					assert false;
-				}
-
-				@Override
 				public Location deserialize(final Fields f) throws StreamCorruptedException {
 					return new Location(f.getObject("world", World.class),
 						f.getPrimitive("x", double.class), f.getPrimitive("y", double.class), f.getPrimitive("z", double.class),
@@ -158,11 +153,6 @@ public class WorldClasses {
 				}
 
 				@Override
-				public void deserialize(Vector o, Fields f) {
-					assert false;
-				}
-
-				@Override
 				public Vector deserialize(final Fields f) throws StreamCorruptedException {
 					return new Vector(f.getPrimitive("x", double.class), f.getPrimitive("y", double.class), f.getPrimitive("z", double.class));
 				}
@@ -223,11 +213,6 @@ public class WorldClasses {
 				}
 
 				@Override
-				public void deserialize(final World o, final Fields f) {
-					assert false;
-				}
-
-				@Override
 				public boolean canBeInstantiated() {
 					return false;
 				}
@@ -252,24 +237,21 @@ public class WorldClasses {
 			.user("biomes?")
 			.name("Biome")
 			.description("All possible biomes Minecraft uses to generate a world.",
-				"NOTE: Minecraft namespaces are supported, ex: 'minecraft:basalt_deltas'.")
-			.examples("biome at the player is desert")
+				"NOTE: Minecraft namespaces are supported, ex: 'minecraft:basalt_deltas'.",
+				"As of Paper 1.21.3, custom biomes are also supported.")
+			.examples("biome at the player is desert",
+				"set biome of block at player to my_pack:super_swamp")
 			.since("1.4.4")
 			.after("damagecause"));
 		Classes.registerClass(new ClassInfo<>(Chunk.class, "chunk")
 			.user("chunks?")
 			.name("Chunk")
-			.description("A chunk is a cuboid of 16×16×128 (x×z×y) blocks. Chunks are spread on a fixed rectangular grid in their world.")
+			.description("A chunk is a cuboid of 16×16×(world height) (x×z×y) blocks.",
+				"Chunks are spread on a fixed rectangular grid in their world.")
 			.usage("")
-			.examples("")
+			.examples("set {_c} to chunk at player")
 			.since("2.0")
 			.parser(new Parser<>() {
-				@Override
-				@Nullable
-				public Chunk parse(final String s, final ParseContext context) {
-					return null;
-				}
-
 				@Override
 				public boolean canParse(final ParseContext context) {
 					return false;
@@ -293,11 +275,6 @@ public class WorldClasses {
 					f.putPrimitive("x", c.getX());
 					f.putPrimitive("z", c.getZ());
 					return f;
-				}
-
-				@Override
-				public void deserialize(final Chunk o, final Fields f) {
-					assert false;
 				}
 
 				@Override

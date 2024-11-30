@@ -233,11 +233,6 @@ public class EntityClasses {
 				}
 
 				@Override
-				public void deserialize(final OfflinePlayer o, final Fields f) {
-					assert false;
-				}
-
-				@Override
 				public boolean canBeInstantiated() {
 					return false;
 				}

@@ -75,11 +75,6 @@ public class BlockClasses {
 				}
 
 				@Override
-				public void deserialize(final Block o, final Fields f) {
-					assert false;
-				}
-
-				@Override
 				protected Block deserialize(final Fields fields) throws StreamCorruptedException {
 					final World w = fields.getObject("world", World.class);
 					final int x = fields.getPrimitive("x", int.class), y = fields.getPrimitive("y", int.class), z = fields.getPrimitive("z", int.class);
@@ -138,11 +133,6 @@ public class BlockClasses {
 					Fields f = new Fields();
 					f.putObject("blockdata", o.getAsString());
 					return f;
-				}
-
-				@Override
-				public void deserialize(BlockData o, Fields f) {
-					assert false;
 				}
 
 				@Override

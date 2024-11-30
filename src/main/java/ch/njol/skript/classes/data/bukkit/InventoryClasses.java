@@ -52,7 +52,8 @@ public class InventoryClasses {
 			.description("Represents an enchantment, e.g. 'sharpness' or 'fortune'.",
 				"NOTE: Minecraft namespaces are supported, ex: 'minecraft:vanishing_curse'.",
 				"As of Minecraft 1.21 this will also support custom enchantments using namespaces, ex: 'myenchants:explosive'.")
-			.examples("")
+			.examples("enchant player's tool with sharpness 10",
+				"enchant player's tool with my_pack:flying 4")
 			.since("1.4.6"));
 
 		Classes.registerClass(new EnumClassInfo<>(EquipmentSlot.class, "equipmentslot", "equipment slots")
@@ -114,34 +115,29 @@ public class InventoryClasses {
 					"e.g. the <a href='expressions.html#ExprArmorSlot'>helmet slot</a> for players " +
 					"(Please note that slot support is still very limited but will be improved eventually).")
 			.usage("")
-			.examples("")
+			.examples("set {_inv} to inventory of player",
+				"add itemstack of diamond to inventory of target player")
 			.since("1.0")
 			.defaultExpression(new EventValueExpression<>(Inventory.class))
 			.parser(new Parser<>() {
-				@Override
-				@Nullable
-				public Inventory parse(final String s, final ParseContext context) {
-					return null;
-				}
-
 				@Override
 				public boolean canParse(final ParseContext context) {
 					return false;
 				}
 
 				@Override
-				public String toString(final Inventory i, final int flags) {
-					return "inventory of " + Classes.toString(i.getHolder());
+				public String toString(final Inventory inventory, final int flags) {
+					return "inventory of " + Classes.toString(inventory.getHolder());
 				}
 
 				@Override
-				public String getDebugMessage(final Inventory i) {
-					return "inventory of " + Classes.getDebugMessage(i.getHolder());
+				public String getDebugMessage(final Inventory inventory) {
+					return "inventory of " + Classes.getDebugMessage(inventory.getHolder());
 				}
 
 				@Override
-				public String toVariableNameString(final Inventory i) {
-					return "inventory of " + Classes.toString(i.getHolder(), StringMode.VARIABLE_NAME);
+				public String toVariableNameString(final Inventory inventory) {
+					return "inventory of " + Classes.toString(inventory.getHolder(), StringMode.VARIABLE_NAME);
 				}
 			}).changer(DefaultChangers.inventoryChanger));
 
