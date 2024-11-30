@@ -2,9 +2,9 @@ package ch.njol.skript.classes.data;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptConfig;
+import ch.njol.skript.bukkitutil.BlockUtils;
 import ch.njol.skript.bukkitutil.EntityCategory;
 import ch.njol.skript.classes.ClassInfo;
-import ch.njol.skript.bukkitutil.BlockUtils;
 import ch.njol.skript.util.Date;
 import ch.njol.skript.util.Time;
 import ch.njol.skript.util.Timeperiod;
@@ -14,7 +14,6 @@ import ch.njol.skript.util.WeatherType;
 import ch.njol.util.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
@@ -25,14 +24,12 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffectType;
 import org.skriptlang.skript.lang.comparator.Comparator;
 import org.skriptlang.skript.lang.comparator.Comparators;
 import org.skriptlang.skript.lang.comparator.Relation;
 
 import java.util.Objects;
 
-@SuppressWarnings({"rawtypes"})
 public class DefaultComparators {
 
 	public DefaultComparators() {
@@ -80,9 +77,6 @@ public class DefaultComparators {
 
 		// ItemStack - ItemStack
 		Comparators.registerComparator(ItemStack.class, ItemStack.class, (o1, o2) -> Relation.get(o1.equals(o2)));
-
-		// EntityType - EntityType
-		Comparators.registerComparator(EntityType.class, EntityType.class, (o1, o2) -> Relation.get(o1.equals(o2)));
 
 		// Entity - EntityType
 		Comparators.registerComparator(Entity.class, EntityType.class, (o1, o2) -> Relation.get(o1.getType() == o2));
@@ -147,9 +141,6 @@ public class DefaultComparators {
 		// Time - Timeperiod
 		Comparators.registerComparator(Time.class, Timeperiod.class, (t, p) -> Relation.get(p.contains(t)));
 
-		// TreeType - TreeType
-		Comparators.registerComparator(TreeType.class, TreeType.class, (s1, s2) -> Relation.get(s1.equals(s2)));
-
 		// Object - ClassInfo
 		Comparators.registerComparator(Object.class, ClassInfo.class, (o, c) -> Relation.get(c.getC().isInstance(o) || o instanceof ClassInfo && c.getC().isAssignableFrom(((ClassInfo<?>) o).getC())));
 
@@ -157,6 +148,7 @@ public class DefaultComparators {
 		// EnchantmentOffer - Number
 		Comparators.registerComparator(EnchantmentOffer.class, Number.class, (eo, exp) -> Relation.get(eo.getCost() == exp.intValue()));
 
+		// Inventory - InventoryType
 		Comparators.registerComparator(Inventory.class, InventoryType.class, (inventory, inventoryType) -> Relation.get(inventory.getType() == inventoryType));
 
 		// World - WeatherType
@@ -173,9 +165,6 @@ public class DefaultComparators {
 				Location.normalizeYaw(first.getYaw()) == Location.normalizeYaw(second.getYaw()) &&
 				Location.normalizePitch(first.getPitch()) == Location.normalizePitch(second.getPitch())
 		));
-
-		// Potion Effect Type
-		Comparators.registerComparator(PotionEffectType.class, PotionEffectType.class, (one, two) -> Relation.get(one.equals(two)));
 	}
 
 }
