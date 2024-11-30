@@ -1,7 +1,6 @@
 package ch.njol.skript;
 
 import ch.njol.skript.classes.ClassInfo;
-import ch.njol.skript.classes.data.bukkit.BukkitClasses;
 import ch.njol.skript.classes.data.BukkitEventValues;
 import ch.njol.skript.classes.data.DefaultComparators;
 import ch.njol.skript.classes.data.DefaultConverters;
@@ -9,6 +8,7 @@ import ch.njol.skript.classes.data.DefaultFunctions;
 import ch.njol.skript.classes.data.DefaultOperations;
 import ch.njol.skript.classes.data.JavaClasses;
 import ch.njol.skript.classes.data.SkriptClasses;
+import ch.njol.skript.classes.data.bukkit.BukkitClasses;
 import ch.njol.skript.command.Commands;
 import ch.njol.skript.doc.Documentation;
 import ch.njol.skript.events.EvtSkript;
@@ -71,7 +71,6 @@ import com.google.gson.Gson;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
@@ -985,68 +984,9 @@ public final class Skript extends JavaPlugin implements Listener {
 		PluginDescriptionFile descriptionFile = plugin.getDescription();
 		if (descriptionFile.getDepend().contains("Skript") || descriptionFile.getSoftDepend().contains("Skript")) {
 			// An addon being disabled, check if server is being stopped
-			if (!isServerRunning()) {
+			if (Bukkit.getServer().isStopping()) {
 				beforeDisable();
 			}
-		}
-	}
-
-	private static final boolean IS_STOPPING_EXISTS;
-	@Nullable
-	private static Method IS_RUNNING;
-	@Nullable
-	private static Object MC_SERVER;
-
-	static {
-		IS_STOPPING_EXISTS = methodExists(Server.class, "isStopping");
-
-		if (!IS_STOPPING_EXISTS) {
-			Server server = Bukkit.getServer();
-			Class<?> clazz = server.getClass();
-
-			Method serverMethod;
-			try {
-				serverMethod = clazz.getMethod("getServer");
-			} catch (NoSuchMethodException e) {
-				throw new RuntimeException(e);
-			}
-
-			try {
-				MC_SERVER = serverMethod.invoke(server);
-			} catch (IllegalAccessException | InvocationTargetException e) {
-				throw new RuntimeException(e);
-			}
-
-			try {
-				// Spigot removed the mapping for this method in 1.18, so its back to obfuscated method
-				// 1.19 mapping is u and 1.18 is v
-				String isRunningMethod = "isRunning";
-
-				if (Skript.isRunningMinecraft(1, 20, 5)) {
-					isRunningMethod = "x";
-				} else if (Skript.isRunningMinecraft(1, 20)) {
-					isRunningMethod = "v";
-				} else if (Skript.isRunningMinecraft(1, 19)) {
-					isRunningMethod = "u";
-				} else if (Skript.isRunningMinecraft(1, 18)) {
-					isRunningMethod = "v";
-				}
-				IS_RUNNING = MC_SERVER.getClass().getMethod(isRunningMethod);
-			} catch (NoSuchMethodException e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
-
-	@SuppressWarnings("ConstantConditions")
-	private boolean isServerRunning() {
-		if (IS_STOPPING_EXISTS)
-			return !Bukkit.getServer().isStopping();
-
-		try {
-			return (boolean) IS_RUNNING.invoke(MC_SERVER);
-		} catch (IllegalAccessException | InvocationTargetException e) {
-			throw new RuntimeException(e);
 		}
 	}
 
