@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 @Name("Item with Enchantment")
 @Description("Add an enchantment to an ItemStack.")
 @Examples("set {_i} to itemstack of diamond sword enchanted with unbreaking 3")
-@Since("INSERT VERSION")
+@Since("3.0.0")
 public class ExprItemStackWithEnchantment extends SimpleExpression<ItemStack> {
 
 	static {
