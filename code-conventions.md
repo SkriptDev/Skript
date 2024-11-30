@@ -293,25 +293,14 @@ Checking whether a class exists in order to target supported versions is accepta
 
 ### Support the Target Servers
 
-Skript currently supports the 'Spigot' and 'Paper' server implementations.
+Skript currently supports the 'Paper' server implementations.
 Contributions must **not** break this cross-compatibility.
 > This may change in the future as the server landscape shifts - we will note any changes here and in the README.
 
-Paper-specific functionality and syntax are acceptable. Please make sure these contributions do not break compatibility with Spigot.
-
 Skript may also run on other server platforms. While these are not supported, please do not deliberately break compatibility for them.
 
-We do not support Bukkit/CraftBukkit.
+We do not support Bukkit/CraftBukkit/Spigot.
 
 ### Class Use
-
-Prefer `Aliases.javaItemType` to the `Material` enum, as this may change in future versions.
-```java
-Material type = Material.DIRT; // Bad
-ItemType type = Aliases.javaItemType("dirt"); // Good
-```
-
-The exceptions are `Material.AIR`, which is a good way to represent "nothing"
-and `Material.STONE` which can be used to get a dummy `ItemMeta`.
 
 Prefer to avoid referencing the Biome enum directly, since it has changed between versons in the past.
