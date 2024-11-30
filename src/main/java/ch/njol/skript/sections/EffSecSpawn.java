@@ -129,6 +129,8 @@ public class EffSecSpawn extends EffectSection {
 				if (world == null) continue;
 
 				for (EntityType type : types) {
+					if (!type.isSpawnable()) continue;
+
 					Class<? extends Entity> entityClass = type.getEntityClass();
 					if (entityClass == null) continue;
 
