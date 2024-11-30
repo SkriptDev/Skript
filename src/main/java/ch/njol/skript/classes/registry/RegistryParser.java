@@ -62,6 +62,9 @@ public class RegistryParser<R extends Keyed> extends Parser<R> {
 			default -> "a";
 		};
 		this.parseMap.put(article + " " + key, object);
+		// Add default plural
+		this.parseMap.put(key + "s", object);
+		this.parseMap.put(article + " " + key + "s", object);
 	}
 
 	/**

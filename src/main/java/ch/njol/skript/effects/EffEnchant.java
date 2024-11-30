@@ -1,7 +1,6 @@
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.classes.Changer.ChangeMode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -26,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 public class EffEnchant extends Effect {
 	static {
 		Skript.registerEffect(EffEnchant.class,
-			"enchant %~itemstacks% with %enchantment% %number%",
+			"enchant %~itemstacks% with %enchantment% [%-number%]",
 			"disenchant %~itemstacks%");
 	}
 
@@ -57,7 +56,7 @@ public class EffEnchant extends Effect {
 			Enchantment enchantment = this.enchantment.getSingle(event);
 			if (enchantment == null) return;
 
-			Number levelNum = this.level.getSingle(event);
+			Number levelNum = this.level != null ? this.level.getSingle(event) : 1;
 			int level = levelNum != null ? levelNum.intValue() : 1;
 
 			for (ItemStack item : items) {
@@ -68,14 +67,14 @@ public class EffEnchant extends Effect {
 				item.removeEnchantments();
 			}
 		}
-		this.items.change(event, items.clone(), ChangeMode.SET);
 	}
 
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
 		if (this.enchantment != null) {
+			String level = this.level != null ?  " " + this.level.getSingle(event).toString() : "";
 			return "enchant " + this.items.toString(event, debug) + " with " +
-				this.enchantment.toString(event, debug) + " " + this.level.toString(event, debug);
+				this.enchantment.toString(event, debug) + level;
 		}
 		return "disenchant " + this.items.toString(event, debug);
 	}

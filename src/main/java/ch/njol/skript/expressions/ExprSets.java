@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 @Name("Sets")
 @Description("Returns a list of all the values of a type. Useful for looping.")
 @Examples({
-	"loop all attribute types:",
+	"loop all attributes:",
 	"\tset loop-value attribute of player to 10",
 	"\tmessage \"Set attribute %loop-value% to 10!\""
 })

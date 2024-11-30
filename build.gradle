@@ -106,7 +106,7 @@ processResources {
 publishing {
 	publications {
 		maven(MavenPublication) {
-			groupId 'com.github.SkriptLang'
+			groupId 'com.github.SkriptDev'
 			artifactId 'Skript'
 			version project.version
 			artifact sourceJar
@@ -117,7 +117,7 @@ publishing {
 	repositories {
 		maven {
 			name = 'repo'
-			url = 'https://repo.skriptlang.org/releases'
+			url = 'https://repo.skriptdev.org/releases'
 			credentials {
 				username = System.getenv('MAVEN_USERNAME')
 				password = System.getenv('MAVEN_PASSWORD')
@@ -270,10 +270,10 @@ task githubResources(type: ProcessResources) {
 		filter ReplaceTokens, tokens: [
 			'version'         : version,
 			'today'           : '' + LocalTime.now(),
-			'release-flavor'  : 'skriptlang-github', // SkriptLang build, distributed on Github
+			'release-flavor'  : 'skriptDev-github', // SkriptDev build, distributed on Github
 			'release-channel' : channel, // Release channel, see above
 			'release-updater' : 'ch.njol.skript.update.GithubChecker', // Github API client
-			'release-source'  : 'https://api.github.com/repos/SkriptLang/Skript/releases', // Github API URL
+			'release-source'  : 'https://api.github.com/repos/SkriptDev/Skript/releases', // Github API URL
 			'release-download': 'null' // Update checker will figure it out
 		]
 	}
@@ -303,10 +303,10 @@ task spigotResources(type: ProcessResources) {
 		filter ReplaceTokens, tokens: [
 			'version'         : version,
 			'today'           : '' + LocalTime.now(),
-			'release-flavor'  : 'skriptlang-spigot', // SkriptLang build, distributed on Spigot resources
+			'release-flavor'  : 'skriptdev-spigot', // SkriptDev build, distributed on Spigot resources
 			'release-channel' : channel, // Release channel, see above
 			'release-updater' : 'ch.njol.skript.update.GithubChecker', // Github API client
-			'release-source'  : 'https://api.github.com/repos/SkriptLang/Skript/releases', // Github API URL
+			'release-source'  : 'https://api.github.com/repos/SkriptDev/Skript/releases', // Github API URL
 			'release-download': '\'http://example.com\'' // TODO insert Spigot URL
 		]
 	}
@@ -334,7 +334,7 @@ task nightlyResources(type: ProcessResources) {
 		filter ReplaceTokens, tokens: [
 			'version'         : version,
 			'today'           : '' + LocalTime.now(),
-			'release-flavor'  : 'skriptlang-nightly', // SkriptLang build, automatically done by CI
+			'release-flavor'  : 'skriptdev-nightly', // SkriptDev build, automatically done by CI
 			'release-channel' : 'prerelease', // No update checking, but these are VERY unstable
 			'release-updater' : 'ch.njol.skript.update.NoUpdateChecker', // No auto updates for now
 			'release-source'  : '',

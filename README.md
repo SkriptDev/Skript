@@ -1,9 +1,5 @@
-![Skript Language](.github/assets/Cover.jpg)
-
----
-
-# Skript
-**Skript** is a Minecraft plugin for Paper, which allows server owners and other people
+# Skript-Three
+**Skript-Three** is a Minecraft plugin for Paper, which allows server owners and other people
 to modify their servers without learning Java. It can also be useful if you
 *do* know Java; some tasks are quicker to do with Skript, and so it can be used
 for prototyping etc.
@@ -11,8 +7,12 @@ for prototyping etc.
 This Github fork of Skript is based on [**SkriptLang's**](https://github.com/SkriptLang/Skript) improvements which was built
 on Njol's original Skript.
 
+To help differentiate between SkriptLang's Skript, we'll be referring to this fork as '**Skript-Three**', but internally it is still called 'Skript'.
+
 ## Requirements
-Skript requires **Paper** to work. You heard it right, **CraftBukkit/Spigot** does *not* work.
+- Java 21+
+- PaperMC server.    
+You heard it right, **CraftBukkit/Spigot** does *not* work.
 
 Skript supports only the **latest** patch versions of Minecraft 1.20+.
 For example, this means that 1.20.6 is supported, but 1.20.1 is *not*.
@@ -22,7 +22,7 @@ Testing with all old patch versions is not feasible for us.
 You can find the downloads for each version with their release notes in the [releases page](https://github.com/SkriptDev/Skript/releases).
 
 ## Documentation
-Documentation is available [**HERE**](https://shanebeee.github.io/docs/Skript/latest) for the
+Documentation is available [**HERE**](https://skriptdev.github.io/docs/Skript/latest) for the
 latest version of Skript.
 
 ## Reporting Issues
