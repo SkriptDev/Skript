@@ -1,6 +1,5 @@
 function ExprXOf(c: number) :: item:
-	set {_gem} to itemstack of diamond
-	return {_c} of {_gem}
+	return {_c} of diamond
 
 test "X of":
 	set {_x} to 5
@@ -9,3 +8,8 @@ test "X of":
 	assert 2 of {_z} is 2 of itemstack of stone with "item failed"
 
 	assert ExprXOf(2) is 2 of itemstack of diamond with "function return failed - got '%ExprXOf(2)%'"
+
+	set {_i} to 15 of stick
+	assert {_i} = itemstack of 15 of stick with "Item should have been 15 sticks"
+	assert material of {_i} = stick with "Material of item should have been a stick"
+	assert item amount of {_i} = 15 with "Item amount of item should be 15"
