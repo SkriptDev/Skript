@@ -6,7 +6,6 @@ import ch.njol.skript.bukkitutil.EntityCategory;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.util.BlockUtils;
 import ch.njol.skript.util.Date;
-import ch.njol.skript.util.GameruleValue;
 import ch.njol.skript.util.Time;
 import ch.njol.skript.util.Timeperiod;
 import ch.njol.skript.util.Timespan;
@@ -153,28 +152,6 @@ public class DefaultComparators {
 
 		// Object - ClassInfo
 		Comparators.registerComparator(Object.class, ClassInfo.class, (o, c) -> Relation.get(c.getC().isInstance(o) || o instanceof ClassInfo && c.getC().isAssignableFrom(((ClassInfo<?>) o).getC())));
-
-		Comparators.registerComparator(GameruleValue.class, GameruleValue.class, (o1, o2) -> Relation.get(o1.equals(o2)));
-
-		Comparators.registerComparator(GameruleValue.class, Number.class, new Comparator<>() {
-			@Override
-			public Relation compare(GameruleValue o1, Number o2) {
-				if (!(o1.getGameruleValue() instanceof Number gameruleValue))
-					return Relation.NOT_EQUAL;
-				return Comparators.compare(gameruleValue, o2);
-			}
-
-			@Override
-			public boolean supportsOrdering() {
-				return true;
-			}
-		});
-
-		Comparators.registerComparator(GameruleValue.class, Boolean.class, (o1, o2) -> {
-			if (!(o1.getGameruleValue() instanceof Boolean))
-				return Relation.NOT_EQUAL;
-			return Relation.get(o2.equals(o1.getGameruleValue()));
-		});
 
 		// EnchantmentOffer Comparators
 		// EnchantmentOffer - Number

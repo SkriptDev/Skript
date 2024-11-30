@@ -15,7 +15,6 @@ import ch.njol.skript.util.Color;
 import ch.njol.skript.util.ColorRGB;
 import ch.njol.skript.util.Date;
 import ch.njol.skript.util.Direction;
-import ch.njol.skript.util.GameruleValue;
 import ch.njol.skript.util.SkriptColor;
 import ch.njol.skript.util.Time;
 import ch.njol.skript.util.Timeperiod;
@@ -345,16 +344,6 @@ public class SkriptClasses {
 					return "" + color.getName().toLowerCase(Locale.ENGLISH).replace('_', ' ');
 				}
 			}));
-
-		Classes.registerClass(new ClassInfo<>(GameruleValue.class, "gamerulevalue")
-			.user("gamerule values?")
-			.name("Gamerule Value")
-			.description("A wrapper for the value of a gamerule for a world.")
-			.usage("")
-			.examples("")
-			.since("2.5")
-			.serializer(new YggdrasilSerializer<GameruleValue>())
-		);
 	}
 
 }
