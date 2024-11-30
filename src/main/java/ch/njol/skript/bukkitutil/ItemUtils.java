@@ -7,10 +7,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Tag;
 import org.bukkit.TreeType;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.type.Fence;
-import org.bukkit.block.data.type.Gate;
-import org.bukkit.block.data.type.Wall;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -74,8 +70,7 @@ public class ItemUtils {
 	 */
 	public static void setMaxDamage(ItemStack itemStack, int maxDamage) {
 		ItemMeta meta = itemStack.getItemMeta();
-		if (HAS_MAX_DAMAGE && meta instanceof Damageable) {
-			Damageable damageable = (Damageable) meta;
+		if (HAS_MAX_DAMAGE && meta instanceof Damageable damageable) {
 			if (HAS_RESET && maxDamage < 1) {
 				damageable.resetDamage();
 			} else {
@@ -139,55 +134,6 @@ public class ItemUtils {
 		}
 	}
 
-	/**
-	 * Gets an item material corresponding to given block material, which might
-	 * be the given material.
-	 *
-	 * @param type Material.
-	 * @return Item version of material or null.
-	 * @deprecated This just returns itself and has no use
-	 */
-	@Deprecated
-	public static Material asItem(Material type) {
-		// Assume (naively) that all types are valid items
-		return type;
-	}
-
-	/**
-	 * Convert an ItemType/Slot to ItemStack
-	 * Will also accept an ItemStack that will return itself
-	 *
-	 * @param object Object to convert
-	 * @return ItemStack from slot/itemtype
-	 */
-	@Nullable
-	public static ItemStack asItemStack(Object object) {
-		if (object instanceof ItemStack itemStack)
-			return itemStack;
-		return null;
-	}
-
-	/**
-	 * Tests whether two item stacks are of the same type, i.e. it ignores the amounts.
-	 *
-	 * @param itemStack1
-	 * @param itemStack2
-	 * @return Whether the item stacks are of the same type
-	 */
-	public static boolean itemStacksEqual(@Nullable ItemStack itemStack1, @Nullable ItemStack itemStack2) {
-		if (itemStack1 == null || itemStack2 == null)
-			return itemStack1 == itemStack2;
-		if (itemStack1.getType() != itemStack2.getType())
-			return false;
-
-		ItemMeta itemMeta1 = itemStack1.getItemMeta();
-		ItemMeta itemMeta2 = itemStack2.getItemMeta();
-		if (itemMeta1 == null || itemMeta2 == null)
-			return itemMeta1 == itemMeta2;
-
-		return itemStack1.getItemMeta().equals(itemStack2.getItemMeta());
-	}
-
 	// Only 1.15 and versions after have Material#isAir method
 	private static final boolean IS_AIR_EXISTS = Skript.methodExists(Material.class, "isAir");
 
@@ -210,6 +156,7 @@ public class ItemUtils {
 		TREE_TO_SAPLING_MAP.put(TreeType.REDWOOD, Material.SPRUCE_SAPLING);
 		TREE_TO_SAPLING_MAP.put(TreeType.TALL_REDWOOD, Material.SPRUCE_SAPLING);
 		TREE_TO_SAPLING_MAP.put(TreeType.MEGA_REDWOOD, Material.SPRUCE_SAPLING);
+		TREE_TO_SAPLING_MAP.put(TreeType.MEGA_PINE, Material.SPRUCE_SAPLING);
 		// birch
 		TREE_TO_SAPLING_MAP.put(TreeType.BIRCH, Material.BIRCH_SAPLING);
 		TREE_TO_SAPLING_MAP.put(TreeType.TALL_BIRCH, Material.BIRCH_SAPLING);
@@ -249,14 +196,18 @@ public class ItemUtils {
 		// cherry
 		if (Skript.isRunningMinecraft(1, 19, 4))
 			TREE_TO_SAPLING_MAP.put(TreeType.CHERRY, Material.CHERRY_SAPLING);
+
+		if (Skript.isRunningMinecraft(1, 21, 3)) {
+			//noinspection UnstableApiUsage
+			TREE_TO_SAPLING_MAP.put(TreeType.PALE_OAK, Material.PALE_OAK_SAPLING);
+			//noinspection UnstableApiUsage
+			TREE_TO_SAPLING_MAP.put(TreeType.PALE_OAK_CREAKING, Material.PALE_OAK_SAPLING);
+		}
 	}
 
 	public static Material getTreeSapling(TreeType treeType) {
 		return TREE_TO_SAPLING_MAP.get(treeType);
 	}
-
-
-	private static final boolean HAS_FENCE_TAGS = !Skript.isRunningMinecraft(1, 14);
 
 	/**
 	 * Whether the block is a fence or a wall.
@@ -265,14 +216,6 @@ public class ItemUtils {
 	 * @return whether the block is a fence/wall.
 	 */
 	public static boolean isFence(Block block) {
-		// TODO: 1.13 only, so remove in 2.10
-		if (!HAS_FENCE_TAGS) {
-			BlockData data = block.getBlockData();
-			return data instanceof Fence
-				|| data instanceof Wall
-				|| data instanceof Gate;
-		}
-
 		Material type = block.getType();
 		return Tag.FENCES.isTagged(type)
 			|| Tag.FENCE_GATES.isTagged(type)
@@ -284,27 +227,16 @@ public class ItemUtils {
 	 * @return whether the material is a full glass block
 	 */
 	public static boolean isGlass(Material material) {
-		switch (material) {
-			case GLASS:
-			case RED_STAINED_GLASS:
-			case ORANGE_STAINED_GLASS:
-			case YELLOW_STAINED_GLASS:
-			case LIGHT_BLUE_STAINED_GLASS:
-			case BLUE_STAINED_GLASS:
-			case CYAN_STAINED_GLASS:
-			case LIME_STAINED_GLASS:
-			case GREEN_STAINED_GLASS:
-			case MAGENTA_STAINED_GLASS:
-			case PURPLE_STAINED_GLASS:
-			case PINK_STAINED_GLASS:
-			case WHITE_STAINED_GLASS:
-			case LIGHT_GRAY_STAINED_GLASS:
-			case GRAY_STAINED_GLASS:
-			case BLACK_STAINED_GLASS:
-			case BROWN_STAINED_GLASS:
-				return true;
-			default:
-				return false;
-		}
+		return switch (material) {
+			case GLASS, RED_STAINED_GLASS, ORANGE_STAINED_GLASS,
+				 YELLOW_STAINED_GLASS, LIGHT_BLUE_STAINED_GLASS,
+				 BLUE_STAINED_GLASS, CYAN_STAINED_GLASS, LIME_STAINED_GLASS,
+				 GREEN_STAINED_GLASS, MAGENTA_STAINED_GLASS,
+				 PURPLE_STAINED_GLASS, PINK_STAINED_GLASS, WHITE_STAINED_GLASS,
+				 LIGHT_GRAY_STAINED_GLASS, GRAY_STAINED_GLASS,
+				 BLACK_STAINED_GLASS, BROWN_STAINED_GLASS -> true;
+			default -> false;
+		};
 	}
+
 }
