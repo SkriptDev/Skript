@@ -10,7 +10,7 @@ import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.util.SoundUtils;
+import ch.njol.skript.bukkitutil.SoundUtils;
 import ch.njol.util.Kleenean;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;

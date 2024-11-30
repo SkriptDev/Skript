@@ -9,7 +9,7 @@ import ch.njol.skript.expressions.ExprDamageCause;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.registrations.Classes;
-import ch.njol.skript.util.PotionEffectUtils;
+import ch.njol.skript.bukkitutil.PotionEffectUtils;
 import ch.njol.yggdrasil.Fields;
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;

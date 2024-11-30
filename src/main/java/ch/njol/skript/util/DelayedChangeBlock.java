@@ -77,6 +77,10 @@ public class DelayedChangeBlock implements Block {
 			this.isPassable = false;
 	}
 
+	public Block getBlock() {
+		return this.block;
+	}
+
 	@Override
 	public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
 		block.setMetadata(metadataKey, newMetadataValue);

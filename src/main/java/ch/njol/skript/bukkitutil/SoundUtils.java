@@ -1,4 +1,4 @@
-package ch.njol.skript.util;
+package ch.njol.skript.bukkitutil;
 
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;

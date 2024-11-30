@@ -4,7 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.bukkitutil.EntityCategory;
 import ch.njol.skript.classes.ClassInfo;
-import ch.njol.skript.util.BlockUtils;
+import ch.njol.skript.bukkitutil.BlockUtils;
 import ch.njol.skript.util.Date;
 import ch.njol.skript.util.Time;
 import ch.njol.skript.util.Timeperiod;

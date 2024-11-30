@@ -7,7 +7,7 @@ import ch.njol.skript.classes.data.DefaultChangers;
 import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.registrations.Classes;
-import ch.njol.skript.util.BlockUtils;
+import ch.njol.skript.bukkitutil.BlockUtils;
 import ch.njol.yggdrasil.Fields;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
