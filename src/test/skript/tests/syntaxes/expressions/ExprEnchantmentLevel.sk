@@ -1,0 +1,20 @@
+test "enchantment level expression":
+	set {_item} to itemstack of diamond sword
+	enchant {_item} with sharpness 10
+	enchant {_item} with unbreaking 3
+
+	assert level of sharpness of {_item} = 10 with "Item should be enchanted with sharpness 10"
+	assert level of unbreaking of {_item} = 3 with "Item should be enchanted with sharpness 3"
+	assert level of lure of {_item} is not set with "Item should not be enchanted with lure"
+	delete {_item}
+
+	set {_item} to itemstack of enchanted book
+	set stored level of sharpness of {_item} to 15
+	set level of unbreaking of {_item} to 3
+	enchant {_item} with lure 6
+	assert stored level of sharpness of {_item} = 15 with "Enchanted Book should have a stored enchantment of sharpness 15"
+	assert level of sharpness of {_item} is not set with "Enchanted Book should not have a normal enchantment of sharpness"
+	assert stored level of unbreaking of {_item} is not set with "Enchanted Book should not have a stored enchantment of unbreaking"
+	assert level of unbreaking of {_item} = 3 with "Enchanted Book should have a normal enchantment of unbreaking 3"
+	assert stored level of lure of {_item} is not set with "Enchanted Book should not have a stored enchantment of lure"
+	assert level of lure of {_item} = 6 with "Enchanted Book should have a normal enchantment of lure 6"
