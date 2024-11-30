@@ -89,6 +89,7 @@ tasks.withType(ShadowJar) {
 			'Sealed': 'true'
 		)
 	}
+	archiveClassifier = ''
 }
 
 processResources {
@@ -110,7 +111,7 @@ publishing {
 			artifactId 'Skript'
 			version project.version
 			artifact sourceJar
-			artifact tasks.jar
+			artifact shadowJar
 		}
 	}
 
