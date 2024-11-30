@@ -83,7 +83,7 @@ public class ExprSecItemStackCreate extends SectionExpression<ItemStack> {
 			ParserInstance parser = getParser();
 			Class<? extends Event>[] currentEvents = parser.getCurrentEvents();
 			parser.setCurrentEvent("itemstack create", ItemStackCreateEvent.class);
-			this.trigger = loadCode(node, "d", null, ItemStackCreateEvent.class);
+			this.trigger = loadCode(node, "ItemStack create section", null, ItemStackCreateEvent.class);
 			parser.setCurrentEvents(currentEvents);
 		}
 		return true;
