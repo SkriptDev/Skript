@@ -1,36 +1,14 @@
 package ch.njol.skript.bukkitutil;
 
-import ch.njol.skript.bukkitutil.block.BlockCompat;
-import ch.njol.skript.bukkitutil.block.BlockSetter;
-import ch.njol.skript.bukkitutil.block.BlockValues;
 import ch.njol.skript.util.DelayedChangeBlock;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.jetbrains.annotations.Nullable;
 
 public class BlockUtils {
-
-	/**
-	 * Sets the given block.
-	 *
-	 * @param block        Block to set.
-	 * @param type         New type of the block.
-	 * @param blockValues  Block values to apply after setting the type.
-	 * @param applyPhysics Whether physics should be applied or not.
-	 * @return Whether setting block succeeded or not (currently always true).
-	 */
-	public static boolean set(Block block, Material type, @Nullable BlockValues blockValues, boolean applyPhysics) {
-		int flags = BlockSetter.ROTATE | BlockSetter.ROTATE_FIX_TYPE | BlockSetter.MULTIPART;
-		if (applyPhysics)
-			flags |= BlockSetter.APPLY_PHYSICS;
-		BlockCompat.SETTER.setBlock(block, type, blockValues, flags);
-
-		return true;
-	}
 
 	@Nullable
 	public static BlockData createBlockData(String dataString) {

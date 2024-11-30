@@ -1,7 +1,6 @@
 package ch.njol.skript.util;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.bukkitutil.block.BlockCompat;
 import com.destroystokyo.paper.block.BlockSoundGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -232,16 +231,13 @@ public class DelayedChangeBlock implements Block {
 
 	@Override
 	public boolean isEmpty() {
-		Material type = getType();
-		assert type != null;
-		return BlockCompat.INSTANCE.isEmpty(type);
+		return getType().isEmpty();
 	}
 
 	@Override
 	public boolean isLiquid() {
 		Material type = getType();
-		assert type != null;
-		return BlockCompat.INSTANCE.isLiquid(type);
+		return type == Material.LAVA || type == Material.WATER;
 	}
 
 	@Override
