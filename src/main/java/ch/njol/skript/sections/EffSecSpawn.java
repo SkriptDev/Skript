@@ -1,6 +1,7 @@
 package ch.njol.skript.sections;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.bukkitutil.EntityUtils;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -139,8 +140,7 @@ public class EffSecSpawn extends EffectSection {
 				if (world == null) continue;
 
 				for (EntityType type : types) {
-					if (!type.isSpawnable()) continue;
-					if (!world.isEnabled(type)) continue;
+					if (!EntityUtils.canSpawn(type, world)) continue;
 
 					Class<? extends Entity> entityClass = type.getEntityClass();
 					if (entityClass == null) continue;
