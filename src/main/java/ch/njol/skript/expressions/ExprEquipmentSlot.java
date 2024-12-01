@@ -27,14 +27,16 @@ import java.util.List;
 @Description("Equipment of living entities, i.e. the head, chest, legs, feet slots.")
 @Examples({"set chest slot of player to itemstack of diamond chestplate",
 	"delete chest slot of player",
-	"set {_i::*} to feet slot of all players"})
+	"set {_i::*} to feet slot of all players",
+	"set body slot of all llamas to red carpet"})
 @Keywords("armor")
 @Since("1.0, 2.8.0 (Armour)")
 public class ExprEquipmentSlot extends SimpleExpression<ItemStack> {
 
 	static {
 		Skript.registerExpression(ExprEquipmentSlot.class, ItemStack.class, ExpressionType.COMBINED,
-			"%equipmentslot% slot[s] of %livingentities%");
+			"%equipmentslot% slot[s] of %livingentities%",
+			"%livingentities%'[s] %equipmentslot% slot[s]");
 	}
 
 	private Expression<EquipmentSlot> equipmentSlot;
@@ -43,8 +45,8 @@ public class ExprEquipmentSlot extends SimpleExpression<ItemStack> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
-		this.equipmentSlot = (Expression<EquipmentSlot>) exprs[0];
-		this.livingEntity = (Expression<LivingEntity>) exprs[1];
+		this.equipmentSlot = (Expression<EquipmentSlot>) exprs[matchedPattern];
+		this.livingEntity = (Expression<LivingEntity>) exprs[matchedPattern ^ 1];
 		return true;
 	}
 
