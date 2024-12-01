@@ -457,6 +457,16 @@ environments:
 	the_end: end, the end
 	custom: custom
 
+# -- Equipment Slots --
+equipment slots:
+	head: head, helmet
+	chest: chest, chestplate
+	legs: legs, leggings, pants
+	feet: feet, boots
+	hand: hand, tool
+	off_hand: off hand, shield
+	body: body
+
 # -- Moon Phases --
 moon phases:
 	first_quarter: first quarter
