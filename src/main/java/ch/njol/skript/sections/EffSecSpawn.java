@@ -20,9 +20,12 @@ import ch.njol.skript.util.Getter;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -64,6 +67,8 @@ public class EffSecSpawn extends EffectSection {
 			throw new IllegalStateException();
 		}
 	}
+
+	private static final BlockData DEFAULT_DATA = Material.STONE.createBlockData();
 
 	static {
 		Skript.registerSection(EffSecSpawn.class,
@@ -149,7 +154,11 @@ public class EffSecSpawn extends EffectSection {
 						if (consumer != null) {
 							lastSpawned = world.spawn(location, entityClass, (Consumer) consumer);
 						} else {
-							lastSpawned = world.spawn(location, entityClass);
+							lastSpawned = world.spawn(location, entityClass, entity -> {
+								if (entity instanceof FallingBlock block) {
+									block.setBlockData(DEFAULT_DATA);
+								}
+							});
 						}
 					}
 				}
@@ -162,9 +171,12 @@ public class EffSecSpawn extends EffectSection {
 	private @Nullable Consumer<? extends Entity> getConsumer(Event event) {
 		Consumer<? extends Entity> consumer;
 		if (trigger != null) {
-			consumer = o -> {
-				lastSpawned = o;
-				SpawnEvent spawnEvent = new SpawnEvent(o);
+			consumer = entity -> {
+				lastSpawned = entity;
+				if (entity instanceof FallingBlock fallingBlock) {
+					fallingBlock.setBlockData(DEFAULT_DATA);
+				}
+				SpawnEvent spawnEvent = new SpawnEvent(entity);
 				// Copy the local variables from the calling code to this section
 				Variables.setLocalVariables(spawnEvent, Variables.copyLocalVariables(event));
 				TriggerItem.walk(trigger, spawnEvent);
