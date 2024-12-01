@@ -11,7 +11,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.Trigger;
 import ch.njol.skript.lang.TriggerItem;
-import ch.njol.skript.sections.EffSecSpawn.SpawnEvent;
+import ch.njol.skript.effects.sections.EffSecSpawn.SpawnEvent;
 import ch.njol.skript.timings.SkriptTimings;
 import ch.njol.skript.util.Direction;
 import ch.njol.skript.variables.Variables;

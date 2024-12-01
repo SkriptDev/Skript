@@ -5,7 +5,7 @@ import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleEvent;
-import ch.njol.skript.sections.EffSecSpawn;
+import ch.njol.skript.effects.sections.EffSecSpawn;
 import ch.njol.util.coll.CollectionUtils;
 import io.papermc.paper.event.player.PlayerStonecutterRecipeSelectEvent;
 import org.bukkit.Material;
