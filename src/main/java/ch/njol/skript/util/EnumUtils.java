@@ -6,8 +6,9 @@ import ch.njol.util.NonNullPair;
 import ch.njol.util.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -22,6 +23,7 @@ public final class EnumUtils<E extends Enum<E>> {
 	private final String languageNode;
 
 	private String[] names;
+	private final List<String> docNames = new ArrayList<>();
 	private final HashMap<String, E> parseMap = new HashMap<>();
 
 	public EnumUtils(Class<E> enumClass, String languageNode) {
@@ -43,6 +45,7 @@ public final class EnumUtils<E extends Enum<E>> {
 		E[] constants = enumClass.getEnumConstants();
 		names = new String[constants.length];
 		parseMap.clear();
+		this.docNames.clear();
 		for (E constant : constants) {
 			String key = languageNode + "." + constant.name();
 			int ordinal = constant.ordinal();
@@ -55,6 +58,7 @@ public final class EnumUtils<E extends Enum<E>> {
 					String tempName = constant.name().toLowerCase(Locale.ENGLISH).replace("_", " ");
 					names[ordinal] = tempName;
 					parseMap.put(tempName, constant);
+					this.docNames.add(tempName);
 
 					// Create articles for entries
 					String start = switch (tempName.charAt(0)) {
@@ -75,8 +79,11 @@ public final class EnumUtils<E extends Enum<E>> {
 				}
 
 				parseMap.put(first, constant);
+				this.docNames.add(first);
 				if (second != null && second != -1) { // There is a gender present
-					parseMap.put(Noun.getArticleWithSpace(second, Language.F_INDEFINITE_ARTICLE) + first, constant);
+					String s = Noun.getArticleWithSpace(second, Language.F_INDEFINITE_ARTICLE) + first;
+					parseMap.put(s, constant);
+					this.docNames.add(s);
 				}
 			}
 		}
@@ -111,7 +118,7 @@ public final class EnumUtils<E extends Enum<E>> {
 	 * Note that some entries may represent the same enumerator.
 	 */
 	public String getAllNames() {
-		return StringUtils.join(Arrays.stream(names).sorted().toList(), ", ");
+		return StringUtils.join(this.docNames.stream().sorted().toList(), ", ");
 	}
 
 }
