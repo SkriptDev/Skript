@@ -58,7 +58,7 @@ public class EntityClasses {
 				"e.g. a <a href='#player'>player</a>, a skeleton, or a zombie, but also " +
 				"<a href='#projectile'>projectiles</a> like arrows, fireballs or thrown potions, " +
 				"or special entities like dropped items, falling blocks or paintings.")
-			.usage("player, op, wolf, tamed ocelot, powered creeper, zombie, unsaddled pig, fireball, arrow, dropped item, item frame, etc.")
+			.usage("entity, event-entity, player, event-player")
 			.examples("entity is a zombie or creeper",
 				"player is an op",
 				"projectile is an arrow",

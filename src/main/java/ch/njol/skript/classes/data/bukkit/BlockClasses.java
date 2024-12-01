@@ -97,6 +97,8 @@ public class BlockClasses {
 		Classes.registerClass(new ClassInfo<>(BlockData.class, "blockdata")
 			.user("block ?datas?")
 			.name("Block Data")
+			.usage("block_type[state=value]",
+				"minecraft:block_type[state=value]")
 			.description("Block data is the detailed information about a block, referred to in Minecraft as BlockStates, " +
 				"allowing for the manipulation of different aspects of the block, including shape, waterlogging, direction the block is facing, " +
 				"and so much more. Information regarding each block's optional data can be found on Minecraft's Wiki. Find the block you're " +
