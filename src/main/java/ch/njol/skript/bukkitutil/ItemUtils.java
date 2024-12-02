@@ -6,12 +6,14 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -94,6 +96,16 @@ public class ItemUtils {
 	}
 
 	/**
+	 * Get the max stack size of an ItemStack
+	 *
+	 * @param itemStack ItemStack to check
+	 * @return Max stack size of ItemStack
+	 */
+	public static int getMaxStackSize(ItemStack itemStack) {
+		return itemStack.getItemMeta().hasMaxStackSize() ? itemStack.getMaxStackSize() : itemStack.getType().getMaxStackSize();
+	}
+
+	/**
 	 * Sets the owner of a player head.
 	 *
 	 * @param skull  player head item to modify
@@ -114,22 +126,6 @@ public class ItemUtils {
 		}
 
 		skull.setItemMeta(skullMeta);
-	}
-
-	/**
-	 * Gets a block material corresponding to given item material, which might
-	 * be the given material. If no block material is found, null is returned.
-	 *
-	 * @param type Material.
-	 * @return Block version of material or null.
-	 */
-	@Nullable
-	public static Material asBlock(Material type) {
-		if (type.isBlock()) {
-			return type;
-		} else {
-			return null;
-		}
 	}
 
 	// Only 1.15 and versions after have Material#isAir method
@@ -155,20 +151,80 @@ public class ItemUtils {
 	}
 
 	/**
-	 * @param material The material to check
-	 * @return whether the material is a full glass block
+	 * Remove an ItemStack from a list of ItemStacks or an Inventory
+	 *
+	 * @param toRemove ItemStack to remove
+	 * @param from     List/Inventory to remove from
 	 */
-	public static boolean isGlass(Material material) {
-		return switch (material) {
-			case GLASS, RED_STAINED_GLASS, ORANGE_STAINED_GLASS,
-				 YELLOW_STAINED_GLASS, LIGHT_BLUE_STAINED_GLASS,
-				 BLUE_STAINED_GLASS, CYAN_STAINED_GLASS, LIME_STAINED_GLASS,
-				 GREEN_STAINED_GLASS, MAGENTA_STAINED_GLASS,
-				 PURPLE_STAINED_GLASS, PINK_STAINED_GLASS, WHITE_STAINED_GLASS,
-				 LIGHT_GRAY_STAINED_GLASS, GRAY_STAINED_GLASS,
-				 BLACK_STAINED_GLASS, BROWN_STAINED_GLASS -> true;
-			default -> false;
-		};
+	public static void removeItemFromList(ItemStack toRemove, Iterable<ItemStack> from) {
+		toRemove = toRemove.clone();
+
+		for (ItemStack itemStack : from) {
+			if (itemStack == null || itemStack.isEmpty() || !itemStack.isSimilar(toRemove))
+				continue;
+
+			int itemStackAmount = itemStack.getAmount();
+			int toRemoveAmount = toRemove.getAmount();
+			if (itemStackAmount < toRemoveAmount) {
+				itemStack.setAmount(0);
+				toRemove.setAmount(toRemoveAmount - itemStackAmount);
+			} else if (itemStackAmount > toRemoveAmount) {
+				itemStack.setAmount(itemStackAmount - toRemoveAmount);
+				toRemove.setAmount(0);
+				return;
+			} else {
+				itemStack.setAmount(0);
+				toRemove.setAmount(0);
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Add an ItemStack to a List/Inventory
+	 * <br>This will break up the ItemStack if it's too large
+	 *
+	 * @param toAdd ItemStack to add
+	 * @param to    List/Inventory to add to
+	 */
+	public static void addItemToList(ItemStack toAdd, Iterable<ItemStack> to) {
+		toAdd = toAdd.clone();
+		int maxStackSize = getMaxStackSize(toAdd);
+
+		List<ItemStack> toAddList = new ArrayList<>();
+		while (toAdd.getAmount() > maxStackSize) {
+			toAddList.add(toAdd.asQuantity(maxStackSize));
+			toAdd.subtract(maxStackSize);
+		}
+		toAddList.add(toAdd);
+
+		if (to instanceof Inventory inventory) {
+			inventory.addItem(toAddList.toArray(new ItemStack[0]));
+		} else if (to instanceof List<ItemStack> list) {
+			list.addAll(toAddList);
+		}
+	}
+
+	/**
+	 * Add a List/Inventory to another List/Inventory
+	 *
+	 * @param from List/Inventory to add
+	 * @param to   List/Inventory to add to
+	 */
+	public static void addListToList(Iterable<ItemStack> from, Iterable<ItemStack> to) {
+		List<ItemStack> cloneList = new ArrayList<>();
+		for (ItemStack itemStack : from) {
+			if (itemStack == null || itemStack.isEmpty()) continue;
+			cloneList.add(itemStack);
+		}
+
+		if (to instanceof Inventory inventory) {
+			for (ItemStack itemStack : cloneList) {
+				inventory.addItem(itemStack);
+			}
+		} else if (to instanceof List<ItemStack> list) {
+			list.addAll(cloneList);
+		}
 	}
 
 }
