@@ -63,6 +63,9 @@ public class DefaultComparators {
 			}
 		});
 
+		// Enum comparators
+		Comparators.registerComparator(Enum.class, Enum.class, (o1, o2) -> Relation.get(o1.ordinal() - o2.ordinal()));
+
 		// Block - BlockData
 		Comparators.registerComparator(Block.class, BlockData.class, (block, data) -> Relation.get(block.getBlockData().matches(data)));
 
