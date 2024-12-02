@@ -40,7 +40,6 @@ public class FilesGenerate {
 		assertTrue(skript.getScriptsFolder().exists());
 		assertTrue(skript.getScriptsFolder().isDirectory());
 		assertTrue(new File(dataFolder, "config.sk").exists());
-		assertTrue(new File(dataFolder, "features.sk").exists());
 		File lang = new File(dataFolder, "lang");
 		assertTrue(lang.exists());
 		assertTrue(lang.isDirectory());

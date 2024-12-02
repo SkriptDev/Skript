@@ -374,9 +374,8 @@ public final class Skript extends JavaPlugin implements Listener {
 
 		scriptsFolder = new File(getDataFolder(), SCRIPTSFOLDER);
 		File config = new File(getDataFolder(), "config.sk");
-		File features = new File(getDataFolder(), "features.sk");
 		File lang = new File(getDataFolder(), "lang");
-		if (!scriptsFolder.isDirectory() || !config.exists() || !features.exists() || !lang.exists()) {
+		if (!scriptsFolder.isDirectory() || !config.exists() || !lang.exists()) {
 			ZipFile f = null;
 			try {
 				boolean populateExamples = false;
@@ -412,13 +411,6 @@ public final class Skript extends JavaPlugin implements Listener {
 					} else if (e.getName().equals("config.sk")) {
 						if (!config.exists())
 							saveTo = config;
-//					} else if (e.getName().startsWith("aliases-") && e.getName().endsWith(".sk") && !e.getName().contains("/")) {
-//						File af = new File(getDataFolder(), e.getName());
-//						if (!af.exists())
-//							saveTo = af;
-					} else if (e.getName().startsWith("features.sk")) {
-						if (!features.exists())
-							saveTo = features;
 					}
 					if (saveTo != null) {
 						InputStream in = f.getInputStream(e);
