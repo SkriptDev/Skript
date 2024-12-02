@@ -27,6 +27,21 @@ public class ItemUtils {
 	public static final boolean CAN_CREATE_PLAYER_PROFILE = Skript.methodExists(Bukkit.class, "createPlayerProfile", UUID.class, String.class);
 
 	/**
+	 * Return an ItemStack with a stack size no higher than 99
+	 * <br>
+	 * Minecraft will not serialize an ItemStack with a size > 99
+	 *
+	 * @param itemStack ItemStack to check
+	 * @return ItemStack with size not greater than 99
+	 */
+	public static ItemStack clampedStack(ItemStack itemStack) {
+		if (itemStack.getAmount() > 99) {
+			return itemStack.asQuantity(99);
+		}
+		return itemStack;
+	}
+
+	/**
 	 * Gets damage/durability of an item, or 0 if it does not have damage.
 	 *
 	 * @param itemStack Item.

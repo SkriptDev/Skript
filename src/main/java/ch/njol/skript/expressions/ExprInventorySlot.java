@@ -1,6 +1,7 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.bukkitutil.ItemUtils;
 import ch.njol.skript.classes.Changer.ChangeMode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -89,7 +90,7 @@ public class ExprInventorySlot extends SimpleExpression<ItemStack> {
 	public void change(Event event, @Nullable Object[] delta, ChangeMode mode) {
 		ItemStack itemStack = null;
 		if (mode == ChangeMode.SET && delta != null && delta[0] instanceof ItemStack is) {
-			itemStack = is;
+			itemStack = ItemUtils.clampedStack(is);
 		}
 
 		Inventory inventory = this.inventory.getSingle(event);

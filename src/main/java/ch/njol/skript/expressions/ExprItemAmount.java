@@ -12,8 +12,14 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Item Amount")
-@Description("The amount of an <a href='classes.html#itemstack'>item stack</a>.")
-@Examples("send \"You have got %item amount of player's tool% %player's tool% in your hand!\" to player")
+@Description({"The stack size of an <a href='classes.html#itemstack'>ItemStack</a>.",
+	"This amount is clamped between 0 and 99.",
+	"Anything above 99 will not serialize and may kick the player.",
+	"0 and below will delete the item."})
+@Examples({"send \"You have got %item amount of player's tool% %player's tool% in your hand!\" to player",
+	"set item amount of player's tool to 10",
+	"add 3 to item amount of player's tool",
+	"remove 2 from item amount of player's tool"})
 @Since("2.2-dev24")
 public class ExprItemAmount extends SimplePropertyExpression<ItemStack, Long> {
 
@@ -39,14 +45,17 @@ public class ExprItemAmount extends SimplePropertyExpression<ItemStack, Long> {
 
 	@Override
 	public void change(Event event, @Nullable Object[] delta, ChangeMode mode) {
-		int amount = delta != null ? ((Number) delta[0]).intValue() : 0;
+		if (getExpr() == null) return;
+		int amount = delta != null && delta[0] instanceof Number num ? num.intValue() : 0;
+
 		switch (mode) {
 			case REMOVE:
 				amount = -amount;
 				// fall through
 			case ADD:
 				for (ItemStack itemStack : getExpr().getArray(event)) {
-					itemStack.setAmount(itemStack.getAmount() + amount);
+					int clamp = Math.clamp(itemStack.getAmount() + amount, 0, 99);
+					itemStack.setAmount(clamp);
 				}
 				break;
 			case RESET:
@@ -55,7 +64,8 @@ public class ExprItemAmount extends SimplePropertyExpression<ItemStack, Long> {
 				// fall through
 			case SET:
 				for (ItemStack itemStack : getExpr().getArray(event)) {
-					itemStack.setAmount(amount);
+					int clamp = Math.clamp(amount, 0, 99);
+					itemStack.setAmount(clamp);
 				}
 				break;
 		}
@@ -68,6 +78,7 @@ public class ExprItemAmount extends SimplePropertyExpression<ItemStack, Long> {
 
 	@Override
 	protected String getPropertyName() {
-		return "item[[ ]stack] (amount|size|number)";
+		return "item amount";
 	}
+
 }

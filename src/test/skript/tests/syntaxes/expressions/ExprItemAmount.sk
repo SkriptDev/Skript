@@ -3,7 +3,11 @@ test "item amount":
 	assert item amount of {_i} is 1 with "default item amount failed"
 	set item amount of {_i} to 64
 	assert item amount of {_i} is 64 with "item amount failed"
+
+	# Minecraft doesn't like ItemStacks with a size over 99
+	# While an ItemStack can have a greater amount, once it's in an inventory all hell breaks loose
 	set item amount of {_i} to 500
-	assert item amount of {_i} is 500 with "over-capacity item amount failed"
+	assert item amount of {_i} is 99 with "over-capacity item amount failed"
+
 	set item amount of {_i} to 0
 	assert item amount of {_i} is 0 with "zero item amount failed"
