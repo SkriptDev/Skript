@@ -20,7 +20,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.Vector;
 import org.skriptlang.skript.lang.converter.Converter;
 import org.skriptlang.skript.lang.converter.Converters;
@@ -38,15 +37,6 @@ public class DefaultConverters {
 		Converters.registerConverter(Number.class, Integer.class, Number::intValue);
 		Converters.registerConverter(Number.class, Long.class, Number::longValue);
 		Converters.registerConverter(Number.class, Short.class, Number::shortValue);
-
-		// OfflinePlayer - PlayerInventory
-		Converters.registerConverter(OfflinePlayer.class, PlayerInventory.class, p -> {
-			if (!p.isOnline())
-				return null;
-			Player online = p.getPlayer();
-			assert online != null;
-			return online.getInventory();
-		}, Commands.CONVERTER_NO_COMMAND_ARGUMENTS);
 
 		// OfflinePlayer - Player
 		Converters.registerConverter(OfflinePlayer.class, Player.class, OfflinePlayer::getPlayer, Commands.CONVERTER_NO_COMMAND_ARGUMENTS);
@@ -79,13 +69,6 @@ public class DefaultConverters {
 		Converters.registerConverter(Block.class, Inventory.class, b -> {
 			if (b.getState() instanceof InventoryHolder)
 				return ((InventoryHolder) b.getState()).getInventory();
-			return null;
-		}, Commands.CONVERTER_NO_COMMAND_ARGUMENTS);
-
-		// Entity - Inventory
-		Converters.registerConverter(Entity.class, Inventory.class, e -> {
-			if (e instanceof InventoryHolder)
-				return ((InventoryHolder) e).getInventory();
 			return null;
 		}, Commands.CONVERTER_NO_COMMAND_ARGUMENTS);
 
