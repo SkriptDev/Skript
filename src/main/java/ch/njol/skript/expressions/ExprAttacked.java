@@ -10,6 +10,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.skript.registrations.Classes;
 import ch.njol.util.Kleenean;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
@@ -79,7 +80,9 @@ public class ExprAttacked extends SimpleExpression<Entity> {
 
 	@Override
 	public String toString(@Nullable Event e, boolean debug) {
-		return "the victim";
+		if (e == null)
+			return "the attacker";
+		return Classes.getDebugMessage(getSingle(e));
 	}
 
 }
