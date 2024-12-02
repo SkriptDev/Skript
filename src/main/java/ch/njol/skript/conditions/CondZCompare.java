@@ -416,7 +416,7 @@ public class CondZCompare extends Condition implements VerboseAssert {
 		else
 			s = first.toString(event, debug) + " is " + (isNegated() ? "not " : "") + "between " + second.toString(event, debug) + " and " + third.toString(event, debug);
 		if (debug)
-			s += " (comparator: " + comparator + ")";
+			s += " (comparator: " + comparator.debugString(first.getReturnType(), second.getReturnType()) + ")";
 		return s;
 	}
 	
