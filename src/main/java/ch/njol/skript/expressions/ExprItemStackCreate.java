@@ -52,6 +52,8 @@ public class ExprItemStackCreate extends SimpleExpression<ItemStack> {
 		}
 
 		for (Material material : this.materials.getArray(event)) {
+			if (!material.isItem()) continue;
+
 			ItemStack itemStack = new ItemStack(material, amount);
 			items.add(itemStack);
 		}

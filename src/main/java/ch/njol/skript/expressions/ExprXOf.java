@@ -46,6 +46,7 @@ public class ExprXOf extends PropertyExpression<Object, ItemStack> {
 		int amount = a.intValue();
 		return get(source, object -> {
 			if (object instanceof Material material) {
+				if (!material.isItem()) return null;
 				return new ItemStack(material, amount);
 			} else if (object instanceof ItemStack itemStack) {
 				ItemStack is = itemStack.clone();
