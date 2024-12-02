@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
-@Name("Target")
+@Name("Target Entity")
 @Description({"For players this is the entity at the cross hair.",
 	"For mobs and experience orbs this is the entity they are attacking/following (if any).",
 	"Display entities have a hit box of 0, so you should use 'target display' to collect Display entities",
@@ -47,10 +47,10 @@ import java.util.function.Predicate;
 	"delete target entity of last spawned zombie # for entities it will make them target-less"
 })
 @Since("1.4.2, 2.7 (Reset), 2.8.0 (ignore blocks)")
-public class ExprTarget extends PropertyExpression<LivingEntity, Entity> {
+public class ExprTargetEntity extends PropertyExpression<LivingEntity, Entity> {
 
 	static {
-		Skript.registerExpression(ExprTarget.class, Entity.class, ExpressionType.PROPERTY,
+		Skript.registerExpression(ExprTargetEntity.class, Entity.class, ExpressionType.PROPERTY,
 			"[the] target[ed] (%-*entitytype%|entity) [of %livingentities%] [blocks:ignoring blocks] [[with|at] ray[ ]size %-number%]", // TODO add a where filter when extendable https://github.com/SkriptLang/Skript/issues/4856
 			"%livingentities%'[s] target[ed] (%-*entitytype%|entity) [blocks:ignoring blocks] [[with|at] ray[ ]size %-number%]"
 		);
@@ -146,7 +146,7 @@ public class ExprTarget extends PropertyExpression<LivingEntity, Entity> {
 
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
-		return "target" + (type == null ? "" : "ed " + type) + (getExpr().isDefault() ? "" : " of " + getExpr().toString(event, debug));
+		return "target" + (type == null ? " entity" : "ed " + type) + (getExpr().isDefault() ? "" : " of " + getExpr().toString(event, debug));
 	}
 
 	/**
