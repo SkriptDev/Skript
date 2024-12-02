@@ -31,12 +31,12 @@ import org.jetbrains.annotations.Nullable;
 	"\tdamage the attacked by 1 heart"})
 @Since("1.3, 2.6.1 (projectile hit event)")
 @Events({"damage", "death", "projectile hit"})
-public class ExprAttacked extends SimpleExpression<Entity> {
+public class ExprVictim extends SimpleExpression<Entity> {
 
 	private static final boolean SUPPORT_PROJECTILE_HIT = Skript.methodExists(ProjectileHitEvent.class, "getHitEntity");
 
 	static {
-		Skript.registerExpression(ExprAttacked.class, Entity.class, ExpressionType.SIMPLE,
+		Skript.registerExpression(ExprVictim.class, Entity.class, ExpressionType.SIMPLE,
 			"[the] victim");
 	}
 
