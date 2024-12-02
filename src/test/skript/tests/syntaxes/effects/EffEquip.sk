@@ -3,11 +3,11 @@ test "equip effect":
 		set {_entity} to event-entity
 	
 	equip {_entity} with a diamond chestplate
-	assert chestplate slot of {_entity} is a diamond chestplate with "Entity should be wearing a diamond chestplate"
+	assert material of chestplate slot of {_entity} is a diamond chestplate with "Entity should be wearing a diamond chestplate"
 	delete chestplate slot of {_entity}
 
 	equip {_entity} with 1 of diamond chestplate named "Test"
-	assert chestplate slot of {_entity} is a diamond chestplate named "Test" with "Entity should be wearing a diamond chestplate named 'test'"
+	assert chestplate slot of {_entity} is 1 of diamond chestplate named "Test" with "Entity should be wearing a diamond chestplate named 'test'"
 
 	delete the entity within {_entity}
 
