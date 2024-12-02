@@ -121,6 +121,18 @@ public class ItemUtils {
 	}
 
 	/**
+	 * Set the max stack size of an ItemStack
+	 *
+	 * @param itemStack    ItemStack to change max stack size
+	 * @param maxStackSize Max stack size clamped between 1 and 99
+	 */
+	public static void setMaxStackSize(ItemStack itemStack, int maxStackSize) {
+		ItemMeta itemMeta = itemStack.getItemMeta();
+		itemMeta.setMaxStackSize(Math.clamp(maxStackSize, 1, 99));
+		itemStack.setItemMeta(itemMeta);
+	}
+
+	/**
 	 * Sets the owner of a player head.
 	 *
 	 * @param skull  player head item to modify
