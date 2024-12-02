@@ -8,9 +8,9 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
+import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
-import ch.njol.skript.util.LiteralUtils;
 import ch.njol.util.Kleenean;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -43,7 +43,7 @@ public class ExprEntities extends SimpleExpression<Entity> {
 			"all [[of] the] [entities of type[s]] %-entitytypes/entitycategories% in radius %number% (of|around) %location%");
 	}
 
-	Expression<?> types;
+	Literal<?> types;
 
 	@Nullable
 	private Expression<World> worlds;
@@ -59,7 +59,7 @@ public class ExprEntities extends SimpleExpression<Entity> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
-		types = LiteralUtils.defendExpression(exprs[0]);
+		types = (Literal<?>) exprs[0];
 
 		isUsingRadius = matchedPattern == 1;
 		if (isUsingRadius) {
@@ -105,7 +105,8 @@ public class ExprEntities extends SimpleExpression<Entity> {
 				for (Chunk chunk : this.chunks.getArray(e)) {
 					for (@NotNull Entity entity : chunk.getEntities()) {
 						if (this.types != null) {
-							if (isOfType(entity, this.types.getArray(e))) entities.add(entity);
+							if (isOfType(entity, this.types.getArray(e)))
+								entities.add(entity);
 						} else {
 							entities.add(entity);
 						}
@@ -116,7 +117,8 @@ public class ExprEntities extends SimpleExpression<Entity> {
 				for (World world : worlds) {
 					for (@NotNull Entity entity : world.getEntities()) {
 						if (this.types != null) {
-							if (isOfType(entity, this.types.getArray(e))) entities.add(entity);
+							if (isOfType(entity, this.types.getArray(e)))
+								entities.add(entity);
 						} else {
 							entities.add(entity);
 						}
@@ -134,6 +136,13 @@ public class ExprEntities extends SimpleExpression<Entity> {
 
 	@Override
 	public Class<? extends Entity> getReturnType() {
+		if (this.types != null && this.types.isSingle()) {
+			Object type = this.types.getSingle();
+			if (type instanceof EntityType entityType)
+				return entityType.getEntityClass();
+			else if (type instanceof EntityCategory entityCategory)
+				return entityCategory.getEntityClass();
+		}
 		return Entity.class;
 	}
 
