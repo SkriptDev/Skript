@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.regex.Pattern;
+
 /**
  * Represents {@link ClassInfo ClassInfos} relating to {@link Entity Entities}
  */
@@ -92,7 +93,7 @@ public class EntityClasses {
 				@Override
 				public String toString(final Entity entity, final int flags) {
 					if (entity.getCustomName() != null)
-						return entity.getCustomName();
+						return "'" + entity.getCustomName() + "'";
 					return Classes.toString(entity.getType());
 				}
 			})
@@ -237,7 +238,6 @@ public class EntityClasses {
 					return false;
 				}
 
-				@SuppressWarnings("deprecation")
 				@Override
 				protected OfflinePlayer deserialize(final Fields fields) throws StreamCorruptedException {
 					if (fields.contains("uuid")) {
@@ -298,7 +298,7 @@ public class EntityClasses {
 						}
 						if (players.size() == 1)
 							return players.get(0);
-						if (players.size() == 0)
+						if (players.isEmpty())
 							Skript.error(String.format(Language.get("commands.no player starts with"), string));
 						else
 							Skript.error(String.format(Language.get("commands.multiple players start with"), string));
@@ -328,7 +328,7 @@ public class EntityClasses {
 
 				@Override
 				public String getDebugMessage(final Player p) {
-					return p.getName() + " " + Classes.getDebugMessage(p.getLocation());
+					return "'" + p.getName() + "'";
 				}
 			})
 			.changer(DefaultChangers.playerChanger)
