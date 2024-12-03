@@ -1,7 +1,13 @@
-test "registry" when minecraft version is "1.14":
+test "registry":
 
 	# Test namespaced keys
-	assert curse of vanishing = minecraft:vanishing_curse with "'curse of vanishing' enchant should match namespace key"
+	assert curse of vanishing = minecraft:vanishing_curse with "'curse of vanishing' enchant should match namespaced key"
+	assert binding curse = minecraft:binding_curse with "'binding curse' enchant should match namespaced key"
+	assert curse of binding = binding curse with "'curse of binding' should match 'binding curse'"
+	assert sheep = minecraft:sheep with "'sheep' entity type should match namespaced key"
+	assert diamond sword = minecraft:diamond_sword with "'diamond sword' material should match namespaced key"
+	assert nether wastes = minecraft:nether_wastes with "'nether wastes' biome should match namespaced key"
+	assert night vision = minecraft:night_vision with "'night vision' potion effect type should match namespaced key"
 
 	# Test serialization
 	set {test::enchantment} to minecraft:sharpness
