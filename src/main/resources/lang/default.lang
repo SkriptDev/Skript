@@ -529,6 +529,7 @@ types:
 	boolean: boolean¦ (yes/no)¦s (yes/no) @a
 	string: text¦s @a
 	chunk: chunk¦s @a
+	uuid: uuid¦s @a
 
 	# Bukkit
 	attribute: attribute¦s @an

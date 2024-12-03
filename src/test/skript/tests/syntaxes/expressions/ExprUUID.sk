@@ -1,0 +1,16 @@
+test "uuid expression":
+	spawn a sheep at spawn of world "world":
+		set {_e} to entity
+
+	set {_eu} to uuid of {_e}
+	assert {_eu} is set with "The entity should have a uuid"
+
+	set {_wu} to uuid of world "world"
+	assert {_wu} is set with "The world should have a uuid"
+
+	set {_r} to random uuid
+	set {_su} to "%{_r}%" parsed as uuid
+	assert {_su} is set with "Parsing as a UUID should work"
+
+	assert {_r} = "%{_r}%" with "UUID to String comparison should work"
+	assert "%{_r}%" = {_r} with "String to UUID comparison should work"

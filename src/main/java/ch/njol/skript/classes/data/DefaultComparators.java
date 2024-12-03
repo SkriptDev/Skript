@@ -29,6 +29,7 @@ import org.skriptlang.skript.lang.comparator.Comparators;
 import org.skriptlang.skript.lang.comparator.Relation;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class DefaultComparators {
 
@@ -168,6 +169,9 @@ public class DefaultComparators {
 				Location.normalizeYaw(first.getYaw()) == Location.normalizeYaw(second.getYaw()) &&
 				Location.normalizePitch(first.getPitch()) == Location.normalizePitch(second.getPitch())
 		));
+
+		// UUID - String
+		Comparators.registerComparator(UUID.class, String.class, (o1, o2) -> Relation.get(o1.toString().equalsIgnoreCase(o2)));
 	}
 
 }

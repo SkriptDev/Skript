@@ -1,21 +1,3 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.classes.data;
 
 import ch.njol.skript.SkriptConfig;
@@ -33,6 +15,9 @@ import ch.njol.util.StringUtils;
 import ch.njol.yggdrasil.Fields;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.NotSerializableException;
+import java.io.StreamCorruptedException;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class JavaClasses {
@@ -627,5 +612,64 @@ public class JavaClasses {
 						return false;
 					}
 				}));
+
+		Classes.registerClass(new ClassInfo<>(UUID.class, "uuid")
+			.user("uuids?")
+			.name("UUID")
+			.description("Represents the UUID (universally unique identifier) of an object.")
+			.examples("set {_uuid} to uuid of player")
+			.since("INSERT VERSION")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(ParseContext context) {
+					return context == ParseContext.PARSE;
+				}
+
+				@Override
+				public @Nullable UUID parse(String string, ParseContext context) {
+					try {
+						return UUID.fromString(string);
+					} catch (IllegalArgumentException e) {
+						return null;
+					}
+				}
+
+				@Override
+				public String toString(UUID uuid, int flags) {
+					return uuid.toString();
+				}
+
+				@Override
+				public String toVariableNameString(UUID uuid) {
+					return uuid.toString();
+				}
+			})
+			.serializer(new Serializer<>() {
+				@Override
+				public Fields serialize(UUID uuid) {
+					Fields fields = new Fields();
+					fields.putObject("uuid", uuid);
+					return fields;
+				}
+
+				@Override
+				protected UUID deserialize(Fields fields) throws StreamCorruptedException {
+					UUID uuid = fields.getObject("uuid", UUID.class);
+					if (uuid == null) {
+						throw new StreamCorruptedException();
+					}
+					return uuid;
+				}
+
+				@Override
+				public boolean mustSyncDeserialization() {
+					return false;
+				}
+
+				@Override
+				protected boolean canBeInstantiated() {
+					return false;
+				}
+			}));
 	}
 }

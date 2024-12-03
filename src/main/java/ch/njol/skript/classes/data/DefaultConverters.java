@@ -24,6 +24,8 @@ import org.bukkit.util.Vector;
 import org.skriptlang.skript.lang.converter.Converter;
 import org.skriptlang.skript.lang.converter.Converters;
 
+import java.util.UUID;
+
 public class DefaultConverters {
 
 	public DefaultConverters() {
@@ -133,6 +135,8 @@ public class DefaultConverters {
 			return new ItemStack(material);
 		});
 
+		// UUID - String
+		Converters.registerConverter(UUID.class, String.class, UUID::toString);
 	}
 
 }
