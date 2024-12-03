@@ -410,13 +410,15 @@ public class CondZCompare extends Condition implements VerboseAssert {
 	@Override
 	public String toString(final @Nullable Event event, final boolean debug) {
 		String s;
+		String first = "(" + this.first.toString(event, debug) + ")";
+		String second = "(" + this.second.toString(event, debug) + ")";
 		final Expression<?> third = this.third;
 		if (third == null)
-			s = first.toString(event, debug) + " is " + (isNegated() ? "not " : "") + relation + " " + second.toString(event, debug);
+			s = first + " is " + (isNegated() ? "not " : "") + relation + " " + second;
 		else
-			s = first.toString(event, debug) + " is " + (isNegated() ? "not " : "") + "between " + second.toString(event, debug) + " and " + third.toString(event, debug);
+			s = first + " is " + (isNegated() ? "not " : "") + "between " + second + " and " + third.toString(event, debug);
 		if (debug)
-			s += " (comparator: " + comparator + ")";
+			s += " (comparator: " + comparator.debugString(this.first.getReturnType(), this.second.getReturnType()) + ")";
 		return s;
 	}
 	

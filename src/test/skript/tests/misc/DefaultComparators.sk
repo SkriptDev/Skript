@@ -1,0 +1,37 @@
+test "default comparators":
+	# World
+	assert location(1,1,1) = location(1,1,1) with "The locations should match"
+	assert location(1,1,1, world "world", 10, 10) = location(1,1,1, world "world", 10, 10) with "The locations should match"
+	assert world "world" = world "world" with "The worlds should match"
+
+	# Block/Data
+	assert block at location(1,1,1) = block at location(1,1,1) with "The blocks should match"
+	assert stone[] = stone[] with "The blockdatas should match"
+	assert oak_stairs[waterlogged=true] = oak_stairs[waterlogged=true] with "The blockdatas should match"
+
+	# ItemStack/Material
+	assert stone = stone with "The materials should match"
+	assert diamond ore = diamond ore with "The materials should match"
+	assert itemstack of stick = itemstack of stick with "The itemstacks should match"
+
+	# EntityType
+	assert zombie villager = zombie villager with "The entity types should match"
+	assert villager = villager with "The entity types should match"
+	assert piglin brute = piglin brute with "The entity types should match"
+	
+	# Misc Bukkit Types
+	assert badlands = badlands with "The biomes should match"
+	assert basalt deltas = basalt deltas with "The biomes should match"
+	assert mega redwood = mega redwood with "The tree types should match"
+	assert vanishing curse = vanishing curse with "The enchantments should match"
+	assert night vision = night vision with "The potion effect types should match"
+
+	# Math
+	assert 1 = 1 with "The numbers should match"
+	assert 1.5 = 1.5 with "The numbers should match"
+
+	# Misc
+	assert "i am thor" = "i am thor" with "The strings should match"
+	assert date(2024, 11, 30) = date(2024, 11, 30) with "The dates should match"
+	assert entitytype = entitytype with "The classes should match"
+	assert enchantment = enchantment with "The classes should match"

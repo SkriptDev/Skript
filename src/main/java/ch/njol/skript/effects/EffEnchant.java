@@ -12,6 +12,7 @@ import ch.njol.util.Kleenean;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -60,7 +61,9 @@ public class EffEnchant extends Effect {
 			int level = levelNum != null ? levelNum.intValue() : 1;
 
 			for (ItemStack item : items) {
-				item.addUnsafeEnchantment(enchantment, level);
+				ItemMeta itemMeta = item.getItemMeta();
+				itemMeta.addEnchant(enchantment, level, true);
+				item.setItemMeta(itemMeta);
 			}
 		} else {
 			for (ItemStack item : items) {
@@ -72,7 +75,7 @@ public class EffEnchant extends Effect {
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
 		if (this.enchantment != null) {
-			String level = this.level != null ?  " " + this.level.getSingle(event).toString() : "";
+			String level = this.level != null ? " " + this.level.getSingle(event).toString() : "";
 			return "enchant " + this.items.toString(event, debug) + " with " +
 				this.enchantment.toString(event, debug) + level;
 		}

@@ -1,7 +1,6 @@
 package ch.njol.skript.events;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.bukkitutil.ItemUtils;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.LiteralList;
 import ch.njol.skript.lang.SkriptEvent;
@@ -140,23 +139,23 @@ public class EvtGrow extends SkriptEvent {
 		if (types.getAnd() && types instanceof LiteralList)
 			((LiteralList<Object>) types).invertAnd();
 
-		if (event instanceof StructureGrowEvent) {
-			Material sapling = ItemUtils.getTreeSapling(((StructureGrowEvent) event).getSpecies());
+		if (event instanceof StructureGrowEvent structureGrowEvent) {
+			Material sapling = structureGrowEvent.getLocation().getBlock().getType();
 			return types.check(event, type -> {
 				if (type instanceof Material material) {
 					return material == sapling;
-				} else if (type instanceof BlockData) {
-					return ((BlockData) type).getMaterial() == sapling;
+				} else if (type instanceof BlockData blockData) {
+					return blockData.getMaterial() == sapling;
 				}
 				return false;
 			});
-		} else if (event instanceof BlockGrowEvent) {
-			BlockState oldState = ((BlockGrowEvent) event).getBlock().getState();
+		} else if (event instanceof BlockGrowEvent blockGrowEvent) {
+			BlockState oldState = blockGrowEvent.getBlock().getState();
 			return types.check(event, type -> {
 				if (type instanceof Material material) {
 					return material == oldState.getType();
-				} else if (type instanceof BlockData) {
-					return ((BlockData) type).matches(oldState.getBlockData());
+				} else if (type instanceof BlockData blockData) {
+					return blockData.matches(oldState.getBlockData());
 				}
 				return false;
 			});
@@ -177,13 +176,13 @@ public class EvtGrow extends SkriptEvent {
 				}
 				return false;
 			});
-		} else if (event instanceof BlockGrowEvent) {
-			BlockState newState = ((BlockGrowEvent) event).getNewState();
+		} else if (event instanceof BlockGrowEvent blockGrowEvent) {
+			BlockState newState = blockGrowEvent.getNewState();
 			return types.check(event, type -> {
 				if (type instanceof Material material) {
 					return material == newState.getType();
-				} else if (type instanceof BlockData) {
-					return ((BlockData) type).matches(newState.getBlockData());
+				} else if (type instanceof BlockData blockData) {
+					return blockData.matches(newState.getBlockData());
 				}
 				return false;
 			});

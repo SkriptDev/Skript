@@ -14,3 +14,18 @@ test "enchantments of itemstack":
 	clear enchantments of {_i}
 	assert enchantments of {_i} does not contain sharpness with "The item should have had sharpness cleared from enchantments"
 	assert enchantments of {_i} does not contain unbreaking with "The item should have had unbreaking cleared from enchantments"
+
+	set {_i} to itemstack of enchanted book
+	set stored level of sharpness of {_i} to 10
+	enchant {_i} with lure 3
+	assert enchantments of {_i} does not contain sharpness with "The item should not have a normal enchantment of sharpness"
+	assert stored enchantments of {_i} contains sharpness with "The item should have a stored enchantment of sharpness"
+	assert enchantments of {_i} contains lure with "The item should have a normal enchantment of lure"
+	assert stored enchantments of {_i} does not contain lure with "The item should not have a stored enchantment of lure"
+
+	clear enchantments of {_i}
+	assert stored enchantments of {_i} contains sharpness with "The item should still have a stored enchantment of sharpness"
+	assert enchantments of {_i} does not contain lure with "The item should have had its lure enchantment cleared"
+
+	clear stored enchantments of {_i}
+	assert stored enchantments of {_i} does not contain sharpness with "The item should have had its stored enchants cleared"

@@ -13,3 +13,19 @@ test "entities in chunk":
 	clear entities within {_e::*}
 	assert entities within {_e::*} where [entity input is valid] is not set with "Not all the sheep were cleared"
 	clear all entities
+
+	# Test for correct return type when using loops
+	loop all players:
+		set {_a} to loop-player
+		set {_a} to loop-entity
+
+	loop all entities:
+		set {_a} to loop-entity
+
+	loop all mobs:
+		set {_a} to loop-entity
+		set {_a} to loop-livingentity
+
+	loop all sheep:
+		set {_a} to loop-entity
+		set {_a} to loop-livingentity

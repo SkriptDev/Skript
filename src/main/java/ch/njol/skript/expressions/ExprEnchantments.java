@@ -14,13 +14,16 @@ import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Name("Item Enchantments")
-@Description("All the enchantments an <a href='classes.html#itemstack'>itemstack</a> has.")
+@Description({"All the enchantments an <a href='classes.html#itemstack'>itemstack</a> has.",
+	"The optional 'stored' pattern is for Enchanted Books, which do not have enchantments but rather have stored enchantments."})
 @Examples({"clear enchantments of event-item",
 	"loop enchantments of player's tool:",
 	"if enchantments of {_item} contains sharpness:"})
@@ -29,16 +32,18 @@ public class ExprEnchantments extends SimpleExpression<Enchantment> {
 
 	static {
 		PropertyExpression.register(ExprEnchantments.class, Enchantment.class,
-			"enchantments", "itemstacks");
+			"[:stored] enchantments", "itemstacks");
 	}
 
 	@SuppressWarnings("null")
 	private Expression<ItemStack> items;
+	private boolean stored;
 
 	@SuppressWarnings({"null", "unchecked"})
 	@Override
 	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
 		this.items = (Expression<ItemStack>) exprs[0];
+		this.stored = parseResult.hasTag("stored");
 		return true;
 	}
 
@@ -48,7 +53,14 @@ public class ExprEnchantments extends SimpleExpression<Enchantment> {
 		List<Enchantment> enchantments = new ArrayList<>();
 
 		for (ItemStack item : items.getArray(event)) {
-			enchantments.addAll(item.getEnchantments().keySet());
+			ItemMeta itemMeta = item.getItemMeta();
+			if (this.stored) {
+				if (itemMeta instanceof EnchantmentStorageMeta storageMeta) {
+					enchantments.addAll(storageMeta.getStoredEnchants().keySet());
+				}
+			} else {
+				enchantments.addAll(itemMeta.getEnchants().keySet());
+			}
 		}
 		return enchantments.toArray(new Enchantment[0]);
 	}
@@ -67,7 +79,15 @@ public class ExprEnchantments extends SimpleExpression<Enchantment> {
 	public void change(Event event, @Nullable Object[] delta, ChangeMode mode) {
 		if (mode == ChangeMode.DELETE) {
 			for (ItemStack itemStack : this.items.getArray(event)) {
-				itemStack.removeEnchantments();
+				ItemMeta itemMeta = itemStack.getItemMeta();
+				if (this.stored && itemMeta instanceof EnchantmentStorageMeta storageMeta) {
+					for (Enchantment enchantment : storageMeta.getStoredEnchants().keySet()) {
+						storageMeta.removeStoredEnchant(enchantment);
+					}
+				} else {
+					itemMeta.removeEnchantments();
+				}
+				itemStack.setItemMeta(itemMeta);
 			}
 		} else if (mode == ChangeMode.REMOVE && delta != null) {
 			List<Enchantment> enchantments = new ArrayList<>();
@@ -78,7 +98,13 @@ public class ExprEnchantments extends SimpleExpression<Enchantment> {
 			}
 			for (ItemStack itemStack : this.items.getArray(event)) {
 				for (Enchantment enchantment : enchantments) {
-					itemStack.removeEnchantment(enchantment);
+					ItemMeta itemMeta = itemStack.getItemMeta();
+					if (this.stored && itemMeta instanceof EnchantmentStorageMeta storageMeta) {
+						storageMeta.removeStoredEnchant(enchantment);
+					} else {
+						itemMeta.removeEnchant(enchantment);
+					}
+					itemStack.setItemMeta(itemMeta);
 				}
 			}
 		}
@@ -95,8 +121,8 @@ public class ExprEnchantments extends SimpleExpression<Enchantment> {
 	}
 
 	@Override
-	public String toString(@Nullable Event e, boolean debug) {
-		return "the enchantments of " + items.toString(e, debug);
+	public String toString(@Nullable Event event, boolean debug) {
+		return "the enchantments of " + this.items.toString(event, debug);
 	}
 
 }

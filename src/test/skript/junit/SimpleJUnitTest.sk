@@ -9,8 +9,7 @@ on damage of pig:
 	# Using the JUnit name is not required, just another example.
 	assert custom name of victim is "Simple JUnit Test" with "piggy was not the same"
 
-	# Remember the damage was 100 but Skript represents it by hearts so it's 50.
-	assert damage is 50 with "damage was not 50"
+	assert damage is 100 with "damage was not 100"
 
 	# Tell our objective that our runtime objective has been completed which was an entity damage event.
 	complete objective "piggy died" for junit test "org.skriptlang.skript.test.tests.regression.SimpleJUnitTest"

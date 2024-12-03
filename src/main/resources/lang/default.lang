@@ -36,6 +36,12 @@ genders:
 		# id: +
 		# used for adjectives only
 
+# -- Enchantments --
+# These enchantments have names different than their keys
+enchantment:
+	binding_curse: curse of binding, binding curse
+	vanishing_curse: curse of vanishing, vanishing curse
+
 # -- Weather --
 weather:
 	clear:
@@ -457,6 +463,16 @@ environments:
 	the_end: end, the end
 	custom: custom
 
+# -- Equipment Slots --
+equipment slots:
+	head: head, helmet
+	chest: chest, chestplate
+	legs: legs, leggings, pants
+	feet: feet, boots
+	hand: hand, tool
+	off_hand: off hand, shield
+	body: body
+
 # -- Moon Phases --
 moon phases:
 	first_quarter: first quarter
@@ -519,6 +535,7 @@ types:
 	boolean: boolean¦ (yes/no)¦s (yes/no) @a
 	string: text¦s @a
 	chunk: chunk¦s @a
+	uuid: uuid¦s @a
 
 	# Bukkit
 	attribute: attribute¦s @an

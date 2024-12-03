@@ -13,17 +13,20 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.BlockDisplay;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Block Data")
-@Description({"Get the <a href='classes.html#blockdata'>block data</a> associated with a Block or BlockDisplay entity.",
+@Description({"Get the <a href='classes.html#blockdata'>block data</a> associated with a Block or BlockDisplay/FallingBlock entity.",
 	"This data can also be used to set blocks."})
 @Examples({"set {data} to block data of target block",
 	"set block at player to {data}",
-	"set block data of target block to oak_stairs[facing=south;waterlogged=true]"})
+	"set block data of target block to oak_stairs[facing=south;waterlogged=true]",
+	"spawn falling block above player:",
+	"\tset blockdata of entity to oak_stairs[]"})
 @RequiredPlugins("Minecraft 1.13+")
-@Since("2.5, 2.5.2 (set), 3.0.0 (BlockDisplays)")
+@Since("2.5, 2.5.2 (set), 3.0.0 (BlockDisplay/FallingBlock)")
 public class ExprBlockData extends SimplePropertyExpression<Object, BlockData> {
 
 	private static final BlockData AIR = Material.AIR.createBlockData();
@@ -39,6 +42,8 @@ public class ExprBlockData extends SimplePropertyExpression<Object, BlockData> {
 		if (object instanceof Block block) return block.getBlockData();
 		else if (object instanceof BlockDisplay blockDisplay)
 			return blockDisplay.getBlock();
+		else if (object instanceof FallingBlock fallingBlock)
+			return fallingBlock.getBlockData();
 		return null;
 	}
 
@@ -62,6 +67,8 @@ public class ExprBlockData extends SimplePropertyExpression<Object, BlockData> {
 				block.setBlockData(blockData);
 			} else if (object instanceof BlockDisplay blockDisplay) {
 				blockDisplay.setBlock(blockData);
+			} else if (object instanceof FallingBlock fallingBlock) {
+				fallingBlock.setBlockData(blockData);
 			}
 		}
 	}

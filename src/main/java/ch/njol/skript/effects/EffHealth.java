@@ -18,8 +18,11 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Damage/Heal/Repair")
-@Description("Damage/Heal/Repair an entity, or item.")
+@Description({"Damage/Heal/Repair an entity, or item.",
+	"Damage/healing will be referenced by full health amount.",
+	"If using optional 'hearts', the amount will be cut in half to represent a heart."})
 @Examples({"damage player by 5 hearts",
+	"damage all mobs by 10",
 	"heal the player",
 	"repair tool of player"})
 @Since("1.0")
@@ -27,8 +30,8 @@ public class EffHealth extends Effect {
 
 	static {
 		Skript.registerEffect(EffHealth.class,
-			"damage %livingentities/itemstacks% by %number% [heart[s]] [with fake cause %-damagecause%]",
-			"heal %livingentities% [by %-number% [heart[s]]]",
+			"damage %livingentities/itemstacks% by %number% [heart:heart[s]]",
+			"heal %livingentities% [by %-number% [heart:heart[s]]]",
 			"repair %itemstacks% [by %-number%]");
 	}
 
@@ -36,18 +39,16 @@ public class EffHealth extends Effect {
 	@Nullable
 	private Expression<Number> amount;
 	private boolean isHealing, isRepairing;
+	private boolean hearts;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
-		if (matchedPattern == 0 && exprs[2] != null)
-			Skript.warning("The fake damage cause extension of this effect has no functionality, " +
-				"and will be removed in the future");
-
 		this.damageables = exprs[0];
 		this.isHealing = matchedPattern >= 1;
 		this.isRepairing = matchedPattern == 2;
 		this.amount = (Expression<Number>) exprs[1];
+		this.hearts = parseResult.hasTag("heart");
 		return true;
 	}
 
@@ -61,6 +62,8 @@ public class EffHealth extends Effect {
 			amount = amountPostCheck.doubleValue();
 		}
 
+		if (hearts) amount /= 2;
+
 		for (Object obj : this.damageables.getArray(event)) {
 			if (obj instanceof ItemStack itemStack) {
 
@@ -71,8 +74,7 @@ public class EffHealth extends Effect {
 				}
 
 			}
-			if (obj instanceof Damageable) {
-				Damageable damageable = (Damageable) obj;
+			if (obj instanceof Damageable damageable) {
 
 				if (this.amount == null) {
 					HealthUtils.heal(damageable, HealthUtils.getMaxHealth(damageable));

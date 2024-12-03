@@ -112,7 +112,7 @@ public class ExprEntity extends SimpleExpression<Entity> {
 
 	@Override
 	public String toString(final @Nullable Event e, final boolean debug) {
-		return "the " + type;
+		return "the " + Classes.toString(type);
 	}
 
 }

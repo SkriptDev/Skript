@@ -2,6 +2,9 @@ package ch.njol.skript.classes.registry;
 
 import ch.njol.skript.classes.Parser;
 import ch.njol.skript.lang.ParseContext;
+import ch.njol.skript.localization.Language;
+import ch.njol.skript.localization.Noun;
+import ch.njol.util.NonNullPair;
 import ch.njol.util.StringUtils;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
@@ -22,13 +25,17 @@ import java.util.Map;
 public class RegistryParser<R extends Keyed> extends Parser<R> {
 
 	private final Registry<R> registry;
+	private final String languageNode;
 
 	private final Map<R, String> names = new HashMap<>();
 	private final Map<String, R> parseMap = new HashMap<>();
 
-	public RegistryParser(Registry<R> registry) {
+	public RegistryParser(Registry<R> registry, String languageNode) {
+		assert !languageNode.isEmpty() && !languageNode.endsWith(".") : languageNode;
 		this.registry = registry;
+		this.languageNode = languageNode;
 		refresh();
+		Language.addListener(this::refresh);
 	}
 
 	private void refresh() {
@@ -39,18 +46,40 @@ public class RegistryParser<R extends Keyed> extends Parser<R> {
 			String namespace = namespacedKey.getNamespace();
 			String key = namespacedKey.getKey();
 			String keyWithSpaces = key.replace("_", " ");
+			String languageKey = languageNode + "." + key;
 
 			String namespacedKeyString = namespacedKey.toString();
 			// Put the full namespaced key as a pattern
 			putInMapWithArticle(namespacedKeyString, registryObject);
 
-			// If the object is a vanilla Minecraft object, we'll add the key with spaces as a pattern
-			if (namespace.equalsIgnoreCase(NamespacedKey.MINECRAFT)) {
-				putInMapWithArticle(keyWithSpaces, registryObject);
-				putInMapWithArticle(key, registryObject);
-				names.put(registryObject, keyWithSpaces);
+			String[] options = Language.getList(languageKey);
+			// Missing/Custom registry objects
+			if (options.length == 1 && options[0].equals(languageKey.toLowerCase(Locale.ENGLISH))) {
+				// If the object is a vanilla Minecraft object, we'll add the key with spaces as a pattern
+				if (namespace.equalsIgnoreCase(NamespacedKey.MINECRAFT)) {
+					putInMapWithArticle(keyWithSpaces, registryObject);
+					putInMapWithArticle(key, registryObject);
+					names.put(registryObject, keyWithSpaces);
+				} else {
+					names.put(registryObject, namespacedKeyString);
+				}
 			} else {
-				names.put(registryObject, namespacedKeyString);
+				for (String option : options) {
+					option = option.toLowerCase(Locale.ENGLISH);
+
+					// Isolate the gender if one is present
+					NonNullPair<String, Integer> strippedOption = Noun.stripGender(option, languageKey);
+					String first = strippedOption.getFirst();
+					Integer second = strippedOption.getSecond();
+
+					// Add to name map if needed
+					names.putIfAbsent(registryObject, first);
+
+					parseMap.put(first, registryObject);
+					if (second != null && second != -1) { // There is a gender present
+						parseMap.put(Noun.getArticleWithSpace(second, Language.F_INDEFINITE_ARTICLE) + first, registryObject);
+					}
+				}
 			}
 		}
 	}

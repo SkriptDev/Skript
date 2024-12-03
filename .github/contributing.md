@@ -60,7 +60,8 @@ You can find issues tagged with "help wanted" on tracker to see if there is
 something for you. If you want to take over one of these, just leave a comment
 so other contributors don't accidentally pick same issue to work on. You can also
 offer your help to any other issue, but for "help wanted" tasks, help is really
-*needed*.
+*needed*.     
+While we do appreciate all contributions, please ensure your contribution actually helps out the project (ie: bug fix/new feature) and isn't a small PR just to get "contributor status" (ie: small typo fixes).
 
 ### Before Programming...
 If you did not pick an existing issue to work on, you should perhaps ask if your
@@ -93,6 +94,10 @@ be scared, usually everything goes well and your pull request will be present
 in next Skript release, whenever that happens.
 
 Good luck!
+
+### What NOT to contribute?
+While we do love having people help us with code, we ask that the follow not be done via PRs:
+- Please do not PR a single line string change (ie: small typos).
 
 ### Submitting a Contribution
 

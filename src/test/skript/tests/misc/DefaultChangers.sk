@@ -1,0 +1,31 @@
+test "default changers":
+	# Entity
+	spawn a sheep at spawn of world "world":
+		set {_e} to entity
+	assert {_e} is alive with "The sheep should be alive"
+	delete entity within {_e}
+	assert {_e} is not alive with "The sheep should have been deleted"
+
+	# Inventory
+	set {_i} to chest inventory with 3 rows
+	add 1 of stone to {_i}
+	add 3 of stick to {_i}
+	assert material of slot 0 of {_i} is stone with "Slot 0 should be stone"
+	assert slot 0 of {_i} is 1 of stone with "Slot 0 should be stone"
+	assert material of slot 1 of {_i} is stick with "Slot 1 should be stick"
+	assert slot 1 of {_i} is 3 of stick with "Slot 1 should be stone"
+	clear inventory within {_i}
+	assert {_i} is empty with "Inventory should be empty"
+
+	# Block
+	set {_b} to block at location(15, 1, 15)
+	set {_data} to blockdata of {_b}
+
+	set block at {_b} to oak_stairs[]
+	assert material of {_b} is oak stairs with "Block should be oak stairs"
+	set block at {_b} to diamond sword
+	assert material of {_b} is oak stairs with "Block should be oak stairs still since it cant be a diamond sword"
+
+	set block at {_b} to {_data}
+	assert blockdata of {_b} = {_data} with "Block should have reverted back to original data"
+

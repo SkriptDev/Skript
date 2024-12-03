@@ -1,12 +1,20 @@
 test "equip effect":
-	#spawn a zombie at spawn of "world":
-	#	set {_entity} to event-entity
-	#
-	#equip {_entity} with a diamond chestplate
-	#assert chestplate of {_entity} is a diamond chestplate with "entity was not wearing a diamond chestplate"
-	#set chestplate of {_entity} to air
+	spawn a zombie at spawn of "world":
+		set {_entity} to event-entity
+	
+	equip {_entity} with a diamond chestplate
+	assert material of chestplate slot of {_entity} is a diamond chestplate with "Entity should be wearing a diamond chestplate"
+	delete chestplate slot of {_entity}
 
-	#equip {_entity} with a diamond chestplate named "Test"
-	#assert chestplate of {_entity} is a diamond chestplate named "Test" with "entity was not wearing a named diamond chestplate"
+	equip {_entity} with 1 of diamond chestplate named "Test"
+	assert chestplate slot of {_entity} is 1 of diamond chestplate named "Test" with "Entity should be wearing a diamond chestplate named 'test'"
 
-	#delete the entity within {_entity}
+	delete the entity within {_entity}
+
+	spawn a llama at spawn of world "world":
+		set {_entity} to event-entity
+
+	equip {_entity} with orange carpet
+	assert body slot of {_entity} is orange carpet with "The llama should be wearing a carpet"
+
+	delete entity within {_entity}

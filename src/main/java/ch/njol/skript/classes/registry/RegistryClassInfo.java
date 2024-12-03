@@ -24,7 +24,7 @@ public class RegistryClassInfo<R extends Keyed> extends ClassInfo<R> {
 	 */
 	public RegistryClassInfo(Class<R> registryClass, Registry<R> registry, String codeName, DefaultExpression<R> defaultExpression) {
 		super(registryClass, codeName);
-		RegistryParser<R> registryParser = new RegistryParser<>(registry);
+		RegistryParser<R> registryParser = new RegistryParser<>(registry, codeName);
 		usage(registryParser.getAllNames())
 			.supplier(registry::iterator)
 			.serializer(new RegistrySerializer<R>(registry))

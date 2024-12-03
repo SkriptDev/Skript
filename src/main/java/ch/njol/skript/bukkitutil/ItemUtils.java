@@ -5,19 +5,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Tag;
-import org.bukkit.TreeType;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.type.Fence;
-import org.bukkit.block.data.type.Gate;
-import org.bukkit.block.data.type.Wall;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -29,6 +25,21 @@ public class ItemUtils {
 	// Introduced in Paper 1.21
 	public static final boolean HAS_RESET = Skript.methodExists(Damageable.class, "resetDamage");
 	public static final boolean CAN_CREATE_PLAYER_PROFILE = Skript.methodExists(Bukkit.class, "createPlayerProfile", UUID.class, String.class);
+
+	/**
+	 * Return an ItemStack with a stack size no higher than 99
+	 * <br>
+	 * Minecraft will not serialize an ItemStack with a size > 99
+	 *
+	 * @param itemStack ItemStack to check
+	 * @return ItemStack with size not greater than 99
+	 */
+	public static ItemStack clampedStack(ItemStack itemStack) {
+		if (itemStack.getAmount() > 99) {
+			return itemStack.asQuantity(99);
+		}
+		return itemStack;
+	}
 
 	/**
 	 * Gets damage/durability of an item, or 0 if it does not have damage.
@@ -74,8 +85,7 @@ public class ItemUtils {
 	 */
 	public static void setMaxDamage(ItemStack itemStack, int maxDamage) {
 		ItemMeta meta = itemStack.getItemMeta();
-		if (HAS_MAX_DAMAGE && meta instanceof Damageable) {
-			Damageable damageable = (Damageable) meta;
+		if (HAS_MAX_DAMAGE && meta instanceof Damageable damageable) {
 			if (HAS_RESET && maxDamage < 1) {
 				damageable.resetDamage();
 			} else {
@@ -101,6 +111,28 @@ public class ItemUtils {
 	}
 
 	/**
+	 * Get the max stack size of an ItemStack
+	 *
+	 * @param itemStack ItemStack to check
+	 * @return Max stack size of ItemStack
+	 */
+	public static int getMaxStackSize(ItemStack itemStack) {
+		return itemStack.getItemMeta().hasMaxStackSize() ? itemStack.getMaxStackSize() : itemStack.getType().getMaxStackSize();
+	}
+
+	/**
+	 * Set the max stack size of an ItemStack
+	 *
+	 * @param itemStack    ItemStack to change max stack size
+	 * @param maxStackSize Max stack size clamped between 1 and 99
+	 */
+	public static void setMaxStackSize(ItemStack itemStack, int maxStackSize) {
+		ItemMeta itemMeta = itemStack.getItemMeta();
+		itemMeta.setMaxStackSize(Math.clamp(maxStackSize, 1, 99));
+		itemStack.setItemMeta(itemMeta);
+	}
+
+	/**
 	 * Sets the owner of a player head.
 	 *
 	 * @param skull  player head item to modify
@@ -123,71 +155,6 @@ public class ItemUtils {
 		skull.setItemMeta(skullMeta);
 	}
 
-	/**
-	 * Gets a block material corresponding to given item material, which might
-	 * be the given material. If no block material is found, null is returned.
-	 *
-	 * @param type Material.
-	 * @return Block version of material or null.
-	 */
-	@Nullable
-	public static Material asBlock(Material type) {
-		if (type.isBlock()) {
-			return type;
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * Gets an item material corresponding to given block material, which might
-	 * be the given material.
-	 *
-	 * @param type Material.
-	 * @return Item version of material or null.
-	 * @deprecated This just returns itself and has no use
-	 */
-	@Deprecated
-	public static Material asItem(Material type) {
-		// Assume (naively) that all types are valid items
-		return type;
-	}
-
-	/**
-	 * Convert an ItemType/Slot to ItemStack
-	 * Will also accept an ItemStack that will return itself
-	 *
-	 * @param object Object to convert
-	 * @return ItemStack from slot/itemtype
-	 */
-	@Nullable
-	public static ItemStack asItemStack(Object object) {
-		if (object instanceof ItemStack itemStack)
-			return itemStack;
-		return null;
-	}
-
-	/**
-	 * Tests whether two item stacks are of the same type, i.e. it ignores the amounts.
-	 *
-	 * @param itemStack1
-	 * @param itemStack2
-	 * @return Whether the item stacks are of the same type
-	 */
-	public static boolean itemStacksEqual(@Nullable ItemStack itemStack1, @Nullable ItemStack itemStack2) {
-		if (itemStack1 == null || itemStack2 == null)
-			return itemStack1 == itemStack2;
-		if (itemStack1.getType() != itemStack2.getType())
-			return false;
-
-		ItemMeta itemMeta1 = itemStack1.getItemMeta();
-		ItemMeta itemMeta2 = itemStack2.getItemMeta();
-		if (itemMeta1 == null || itemMeta2 == null)
-			return itemMeta1 == itemMeta2;
-
-		return itemStack1.getItemMeta().equals(itemStack2.getItemMeta());
-	}
-
 	// Only 1.15 and versions after have Material#isAir method
 	private static final boolean IS_AIR_EXISTS = Skript.methodExists(Material.class, "isAir");
 
@@ -197,67 +164,6 @@ public class ItemUtils {
 		return type == Material.AIR || type == Material.CAVE_AIR || type == Material.VOID_AIR;
 	}
 
-	// TreeType -> Sapling (Material) conversion for EvtGrow
-	private static final HashMap<TreeType, Material> TREE_TO_SAPLING_MAP = new HashMap<>();
-
-	static {
-		// Populate TREE_TO_SAPLING_MAP
-		// oak
-		TREE_TO_SAPLING_MAP.put(TreeType.TREE, Material.OAK_SAPLING);
-		TREE_TO_SAPLING_MAP.put(TreeType.BIG_TREE, Material.OAK_SAPLING);
-		TREE_TO_SAPLING_MAP.put(TreeType.SWAMP, Material.OAK_SAPLING);
-		// spruce
-		TREE_TO_SAPLING_MAP.put(TreeType.REDWOOD, Material.SPRUCE_SAPLING);
-		TREE_TO_SAPLING_MAP.put(TreeType.TALL_REDWOOD, Material.SPRUCE_SAPLING);
-		TREE_TO_SAPLING_MAP.put(TreeType.MEGA_REDWOOD, Material.SPRUCE_SAPLING);
-		// birch
-		TREE_TO_SAPLING_MAP.put(TreeType.BIRCH, Material.BIRCH_SAPLING);
-		TREE_TO_SAPLING_MAP.put(TreeType.TALL_BIRCH, Material.BIRCH_SAPLING);
-		// jungle
-		TREE_TO_SAPLING_MAP.put(TreeType.JUNGLE, Material.JUNGLE_SAPLING);
-		TREE_TO_SAPLING_MAP.put(TreeType.SMALL_JUNGLE, Material.JUNGLE_SAPLING);
-		TREE_TO_SAPLING_MAP.put(TreeType.JUNGLE_BUSH, Material.JUNGLE_SAPLING);
-		TREE_TO_SAPLING_MAP.put(TreeType.COCOA_TREE, Material.JUNGLE_SAPLING);
-		// acacia
-		TREE_TO_SAPLING_MAP.put(TreeType.ACACIA, Material.ACACIA_SAPLING);
-		// dark oak
-		TREE_TO_SAPLING_MAP.put(TreeType.DARK_OAK, Material.DARK_OAK_SAPLING);
-
-		// mushrooms
-		TREE_TO_SAPLING_MAP.put(TreeType.BROWN_MUSHROOM, Material.BROWN_MUSHROOM);
-		TREE_TO_SAPLING_MAP.put(TreeType.RED_MUSHROOM, Material.RED_MUSHROOM);
-
-		// chorus
-		TREE_TO_SAPLING_MAP.put(TreeType.CHORUS_PLANT, Material.CHORUS_FLOWER);
-
-		// nether
-		if (Skript.isRunningMinecraft(1, 16)) {
-			TREE_TO_SAPLING_MAP.put(TreeType.WARPED_FUNGUS, Material.WARPED_FUNGUS);
-			TREE_TO_SAPLING_MAP.put(TreeType.CRIMSON_FUNGUS, Material.CRIMSON_FUNGUS);
-		}
-
-		// azalea
-		if (Skript.isRunningMinecraft(1, 17))
-			TREE_TO_SAPLING_MAP.put(TreeType.AZALEA, Material.AZALEA);
-
-		// mangrove
-		if (Skript.isRunningMinecraft(1, 19)) {
-			TREE_TO_SAPLING_MAP.put(TreeType.MANGROVE, Material.MANGROVE_PROPAGULE);
-			TREE_TO_SAPLING_MAP.put(TreeType.TALL_MANGROVE, Material.MANGROVE_PROPAGULE);
-		}
-
-		// cherry
-		if (Skript.isRunningMinecraft(1, 19, 4))
-			TREE_TO_SAPLING_MAP.put(TreeType.CHERRY, Material.CHERRY_SAPLING);
-	}
-
-	public static Material getTreeSapling(TreeType treeType) {
-		return TREE_TO_SAPLING_MAP.get(treeType);
-	}
-
-
-	private static final boolean HAS_FENCE_TAGS = !Skript.isRunningMinecraft(1, 14);
-
 	/**
 	 * Whether the block is a fence or a wall.
 	 *
@@ -265,14 +171,6 @@ public class ItemUtils {
 	 * @return whether the block is a fence/wall.
 	 */
 	public static boolean isFence(Block block) {
-		// TODO: 1.13 only, so remove in 2.10
-		if (!HAS_FENCE_TAGS) {
-			BlockData data = block.getBlockData();
-			return data instanceof Fence
-				|| data instanceof Wall
-				|| data instanceof Gate;
-		}
-
 		Material type = block.getType();
 		return Tag.FENCES.isTagged(type)
 			|| Tag.FENCE_GATES.isTagged(type)
@@ -280,31 +178,80 @@ public class ItemUtils {
 	}
 
 	/**
-	 * @param material The material to check
-	 * @return whether the material is a full glass block
+	 * Remove an ItemStack from a list of ItemStacks or an Inventory
+	 *
+	 * @param toRemove ItemStack to remove
+	 * @param from     List/Inventory to remove from
 	 */
-	public static boolean isGlass(Material material) {
-		switch (material) {
-			case GLASS:
-			case RED_STAINED_GLASS:
-			case ORANGE_STAINED_GLASS:
-			case YELLOW_STAINED_GLASS:
-			case LIGHT_BLUE_STAINED_GLASS:
-			case BLUE_STAINED_GLASS:
-			case CYAN_STAINED_GLASS:
-			case LIME_STAINED_GLASS:
-			case GREEN_STAINED_GLASS:
-			case MAGENTA_STAINED_GLASS:
-			case PURPLE_STAINED_GLASS:
-			case PINK_STAINED_GLASS:
-			case WHITE_STAINED_GLASS:
-			case LIGHT_GRAY_STAINED_GLASS:
-			case GRAY_STAINED_GLASS:
-			case BLACK_STAINED_GLASS:
-			case BROWN_STAINED_GLASS:
-				return true;
-			default:
-				return false;
+	public static void removeItemFromList(ItemStack toRemove, Iterable<ItemStack> from) {
+		toRemove = toRemove.clone();
+
+		for (ItemStack itemStack : from) {
+			if (itemStack == null || itemStack.isEmpty() || !itemStack.isSimilar(toRemove))
+				continue;
+
+			int itemStackAmount = itemStack.getAmount();
+			int toRemoveAmount = toRemove.getAmount();
+			if (itemStackAmount < toRemoveAmount) {
+				itemStack.setAmount(0);
+				toRemove.setAmount(toRemoveAmount - itemStackAmount);
+			} else if (itemStackAmount > toRemoveAmount) {
+				itemStack.setAmount(itemStackAmount - toRemoveAmount);
+				toRemove.setAmount(0);
+				return;
+			} else {
+				itemStack.setAmount(0);
+				toRemove.setAmount(0);
+				return;
+			}
 		}
 	}
+
+	/**
+	 * Add an ItemStack to a List/Inventory
+	 * <br>This will break up the ItemStack if it's too large
+	 *
+	 * @param toAdd ItemStack to add
+	 * @param to    List/Inventory to add to
+	 */
+	public static void addItemToList(ItemStack toAdd, Iterable<ItemStack> to) {
+		toAdd = toAdd.clone();
+		int maxStackSize = getMaxStackSize(toAdd);
+
+		List<ItemStack> toAddList = new ArrayList<>();
+		while (toAdd.getAmount() > maxStackSize) {
+			toAddList.add(toAdd.asQuantity(maxStackSize));
+			toAdd.subtract(maxStackSize);
+		}
+		toAddList.add(toAdd);
+
+		if (to instanceof Inventory inventory) {
+			inventory.addItem(toAddList.toArray(new ItemStack[0]));
+		} else if (to instanceof List<ItemStack> list) {
+			list.addAll(toAddList);
+		}
+	}
+
+	/**
+	 * Add a List/Inventory to another List/Inventory
+	 *
+	 * @param from List/Inventory to add
+	 * @param to   List/Inventory to add to
+	 */
+	public static void addListToList(Iterable<ItemStack> from, Iterable<ItemStack> to) {
+		List<ItemStack> cloneList = new ArrayList<>();
+		for (ItemStack itemStack : from) {
+			if (itemStack == null || itemStack.isEmpty()) continue;
+			cloneList.add(itemStack);
+		}
+
+		if (to instanceof Inventory inventory) {
+			for (ItemStack itemStack : cloneList) {
+				inventory.addItem(itemStack);
+			}
+		} else if (to instanceof List<ItemStack> list) {
+			list.addAll(cloneList);
+		}
+	}
+
 }

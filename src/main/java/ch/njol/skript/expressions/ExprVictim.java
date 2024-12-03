@@ -10,6 +10,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.skript.registrations.Classes;
 import ch.njol.util.Kleenean;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
@@ -30,12 +31,12 @@ import org.jetbrains.annotations.Nullable;
 	"\tdamage the attacked by 1 heart"})
 @Since("1.3, 2.6.1 (projectile hit event)")
 @Events({"damage", "death", "projectile hit"})
-public class ExprAttacked extends SimpleExpression<Entity> {
+public class ExprVictim extends SimpleExpression<Entity> {
 
 	private static final boolean SUPPORT_PROJECTILE_HIT = Skript.methodExists(ProjectileHitEvent.class, "getHitEntity");
 
 	static {
-		Skript.registerExpression(ExprAttacked.class, Entity.class, ExpressionType.SIMPLE,
+		Skript.registerExpression(ExprVictim.class, Entity.class, ExpressionType.SIMPLE,
 			"[the] victim");
 	}
 
@@ -79,7 +80,9 @@ public class ExprAttacked extends SimpleExpression<Entity> {
 
 	@Override
 	public String toString(@Nullable Event e, boolean debug) {
-		return "the victim";
+		if (e == null)
+			return "the attacker";
+		return Classes.getDebugMessage(getSingle(e));
 	}
 
 }

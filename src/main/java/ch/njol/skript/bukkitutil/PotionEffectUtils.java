@@ -1,25 +1,8 @@
-/**
- * This file is part of Skript.
- * <p>
- * Skript is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * Skript is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * <p>
- * You should have received a copy of the GNU General Public License
- * along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- * <p>
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
-package ch.njol.skript.util;
+package ch.njol.skript.bukkitutil;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.registrations.Classes;
+import ch.njol.skript.util.Timespan;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -33,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class PotionEffectUtils {
-
-	private static final boolean HAS_SUSPICIOUS_META = Skript.classExists("org.bukkit.inventory.meta.SuspiciousStewMeta");
 
 	private PotionEffectUtils() {
 	}
@@ -110,10 +91,10 @@ public abstract class PotionEffectUtils {
 	 */
 	public static void clearAllEffects(ItemStack itemStack) {
 		ItemMeta meta = itemStack.getItemMeta();
-		if (meta instanceof PotionMeta)
-			((PotionMeta) meta).clearCustomEffects();
-		else if (HAS_SUSPICIOUS_META && meta instanceof SuspiciousStewMeta)
-			((SuspiciousStewMeta) meta).clearCustomEffects();
+		if (meta instanceof PotionMeta potionMeta)
+			potionMeta.clearCustomEffects();
+		else if (meta instanceof SuspiciousStewMeta stewMeta)
+			stewMeta.clearCustomEffects();
 		itemStack.setItemMeta(meta);
 	}
 
@@ -136,8 +117,8 @@ public abstract class PotionEffectUtils {
 
 			if (meta instanceof PotionMeta)
 				((PotionMeta) meta).addCustomEffect(effect, false);
-			else if (HAS_SUSPICIOUS_META && meta instanceof SuspiciousStewMeta)
-				((SuspiciousStewMeta) meta).addCustomEffect(effect, false);
+			else if (meta instanceof SuspiciousStewMeta stewMeta)
+				stewMeta.addCustomEffect(effect, false);
 		}
 		itemStack.setItemMeta(meta);
 	}
@@ -153,17 +134,17 @@ public abstract class PotionEffectUtils {
 
 		for (Object object : effects) {
 			PotionEffectType effectType;
-			if (object instanceof PotionEffect)
-				effectType = ((PotionEffect) object).getType();
-			else if (object instanceof PotionEffectType)
-				effectType = (PotionEffectType) object;
+			if (object instanceof PotionEffect potionEffect)
+				effectType = potionEffect.getType();
+			else if (object instanceof PotionEffectType potionEffectType)
+				effectType = potionEffectType;
 			else
 				continue;
 
-			if (meta instanceof PotionMeta)
-				((PotionMeta) meta).removeCustomEffect(effectType);
-			else if (HAS_SUSPICIOUS_META && meta instanceof SuspiciousStewMeta)
-				((SuspiciousStewMeta) meta).removeCustomEffect(effectType);
+			if (meta instanceof PotionMeta potionMeta)
+				potionMeta.removeCustomEffect(effectType);
+			else if (meta instanceof SuspiciousStewMeta stewMeta)
+				stewMeta.removeCustomEffect(effectType);
 		}
 		itemStack.setItemMeta(meta);
 	}
@@ -181,8 +162,7 @@ public abstract class PotionEffectUtils {
 	public static List<PotionEffect> getEffects(ItemStack itemStack) {
 		List<PotionEffect> effects = new ArrayList<>();
 		ItemMeta meta = itemStack.getItemMeta();
-		if (meta instanceof PotionMeta) {
-			PotionMeta potionMeta = ((PotionMeta) meta);
+		if (meta instanceof PotionMeta potionMeta) {
 			if (potionMeta.hasCustomEffects())
 				effects.addAll(potionMeta.getCustomEffects());
 			if (HAS_POTION_TYPE_METHOD) {
@@ -198,8 +178,8 @@ public abstract class PotionEffectUtils {
 					}
 				}
 			}
-		} else if (HAS_SUSPICIOUS_META && meta instanceof SuspiciousStewMeta)
-			effects.addAll(((SuspiciousStewMeta) meta).getCustomEffects());
+		} else if (meta instanceof SuspiciousStewMeta stewMeta)
+			effects.addAll(stewMeta.getCustomEffects());
 		return effects;
 	}
 

@@ -54,7 +54,7 @@ public interface VerboseAssert {
 	 * @return The string representation of the expression's value.
 	 */
 	static String getExpressionValue(Expression<?> expression, Event event) {
-		return Classes.toString(expression.getAll(event), expression.getAnd());
+		return Classes.toString(expression.getAll(event), expression.getAnd()) + " [" + expression.getReturnType().getName() + "]";
 	}
 	
 }

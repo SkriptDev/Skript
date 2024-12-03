@@ -125,7 +125,7 @@ public class ConvertedExpression<F, T> implements Expression<T> {
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
 		if (debug && event == null)
-			return "(" + source.toString(event, debug) + " >> " + converter + ": "
+			return "(" + source.toString(event, debug) + " >> converters: "
 				+ converterInfos.stream().map(Object::toString).collect(Collectors.joining(", ")) + ")";
 		return source.toString(event, debug);
 	}

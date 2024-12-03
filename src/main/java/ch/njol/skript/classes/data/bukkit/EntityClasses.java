@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.regex.Pattern;
+
 /**
  * Represents {@link ClassInfo ClassInfos} relating to {@link Entity Entities}
  */
@@ -58,7 +59,7 @@ public class EntityClasses {
 				"e.g. a <a href='#player'>player</a>, a skeleton, or a zombie, but also " +
 				"<a href='#projectile'>projectiles</a> like arrows, fireballs or thrown potions, " +
 				"or special entities like dropped items, falling blocks or paintings.")
-			.usage("player, op, wolf, tamed ocelot, powered creeper, zombie, unsaddled pig, fireball, arrow, dropped item, item frame, etc.")
+			.usage("entity, event-entity, player, event-player")
 			.examples("entity is a zombie or creeper",
 				"player is an op",
 				"projectile is an arrow",
@@ -92,7 +93,7 @@ public class EntityClasses {
 				@Override
 				public String toString(final Entity entity, final int flags) {
 					if (entity.getCustomName() != null)
-						return entity.getCustomName();
+						return "'" + entity.getCustomName() + "'";
 					return Classes.toString(entity.getType());
 				}
 			})
@@ -233,16 +234,10 @@ public class EntityClasses {
 				}
 
 				@Override
-				public void deserialize(final OfflinePlayer o, final Fields f) {
-					assert false;
-				}
-
-				@Override
 				public boolean canBeInstantiated() {
 					return false;
 				}
 
-				@SuppressWarnings("deprecation")
 				@Override
 				protected OfflinePlayer deserialize(final Fields fields) throws StreamCorruptedException {
 					if (fields.contains("uuid")) {
@@ -303,7 +298,7 @@ public class EntityClasses {
 						}
 						if (players.size() == 1)
 							return players.get(0);
-						if (players.size() == 0)
+						if (players.isEmpty())
 							Skript.error(String.format(Language.get("commands.no player starts with"), string));
 						else
 							Skript.error(String.format(Language.get("commands.multiple players start with"), string));
@@ -333,7 +328,7 @@ public class EntityClasses {
 
 				@Override
 				public String getDebugMessage(final Player p) {
-					return p.getName() + " " + Classes.getDebugMessage(p.getLocation());
+					return "'" + p.getName() + "'";
 				}
 			})
 			.changer(DefaultChangers.playerChanger)

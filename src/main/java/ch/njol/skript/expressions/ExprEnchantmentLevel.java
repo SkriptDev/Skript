@@ -15,28 +15,35 @@ import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Name("Enchantment Level")
-@Description("The level of a particular <a href='classes.html#enchantment'>enchantment</a> on an item.")
-@Examples({"player's tool is a sword of sharpness:",
-	"\tmessage \"You have a sword of sharpness %level of sharpness of the player's tool% equipped\""})
+@Description({"The level of a particular <a href='classes.html#enchantment'>enchantment</a> on an item.",
+	"The optional 'stored' pattern is for Enchanted Books, where they're not actually enchanted but have stored enchantments."})
+@Examples({"if player's tool is enchanted with sharpness:",
+	"\tmessage \"You have a sword of sharpness %level of sharpness of the player's tool% equipped\"",
+	"# Stored Enchantments",
+	"set {_item} to 1 of enchanted book",
+	"set stored enchantment level of sharpness of {_item} to 10"})
 @Since("2.0")
 public class ExprEnchantmentLevel extends SimpleExpression<Long> {
 
 	static {
 		Skript.registerExpression(ExprEnchantmentLevel.class, Long.class, ExpressionType.PROPERTY,
-			"[the] [enchant[ment]] level[s] of %enchantments% (on|of) %itemstacks%",
-			"[the] %enchantments% [enchant[ment]] level[s] (on|of) %itemstacks%",
-			"%itemstacks%'[s] %enchantments% [enchant[ment]] level[s]",
-			"%itemstacks%'[s] [enchant[ment]] level[s] of %enchantments%");
+			"[the] [:stored] [enchant[ment]] level[s] of %enchantments% (on|of) %itemstacks%",
+			"[the] %enchantments% [:stored] [enchant[ment]] level[s] (on|of) %itemstacks%",
+			"%itemstacks%'[s] %enchantments% [:stored] [enchant[ment]] level[s]",
+			"%itemstacks%'[s] [:stored] [enchant[ment]] level[s] of %enchantments%");
 	}
 
 	private Expression<ItemStack> items;
 	private Expression<Enchantment> enchants;
+	private boolean stored;
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -44,6 +51,7 @@ public class ExprEnchantmentLevel extends SimpleExpression<Long> {
 		int i = matchedPattern < 2 ? 1 : 0;
 		items = (Expression<ItemStack>) exprs[i];
 		enchants = (Expression<Enchantment>) exprs[i ^ 1];
+		this.stored = parseResult.hasTag("stored");
 		return true;
 	}
 
@@ -52,8 +60,16 @@ public class ExprEnchantmentLevel extends SimpleExpression<Long> {
 		List<Long> levels = new ArrayList<>();
 		for (ItemStack itemStack : this.items.getArray(e)) {
 			for (Enchantment enchantment : this.enchants.getArray(e)) {
-				if (itemStack.containsEnchantment(enchantment)) {
-					int level = itemStack.getEnchantmentLevel(enchantment);
+				ItemMeta itemMeta = itemStack.getItemMeta();
+				if (this.stored) {
+					if (itemMeta instanceof EnchantmentStorageMeta storedMeta) {
+						if (storedMeta.hasStoredEnchant(enchantment)) {
+							int level = storedMeta.getStoredEnchantLevel(enchantment);
+							levels.add((long) level);
+						}
+					}
+				} else if (itemMeta.hasEnchant(enchantment)) {
+					int level = itemMeta.getEnchantLevel(enchantment);
 					levels.add((long) level);
 				}
 			}
@@ -98,11 +114,21 @@ public class ExprEnchantmentLevel extends SimpleExpression<Long> {
 						return;
 				}
 
-				if (newItemLevel <= 0) {
-					itemStack.removeEnchantment(enchantment);
+				ItemMeta itemMeta = itemStack.getItemMeta();
+				if (this.stored && itemMeta instanceof EnchantmentStorageMeta storageMeta) {
+					if (newItemLevel <= 0) {
+						storageMeta.removeStoredEnchant(enchantment);
+					} else {
+						storageMeta.addStoredEnchant(enchantment, newItemLevel, true);
+					}
 				} else {
-					itemStack.addUnsafeEnchantment(enchantment, newItemLevel);
+					if (newItemLevel <= 0) {
+						itemMeta.removeEnchant(enchantment);
+					} else {
+						itemMeta.addEnchant(enchantment, newItemLevel, true);
+					}
 				}
+				itemStack.setItemMeta(itemMeta);
 			}
 		}
 	}
@@ -118,8 +144,10 @@ public class ExprEnchantmentLevel extends SimpleExpression<Long> {
 	}
 
 	@Override
-	public String toString(@Nullable Event e, boolean debug) {
-		return "the level of " + enchants.toString(e, debug) + " of " + items.toString(e, debug);
+	public String toString(@Nullable Event event, boolean debug) {
+		String stored = this.stored ? " stored " : " ";
+		return "the" + stored + "enchantment level of " + this.enchants.toString(event, debug) + " of " +
+			this.items.toString(event, debug);
 	}
 
 }

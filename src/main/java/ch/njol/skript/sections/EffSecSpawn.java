@@ -1,6 +1,7 @@
 package ch.njol.skript.sections;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.bukkitutil.EntityUtils;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -8,18 +9,23 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.EffectSection;
 import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.Trigger;
 import ch.njol.skript.lang.TriggerItem;
+import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.util.Direction;
 import ch.njol.skript.util.Getter;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -62,6 +68,8 @@ public class EffSecSpawn extends EffectSection {
 		}
 	}
 
+	private static final BlockData DEFAULT_DATA = Material.STONE.createBlockData();
+
 	static {
 		Skript.registerSection(EffSecSpawn.class,
 			"(spawn|summon) %entitytypes% [%directions% %locations%]",
@@ -99,6 +107,14 @@ public class EffSecSpawn extends EffectSection {
 		types = (Expression<EntityType>) exprs[matchedPattern];
 		locations = Direction.combine((Expression<? extends Direction>) exprs[1 + matchedPattern], (Expression<? extends Location>) exprs[2 + matchedPattern]);
 
+		if (types instanceof Literal<EntityType> et) {
+			for (EntityType entityType : et.getArray()) {
+				if (!entityType.isSpawnable()) {
+					Skript.error("EntityType '" + Classes.toString(entityType) + "' cannot be spawned.");
+					return false;
+				}
+			}
+		}
 		if (sectionNode != null) {
 			AtomicBoolean delayed = new AtomicBoolean(false);
 			Runnable afterLoading = () -> delayed.set(!getParser().getHasDelayBefore().isFalse());
@@ -129,6 +145,8 @@ public class EffSecSpawn extends EffectSection {
 				if (world == null) continue;
 
 				for (EntityType type : types) {
+					if (!EntityUtils.canSpawn(type, world)) continue;
+
 					Class<? extends Entity> entityClass = type.getEntityClass();
 					if (entityClass == null) continue;
 
@@ -136,7 +154,11 @@ public class EffSecSpawn extends EffectSection {
 						if (consumer != null) {
 							lastSpawned = world.spawn(location, entityClass, (Consumer) consumer);
 						} else {
-							lastSpawned = world.spawn(location, entityClass);
+							lastSpawned = world.spawn(location, entityClass, entity -> {
+								if (entity instanceof FallingBlock block) {
+									block.setBlockData(DEFAULT_DATA);
+								}
+							});
 						}
 					}
 				}
@@ -149,9 +171,12 @@ public class EffSecSpawn extends EffectSection {
 	private @Nullable Consumer<? extends Entity> getConsumer(Event event) {
 		Consumer<? extends Entity> consumer;
 		if (trigger != null) {
-			consumer = o -> {
-				lastSpawned = o;
-				SpawnEvent spawnEvent = new SpawnEvent(o);
+			consumer = entity -> {
+				lastSpawned = entity;
+				if (entity instanceof FallingBlock fallingBlock) {
+					fallingBlock.setBlockData(DEFAULT_DATA);
+				}
+				SpawnEvent spawnEvent = new SpawnEvent(entity);
 				// Copy the local variables from the calling code to this section
 				Variables.setLocalVariables(spawnEvent, Variables.copyLocalVariables(event));
 				TriggerItem.walk(trigger, spawnEvent);

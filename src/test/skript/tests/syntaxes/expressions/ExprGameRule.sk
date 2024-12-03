@@ -1,0 +1,15 @@
+test "gamerule expression":
+	set gamerule doDaylightCycle of world "world" to false
+	assert gamerule doDaylightCycle of world "world" = false with "doDaylightCycle gamerule should be false"
+	set gamerule doDaylightCycle of world "world" to true # default
+	assert gamerule doDaylightCycle of world "world" = true with "doDaylightCycle gamerule should be true"
+
+	set gamerule maxEntityCramming of world "world" to 10
+	assert gamerule maxEntityCramming of world "world" = 10 with "maxEntityCramming gamerule should be 10"
+	set gamerule maxEntityCramming of world "world" to 24 # default
+	assert gamerule maxEntityCramming of world "world" = 24 with "maxEntityCramming gamerule should be 24"
+
+	set gamerule keepInventory of all worlds to true
+	assert gamerule keepInventory of world "world" = true with "keepInventory gamerule should be true"
+	set gamerule keepInventory of all worlds to false # default
+	assert gamerule keepInventory of world "world" = false with "keepInventory gamerule should be false"
