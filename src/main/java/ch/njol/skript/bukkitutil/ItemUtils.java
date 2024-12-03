@@ -2,10 +2,7 @@ package ch.njol.skript.bukkitutil;
 
 import ch.njol.skript.Skript;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Tag;
-import org.bukkit.block.Block;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -154,28 +151,6 @@ public class ItemUtils {
 		}
 
 		skull.setItemMeta(skullMeta);
-	}
-
-	// Only 1.15 and versions after have Material#isAir method
-	private static final boolean IS_AIR_EXISTS = Skript.methodExists(Material.class, "isAir");
-
-	public static boolean isAir(Material type) {
-		if (IS_AIR_EXISTS)
-			return type.isAir();
-		return type == Material.AIR || type == Material.CAVE_AIR || type == Material.VOID_AIR;
-	}
-
-	/**
-	 * Whether the block is a fence or a wall.
-	 *
-	 * @param block the block to check.
-	 * @return whether the block is a fence/wall.
-	 */
-	public static boolean isFence(Block block) {
-		Material type = block.getType();
-		return Tag.FENCES.isTagged(type)
-			|| Tag.FENCE_GATES.isTagged(type)
-			|| Tag.WALLS.isTagged(type);
 	}
 
 	/**

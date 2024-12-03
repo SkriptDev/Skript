@@ -41,16 +41,16 @@ public class EvtEntityBlockChange extends SkriptEvent {
 
 	private enum ChangeEvent {
 
-		ENDERMAN_PLACE("enderman place", event -> event.getEntity() instanceof Enderman && !ItemUtils.isAir(event.getTo())),
-		ENDERMAN_PICKUP("enderman pickup", event -> event.getEntity() instanceof Enderman && ItemUtils.isAir(event.getTo())),
+		ENDERMAN_PLACE("enderman place", event -> event.getEntity() instanceof Enderman && !event.getTo().isAir()),
+		ENDERMAN_PICKUP("enderman pickup", event -> event.getEntity() instanceof Enderman && event.getTo().isAir()),
 
 		SHEEP_EAT("sheep eat", event -> event.getEntity() instanceof Sheep),
 
-		SILVERFISH_ENTER("silverfish enter", event -> event.getEntity() instanceof Silverfish && !ItemUtils.isAir(event.getTo())),
-		SILVERFISH_EXIT("silverfish exit", event -> event.getEntity() instanceof Silverfish && ItemUtils.isAir(event.getTo())),
+		SILVERFISH_ENTER("silverfish enter", event -> event.getEntity() instanceof Silverfish && !event.getTo().isAir()),
+		SILVERFISH_EXIT("silverfish exit", event -> event.getEntity() instanceof Silverfish && event.getTo().isAir()),
 
-		FALLING_BLOCK_FALLING("falling block fall[ing]", event -> event.getEntity() instanceof FallingBlock && ItemUtils.isAir(event.getTo())),
-		FALLING_BLOCK_LANDING("falling block land[ing]", event -> event.getEntity() instanceof FallingBlock && !ItemUtils.isAir(event.getTo())),
+		FALLING_BLOCK_FALLING("falling block fall[ing]", event -> event.getEntity() instanceof FallingBlock && event.getTo().isAir()),
+		FALLING_BLOCK_LANDING("falling block land[ing]", event -> event.getEntity() instanceof FallingBlock && !event.getTo().isAir()),
 
 		// Covers all possible entity block changes.
 		GENERIC("(entity|%*-entitytypes%) chang(e|ing) block[s]");

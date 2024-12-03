@@ -3,7 +3,6 @@ package ch.njol.skript.events;
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.SkriptEventHandler;
-import ch.njol.skript.bukkitutil.ItemUtils;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -12,6 +11,7 @@ import ch.njol.skript.registrations.Classes;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
@@ -53,7 +53,7 @@ public class EvtMoveOn extends SkriptEvent {
 
 		if (!ITEM_TYPE_TRIGGERS.isEmpty()) {
 			Block block = getOnBlock(to);
-			if (block == null || ItemUtils.isAir(block.getType()))
+			if (block == null || block.getType().isAir())
 				return;
 
 			Material id = block.getType();
@@ -88,14 +88,14 @@ public class EvtMoveOn extends SkriptEvent {
 		Block block = location.getWorld().getBlockAt(location.getBlockX(), (int) (Math.ceil(location.getY()) - 1), location.getBlockZ());
 		if (block.getType() == Material.AIR && Math.abs((location.getY() - location.getBlockY()) - 0.5) < Skript.EPSILON) { // Fences
 			block = location.getWorld().getBlockAt(location.getBlockX(), location.getBlockY() - 1, location.getBlockZ());
-			if (!ItemUtils.isFence(block))
+			if (!isFence(block))
 				return null;
 		}
 		return block;
 	}
 
 	private static int getBlockY(double y, Block block) {
-		if (ItemUtils.isFence(block) && Math.abs((y - Math.floor(y)) - 0.5) < Skript.EPSILON)
+		if (isFence(block) && Math.abs((y - Math.floor(y)) - 0.5) < Skript.EPSILON)
 			return (int) Math.floor(y) - 1;
 		return (int) Math.ceil(y) - 1;
 	}
@@ -157,6 +157,11 @@ public class EvtMoveOn extends SkriptEvent {
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
 		return "walk on " + Classes.toString(types, false);
+	}
+
+	private static boolean isFence(Block block) {
+		Material type = block.getType();
+		return Tag.FENCES.isTagged(type) || Tag.FENCE_GATES.isTagged(type) || Tag.WALLS.isTagged(type);
 	}
 
 }
