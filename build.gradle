@@ -14,6 +14,9 @@ configurations {
     testImplementation.extendsFrom testShadow
 }
 
+// Used for Paper dependency, latest test and JavaDocs
+def paperVersion = '1.21.3'
+
 allprojects {
 	repositories {
 		mavenCentral()
@@ -29,7 +32,7 @@ dependencies {
 	shadow group: 'org.bstats', name: 'bstats-bukkit', version: '3.0.2'
 	shadow group: 'net.kyori', name: 'adventure-text-serializer-bungeecord', version: '4.3.2'
 
-	implementation group: 'io.papermc.paper', name: 'paper-api', version: '1.21.3-R0.1-SNAPSHOT'
+	implementation group: 'io.papermc.paper', name: 'paper-api', version: paperVersion + '-R0.1-SNAPSHOT'
 	implementation group: 'com.google.code.findbugs', name: 'findbugs', version: '3.0.1'
 	implementation group: 'com.sk89q.worldguard', name: 'worldguard-legacy', version: '7.0.0-SNAPSHOT'
 	implementation group: 'net.milkbowl.vault', name: 'Vault', version: '1.7.3', {
@@ -216,7 +219,7 @@ void createTestTask(String name, String desc, String environments, int javaVersi
 
 def java21 = 21
 
-def latestEnv = 'java21/paper-1.21.3.json'
+def latestEnv = 'java21/paper-' + paperVersion + '.json'
 def latestJava = java21
 def oldestJava = java21
 
@@ -369,6 +372,10 @@ javadoc {
 	exclude("ch/njol/skript/lang/function/ExprFunctionCall.java")
 	exclude("ch/njol/skript/hooks/**")
 	exclude("ch/njol/skript/test/**")
+
+	options {
+		links('https://jd.papermc.io/paper/' + paperVersion + '/')
+	}
 
 	classpath = configurations.compileClasspath + sourceSets.main.output
 	options.encoding = 'UTF-8'
