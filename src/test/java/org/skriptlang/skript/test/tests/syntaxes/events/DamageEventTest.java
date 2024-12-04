@@ -1,4 +1,4 @@
-package org.skriptlang.skript.test.tests.events;
+package org.skriptlang.skript.test.tests.syntaxes.events;
 
 import ch.njol.skript.test.runner.SkriptJUnitTest;
 import org.bukkit.entity.Pillager;
