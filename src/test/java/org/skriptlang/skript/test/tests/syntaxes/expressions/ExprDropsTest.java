@@ -33,7 +33,7 @@ public class ExprDropsTest extends SkriptJUnitTest {
 
 	@Before
 	public void spawnPig() {
-		pig = spawnTestPig();
+		pig = spawnTestEntity(Pig.class);
 	}
 
 	@Test
