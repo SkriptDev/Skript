@@ -1,0 +1,62 @@
+test "EvtDamage JUnit Test" when running JUnit:
+	ensure junit test "org.skriptlang.skript.test.tests.events.DamageEventTest" completes "damage"
+	ensure junit test "org.skriptlang.skript.test.tests.events.DamageEventTest" completes "damage of sheep"
+	ensure junit test "org.skriptlang.skript.test.tests.events.DamageEventTest" completes "damage of sheep by pillager"
+	ensure junit test "org.skriptlang.skript.test.tests.events.DamageEventTest" completes "damage of sheep by mob"
+	ensure junit test "org.skriptlang.skript.test.tests.events.DamageEventTest" completes "damage of sheep by monster"
+	ensure junit test "org.skriptlang.skript.test.tests.events.DamageEventTest" completes "damage of mob by monster"
+	ensure junit test "org.skriptlang.skript.test.tests.events.DamageEventTest" completes "damage of mob by illager"
+	ensure junit test "org.skriptlang.skript.test.tests.events.DamageEventTest" completes "damage of mob by raider"
+
+on damage:
+	junit test is "org.skriptlang.skript.test.tests.events.DamageEventTest"
+	assert custom name of victim is "Damage Event Sheep" with "Sheep did not have the same name"
+	complete objective "damage" for junit test "org.skriptlang.skript.test.tests.events.DamageEventTest"
+
+on damage of sheep:
+	junit test is "org.skriptlang.skript.test.tests.events.DamageEventTest"
+	assert victim is a sheep with "Victim should be a sheep"
+	assert custom name of victim is "Damage Event Sheep" with "Sheep did not have the same name"
+	complete objective "damage of sheep" for junit test "org.skriptlang.skript.test.tests.events.DamageEventTest"
+
+on damage of sheep by pillager:
+	junit test is "org.skriptlang.skript.test.tests.events.DamageEventTest"
+	assert victim is a sheep with "Victim should be a sheep"
+	assert custom name of victim is "Damage Event Sheep" with "Sheep did not have the same name"
+	assert attacker is a pillager with "Attacker should have been a Pillager"
+	complete objective "damage of sheep by pillager" for junit test "org.skriptlang.skript.test.tests.events.DamageEventTest"
+
+on damage of sheep by mob:
+	junit test is "org.skriptlang.skript.test.tests.events.DamageEventTest"
+	assert victim is a sheep with "Victim should be a sheep"
+	assert custom name of victim is "Damage Event Sheep" with "Sheep did not have the same name"
+	assert attacker is a mob with "Attacker should have been a Mob"
+	complete objective "damage of sheep by mob" for junit test "org.skriptlang.skript.test.tests.events.DamageEventTest"
+
+on damage of sheep by monster:
+	junit test is "org.skriptlang.skript.test.tests.events.DamageEventTest"
+	assert victim is a sheep with "Victim should be a sheep"
+	assert custom name of victim is "Damage Event Sheep" with "Sheep did not have the same name"
+	assert attacker is a monster with "Attacker should have been a Monster"
+	complete objective "damage of sheep by monster" for junit test "org.skriptlang.skript.test.tests.events.DamageEventTest"
+
+on damage of mob by monster:
+	junit test is "org.skriptlang.skript.test.tests.events.DamageEventTest"
+	assert victim is a mob with "Victim should be a mob"
+	assert custom name of victim is "Damage Event Sheep" with "Sheep did not have the same name"
+	assert attacker is a monster with "Attacker should have been a Monster"
+	complete objective "damage of mob by monster" for junit test "org.skriptlang.skript.test.tests.events.DamageEventTest"
+
+on damage of mob by illager:
+	junit test is "org.skriptlang.skript.test.tests.events.DamageEventTest"
+	assert victim is a mob with "Victim should be a mob"
+	assert custom name of victim is "Damage Event Sheep" with "Sheep did not have the same name"
+	assert attacker is an illager with "Attacker should have been a Illager"
+	complete objective "damage of mob by illager" for junit test "org.skriptlang.skript.test.tests.events.DamageEventTest"
+
+on damage of mob by raider:
+	junit test is "org.skriptlang.skript.test.tests.events.DamageEventTest"
+	assert victim is a mob with "Victim should be a mob"
+	assert custom name of victim is "Damage Event Sheep" with "Sheep did not have the same name"
+	assert attacker is a raider with "Attacker should have been a Raider"
+	complete objective "damage of mob by raider" for junit test "org.skriptlang.skript.test.tests.events.DamageEventTest"
