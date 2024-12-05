@@ -48,7 +48,7 @@ public class SimpleJUnitTest extends SkriptJUnitTest {
 	@Before
 	@SuppressWarnings("deprecation")
 	public void spawnPig() {
-		piggy = spawnTestPig();
+		piggy = spawnTestEntity(Pig.class);
 		piggy.setCustomName("Simple JUnit Test");
 	}
 

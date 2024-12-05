@@ -1,0 +1,17 @@
+test "multiple conditions condition":
+	assert (diamond sword = diamond sword) and (iron sword = iron sword) with "Both conditions should pass"
+	assert ("a" = "a") and ("b" = "b") with "Both conditions should pass"
+
+	assert (diamond sword = iron sword) or (diamond axe = diamond axe) with "One of the conditions should pass"
+	assert ("a" = "a") or ("b" = "c") with "One of the conditions should pass"
+
+	assert (diamond sword = diamond axe) and (iron sword = iron sword) to fail with "The first condition should have failed"
+	assert (diamond sword = diamond sword) and (iron sword = iron axe) to fail with "The second condition should have failed"
+
+	assert (diamond sword = diamond axe) or (iron sword = iron axe) to fail with "Both conditions should fail"
+	assert ("a" = "b") or ("c" = "d") to fail with "Both conditions should fail"
+
+	# Test with three
+	assert (("a" = "a") and ("b" = "b")) and ("c" = "c") with "All three conditions should pass"
+	assert (("a" = "a") and ("b" = "b")) or ("c" = "d") with "First 2 conditions should pass before reaching 3rd"
+
