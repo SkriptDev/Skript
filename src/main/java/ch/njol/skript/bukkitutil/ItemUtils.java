@@ -115,7 +115,8 @@ public class ItemUtils {
 	 * @return Max stack size of ItemStack
 	 */
 	public static int getMaxStackSize(ItemStack itemStack) {
-		return itemStack.getItemMeta().hasMaxStackSize() ? itemStack.getMaxStackSize() : itemStack.getType().getMaxStackSize();
+		ItemMeta itemMeta = itemStack.getItemMeta();
+		return itemMeta != null && itemMeta.hasMaxStackSize() ? itemStack.getMaxStackSize() : itemStack.getType().getMaxStackSize();
 	}
 
 	/**
