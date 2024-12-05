@@ -1,26 +1,7 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.structures;
 
 import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
-import ch.njol.skript.bukkitutil.CommandReloader;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.classes.Parser;
 import ch.njol.skript.command.Argument;
@@ -35,16 +16,9 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.ParseContext;
-import org.skriptlang.skript.lang.script.Script;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.VariableString;
-import org.skriptlang.skript.lang.entry.EntryContainer;
-import org.skriptlang.skript.lang.entry.KeyValueEntryData;
-import org.skriptlang.skript.lang.structure.Structure;
-import org.skriptlang.skript.lang.entry.EntryValidator;
-import org.skriptlang.skript.lang.entry.util.LiteralEntryData;
-import org.skriptlang.skript.lang.entry.util.VariableStringEntryData;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.StringMode;
 import ch.njol.skript.util.Timespan;
@@ -52,8 +26,16 @@ import ch.njol.skript.util.Utils;
 import ch.njol.util.NonNullPair;
 import ch.njol.util.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.lang.entry.EntryContainer;
+import org.skriptlang.skript.lang.entry.EntryValidator;
+import org.skriptlang.skript.lang.entry.KeyValueEntryData;
+import org.skriptlang.skript.lang.entry.util.LiteralEntryData;
+import org.skriptlang.skript.lang.entry.util.VariableStringEntryData;
+import org.skriptlang.skript.lang.script.Script;
+import org.skriptlang.skript.lang.structure.Structure;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -277,7 +259,7 @@ public class StructCommand extends Structure {
 		if (permissionMessage != null && permission.isEmpty())
 			Skript.warning("command /" + command + " has a permission message set, but not a permission");
 
-		List<String> aliases = entryContainer.get("aliases", List.class,true);
+		List<String> aliases = entryContainer.get("aliases", List.class, true);
 		int executableBy = entryContainer.get("executable by", Integer.class, true);
 
 		Timespan cooldown = entryContainer.getOptional("cooldown", Timespan.class, false);
@@ -351,11 +333,7 @@ public class StructCommand extends Structure {
 	}
 
 	private void forceCommandSync() {
-		if (CommandReloader.syncCommands(Bukkit.getServer())) {
-			Skript.debug("Commands synced to clients");
-		} else {
-			Skript.debug("Commands changed but not synced to clients (normal on 1.12 and older)");
-		}
+		Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
 	}
 
 	@Override
