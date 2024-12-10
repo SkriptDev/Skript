@@ -1,0 +1,20 @@
+test "create itemstack expression":
+	set {_i} to itemstack of diamond sword
+	assert material of {_i} = diamond sword with "ItemStack should be a diamond sword"
+	delete {_i}
+
+	set {_i} to itemstack of 10 of stick
+	assert item amount of {_i} = 10 with "ItemStack should have a stack size of 10"
+	assert material of {_i} = stick with "ItemStack should be a stick"
+	delete {_i}
+
+	set {_i} to itemstack of stick[enchantments={sharpness:3,knockback:2}]
+	assert material of {_i} = stick with "ItemStack should be a stick"
+	assert enchantment level of sharpness of {_i} = 3 with "ItemStack should be enchanted with sharpness 3"
+	delete {_i}
+
+	if running minecraft "1.21.2":
+		set {_i} to itemstack of apple[!food,!consumable]
+	else:
+		set {_i} to itemstack of apple[!food]
+	assert {_i} is not edible with "ItemStack should not be edible"
