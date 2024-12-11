@@ -15,6 +15,4 @@ test "create itemstack expression":
 
 	if running minecraft "1.21.2":
 		set {_i} to itemstack of apple[!food,!consumable]
-	else:
-		set {_i} to itemstack of apple[!food]
-	assert {_i} is not edible with "ItemStack should not be edible"
+		assert {_i} is not edible with "ItemStack should not be edible"
