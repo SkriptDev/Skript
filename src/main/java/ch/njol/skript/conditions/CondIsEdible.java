@@ -1,5 +1,6 @@
 package ch.njol.skript.conditions;
 
+import ch.njol.skript.Skript;
 import ch.njol.skript.bukkitutil.ItemComponentUtils;
 import ch.njol.skript.conditions.base.PropertyCondition;
 import ch.njol.skript.doc.Description;
@@ -19,6 +20,15 @@ import org.bukkit.inventory.ItemStack;
 @Keywords("consumable")
 public class CondIsEdible extends PropertyCondition<Object> {
 
+	public static final boolean HAS_CONSUMABLE;
+	public static final boolean HAS_FOOD;
+
+	static {
+		HAS_CONSUMABLE = Skript.classExists("io.papermc.paper.datacomponent.DataComponentTypes");
+		boolean food = Skript.classExists("org.bukkit.inventory.meta.components.FoodComponent");
+		HAS_FOOD = food && !HAS_CONSUMABLE;
+	}
+
 	static {
 		PropertyCondition.register(CondIsEdible.class, "(edible|consumable)", "materials/itemstacks");
 	}
@@ -28,9 +38,11 @@ public class CondIsEdible extends PropertyCondition<Object> {
 		if (object instanceof Material material) {
 			return material.isEdible();
 		} else if (object instanceof ItemStack itemstack) {
-			if (ItemComponentUtils.HAS_CONSUMABLE) {
+			if (HAS_CONSUMABLE) {
 				return ItemComponentUtils.isConsumable(itemstack);
-			} else if (ItemComponentUtils.HAS_FOOD) {
+			} else if (HAS_FOOD) {
+				// Saddly this only checks if a custom food component was added
+				// An apple for example doesn't have a custom one, and will fall through
 				if (itemstack.getItemMeta().hasFood()) return true;
 			}
 			return itemstack.getType().isEdible();

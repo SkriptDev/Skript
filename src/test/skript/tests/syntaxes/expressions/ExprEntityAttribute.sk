@@ -1,4 +1,4 @@
-test "attributes 1" when minecraft version is "1.21.3":
+test "attributes 1" when running minecraft "1.21.3":
 	spawn cow at spawn of world "world":
 		assert movement speed attribute of event-entity is set with "attribute get failed"
 		set movement speed attribute of event-entity to 3.14
@@ -13,7 +13,7 @@ test "attributes 1" when minecraft version is "1.21.3":
 		assert movement speed attribute of event-entity is 0 with "attribute delete failed"
 		delete event-entity
 
-test "attributes 2" when minecraft version is not "1.21.3":
+test "attributes 2" when running below minecraft "1.21.3":
 	spawn cow at spawn of world "world":
 		assert generic.movement speed attribute of event-entity is set with "attribute get failed"
 		set generic.movement speed attribute of event-entity to 3.14

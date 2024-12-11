@@ -2,10 +2,7 @@ package ch.njol.skript.bukkitutil;
 
 import ch.njol.skript.Skript;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Tag;
-import org.bukkit.block.Block;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -13,6 +10,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -117,7 +115,8 @@ public class ItemUtils {
 	 * @return Max stack size of ItemStack
 	 */
 	public static int getMaxStackSize(ItemStack itemStack) {
-		return itemStack.getItemMeta().hasMaxStackSize() ? itemStack.getMaxStackSize() : itemStack.getType().getMaxStackSize();
+		ItemMeta itemMeta = itemStack.getItemMeta();
+		return itemMeta != null && itemMeta.hasMaxStackSize() ? itemStack.getMaxStackSize() : itemStack.getType().getMaxStackSize();
 	}
 
 	/**
@@ -153,28 +152,6 @@ public class ItemUtils {
 		}
 
 		skull.setItemMeta(skullMeta);
-	}
-
-	// Only 1.15 and versions after have Material#isAir method
-	private static final boolean IS_AIR_EXISTS = Skript.methodExists(Material.class, "isAir");
-
-	public static boolean isAir(Material type) {
-		if (IS_AIR_EXISTS)
-			return type.isAir();
-		return type == Material.AIR || type == Material.CAVE_AIR || type == Material.VOID_AIR;
-	}
-
-	/**
-	 * Whether the block is a fence or a wall.
-	 *
-	 * @param block the block to check.
-	 * @return whether the block is a fence/wall.
-	 */
-	public static boolean isFence(Block block) {
-		Material type = block.getType();
-		return Tag.FENCES.isTagged(type)
-			|| Tag.FENCE_GATES.isTagged(type)
-			|| Tag.WALLS.isTagged(type);
 	}
 
 	/**
@@ -213,8 +190,10 @@ public class ItemUtils {
 	 *
 	 * @param toAdd ItemStack to add
 	 * @param to    List/Inventory to add to
+	 * @return List of ItemStacks that didn't fit (only when adding to an Inventory)
 	 */
-	public static void addItemToList(ItemStack toAdd, Iterable<ItemStack> to) {
+	@SuppressWarnings("UnusedReturnValue")
+	public static List<ItemStack> addItemToList(ItemStack toAdd, Iterable<ItemStack> to) {
 		toAdd = toAdd.clone();
 		int maxStackSize = getMaxStackSize(toAdd);
 
@@ -226,10 +205,12 @@ public class ItemUtils {
 		toAddList.add(toAdd);
 
 		if (to instanceof Inventory inventory) {
-			inventory.addItem(toAddList.toArray(new ItemStack[0]));
+			HashMap<Integer, ItemStack> integerItemStackHashMap = inventory.addItem(toAddList.toArray(new ItemStack[0]));
+			return new ArrayList<>(integerItemStackHashMap.values());
 		} else if (to instanceof List<ItemStack> list) {
 			list.addAll(toAddList);
 		}
+		return null;
 	}
 
 	/**
@@ -237,8 +218,10 @@ public class ItemUtils {
 	 *
 	 * @param from List/Inventory to add
 	 * @param to   List/Inventory to add to
+	 * @return List of ItemStacks that didn't fit (only when adding to an Inventory)
 	 */
-	public static void addListToList(Iterable<ItemStack> from, Iterable<ItemStack> to) {
+	@SuppressWarnings("UnusedReturnValue")
+	public static List<ItemStack> addListToList(Iterable<ItemStack> from, Iterable<ItemStack> to) {
 		List<ItemStack> cloneList = new ArrayList<>();
 		for (ItemStack itemStack : from) {
 			if (itemStack == null || itemStack.isEmpty()) continue;
@@ -246,12 +229,15 @@ public class ItemUtils {
 		}
 
 		if (to instanceof Inventory inventory) {
+			List<ItemStack> returned = new ArrayList<>();
 			for (ItemStack itemStack : cloneList) {
-				inventory.addItem(itemStack);
+				returned.addAll(inventory.addItem(itemStack).values());
 			}
+			return returned;
 		} else if (to instanceof List<ItemStack> list) {
 			list.addAll(cloneList);
 		}
+		return null;
 	}
 
 }

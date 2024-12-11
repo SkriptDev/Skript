@@ -3,6 +3,8 @@ package ch.njol.skript.bukkitutil;
 import ch.njol.skript.Skript;
 import org.bukkit.Registry;
 
+import java.util.Locale;
+
 /**
  * Utility class with methods pertaining to Bukkit API
  */
@@ -15,7 +17,7 @@ public class BukkitUtils {
 	 * @return True if registry exists else false
 	 */
 	public static boolean registryExists(String registry) {
-		return Skript.classExists("org.bukkit.Registry") && Skript.fieldExists(Registry.class, registry);
+		return Skript.fieldExists(Registry.class, registry.toUpperCase(Locale.ENGLISH));
 	}
 
 }

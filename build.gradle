@@ -15,7 +15,7 @@ configurations {
 }
 
 // Used for Paper dependency, latest test and JavaDocs
-def paperVersion = '1.21.3'
+def paperVersion = '1.21.4'
 
 allprojects {
 	repositories {

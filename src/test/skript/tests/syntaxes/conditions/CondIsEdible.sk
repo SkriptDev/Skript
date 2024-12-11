@@ -4,3 +4,19 @@ test "edible condition":
 	assert diamond isn't edible with "diamond is edible"
 	assert golden apple is edible with "golden apple isn't edible"
 	assert cooked beef is edible with "cooked beef isn't edible"
+
+	set {_i} to itemstack of apple
+	assert {_i} is edible with "ItemStack of apple should be edible"
+	delete {_i}
+
+	if running minecraft "1.21.2":
+		# Consumable component added in Minecraft 1.21.2
+		# Due to api issues, removal of food cannot be checked below 1.21.2
+		set {_i} to itemstack of apple[!food,!consumable]
+		assert {_i} is not edible with "ItemStack of apple should have had food/consumable removed"
+
+	if running minecraft "1.21.2":
+		set {_i} to itemstack of stick[food={saturation:10,nutrition:10},consumable={}]
+	else:
+		set {_i} to itemstack of stick[food={saturation:10,nutrition:10}]
+	assert {_i} is edible with "ItemStack of stick should have had food/consumable components added"
