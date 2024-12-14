@@ -6,8 +6,7 @@ test "particle spawn effect":
 	make 2 of block using dirt at {_loc} with offset vector(1,1,1)
 	make 2 of block using dirt at {_loc} with offset vector(1,1,1) with extra 2
 	make 2 of block using dirt at {_loc} with offset vector(1,1,1) with extra 2 with force
-	# TODO fix bug regarding casting error from "all players"
-	# make 2 of block using dirt at {_loc} with offset vector(1,1,1) with extra 2 with force to all players
+	make 2 of block using dirt at {_loc} with offset vector(1,1,1) with extra 2 with force to all players
 
 	# Test different particle datas
 	spawn 3 of block_crumble using stone[] at location above {_loc} with offset vector(1,1,1)
