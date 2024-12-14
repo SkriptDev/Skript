@@ -1,0 +1,21 @@
+test "particle spawn effect":
+	set {_loc} to location(5,5,5)
+
+	# Test to make none of the patterns error
+	make 2 of block using dirt at {_loc}
+	make 2 of block using dirt at {_loc} with offset vector(1,1,1)
+	make 2 of block using dirt at {_loc} with offset vector(1,1,1) with extra 2
+	make 2 of block using dirt at {_loc} with offset vector(1,1,1) with extra 2 with force
+	# TODO fix bug regarding casting error from "all players"
+	# make 2 of block using dirt at {_loc} with offset vector(1,1,1) with extra 2 with force to all players
+
+	# Test different particle datas
+	spawn 3 of block_crumble using stone[] at location above {_loc} with offset vector(1,1,1)
+	spawn 3 of block_marker using diamond ore at location above {_loc} with offset vector(1,1,1) with extra 1
+	spawn 1 of dust using dustOption(red,3) at {_loc}
+	spawn 1 of dust color transition using dustTransition(red, blue, 10) at {_loc}
+	spawn 1 of dust pillar using dirt at {_loc}
+	spawn 2 of entity effect using red at {_loc}
+	spawn 2 of sculk charge using 5.5 at {_loc}
+	spawn 1 of shriek using 2 at {_loc}
+

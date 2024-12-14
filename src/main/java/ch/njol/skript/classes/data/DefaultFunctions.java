@@ -1,6 +1,7 @@
 package ch.njol.skript.classes.data;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.bukkitutil.ParticleUtils;
 import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.function.FunctionEvent;
@@ -11,15 +12,19 @@ import ch.njol.skript.lang.function.SimpleJavaFunction;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.registrations.DefaultClasses;
+import ch.njol.skript.util.Color;
 import ch.njol.skript.util.ColorRGB;
 import ch.njol.skript.util.Contract;
 import ch.njol.skript.util.Date;
+import ch.njol.skript.util.Timespan;
 import ch.njol.util.Math2;
 import ch.njol.util.StringUtils;
 import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Particle;
+import org.bukkit.Vibration;
 import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentOffer;
@@ -635,6 +640,90 @@ public class DefaultFunctions {
 				"\tset enchantment offer 2 to enchantmentOffer(unbreaking, 1)",
 				"\tset enchantment offer 3 to enchantmentOffer(custom:fancy_enchantment, 2, 2)")
 			.since("3.0.0");
+
+		// Particle Functions
+		// DustOptions
+		//noinspection ConstantConditions
+		Functions.registerFunction(new SimpleJavaFunction<>("dustOption", new Parameter[]{
+			new Parameter<>("color", DefaultClasses.COLOR, true, null),
+			new Parameter<>("size", DefaultClasses.NUMBER, true, null)
+		}, Classes.getExactClassInfo(Particle.DustOptions.class), true) {
+			@Override
+			public Particle.DustOptions[] executeSimple(Object[][] params) {
+				org.bukkit.Color color = ((Color) params[0][0]).asBukkitColor();
+				float size = ((Number) params[1][0]).floatValue();
+				return new Particle.DustOptions[]{new Particle.DustOptions(color, size)};
+			}
+		}.description("Creates a new dust option to be used with 'dust' particle. Color can either be a regular color or an RGB color using",
+				"the rgb() function. Size is the size the particle will be.")
+			.examples("set {_c} to dustOption(red, 1.5)", "set {_c} to dustOption(rgb(1, 255, 1), 3)")
+			.since("INSERT VERSION"));
+
+
+		// DustTransition
+		//noinspection ConstantConditions
+		Functions.registerFunction(new SimpleJavaFunction<>("dustTransition", new Parameter[]{
+			new Parameter<>("fromColor", DefaultClasses.COLOR, true, null),
+			new Parameter<>("toColor", DefaultClasses.COLOR, true, null),
+			new Parameter<>("size", DefaultClasses.NUMBER, true, null)
+		}, Classes.getExactClassInfo(Particle.DustTransition.class), true) {
+			@Override
+			public Particle.DustTransition[] executeSimple(Object[][] params) {
+				org.bukkit.Color fromColor = ((Color) params[0][0]).asBukkitColor();
+				org.bukkit.Color toColor = ((Color) params[1][0]).asBukkitColor();
+				float size = ((Number) params[2][0]).floatValue();
+				return new Particle.DustTransition[]{new Particle.DustTransition(fromColor, toColor, size)};
+			}
+		}.description("Creates a new dust transition to be used with 'dust_color_transition' particle.",
+				"Color can either be a regular color or an RGB color using Skript's rgb() function.",
+				"Size is the size the particle will be. Requires MC 1.17+")
+			.examples("set {_d} to dustTransition(red, green, 10)", "set {_d} to dustTransition(blue, rgb(1,1,1), 5)")
+			.since("INSERT VERSION"));
+
+		// Vibration
+		//noinspection ConstantConditions
+		Functions.registerFunction(new SimpleJavaFunction<>("vibration", new Parameter[]{
+			new Parameter<>("to", DefaultClasses.LOCATION, true, null),
+			new Parameter<>("arrivalTime", DefaultClasses.TIMESPAN, true, null)
+		}, Classes.getExactClassInfo(Vibration.class), true) {
+			@Override
+			public Vibration[] executeSimple(Object[][] params) {
+				if (params[0].length == 0 || params[1].length == 0) {
+					return null;
+				}
+				Location destination = (Location) params[0][0];
+				int arrivalTime = (int) ((Timespan) params[1][0]).getAs(Timespan.TimePeriod.TICK);
+				Vibration vibration = new Vibration(new Vibration.Destination.BlockDestination(destination), arrivalTime);
+				return new Vibration[]{vibration};
+			}
+		}.description("Creates a new vibration to be used with 'vibration' particle.",
+				"TO = the destination location the particle will travel to.",
+				"ARRIVAL TIME = the time it will take to arrive at the destination location.")
+			.examples("set {_v} to vibration({loc}, 10 seconds)")
+			.since("INSERT VERSION"));
+
+		if (ParticleUtils.HAS_TRAIL) {
+			//noinspection UnstableApiUsage
+			Functions.registerFunction(new SimpleJavaFunction<>("trail", new Parameter[]{
+					new Parameter<>("target", DefaultClasses.LOCATION, true, null),
+					new Parameter<>("color", DefaultClasses.COLOR, true, null),
+					new Parameter<>("duration", DefaultClasses.TIMESPAN, true, null)
+				}, Classes.getExactClassInfo(Particle.Trail.class), true) {
+					@Override
+					public Particle.Trail[] executeSimple(Object[][] params) {
+						Location target = (Location) params[0][0];
+						org.bukkit.Color color = ((Color) params[1][0]).asBukkitColor();
+						Timespan timespan = (Timespan) params[2][0];
+						//noinspection UnstableApiUsage
+						return new Particle.Trail[]{new Particle.Trail(target, color, (int) timespan.getAs(Timespan.TimePeriod.TICK))};
+					}
+				}).description("Creates a new trail to be used with 'trail' particle.",
+					"Takes in a location for the target (where the trail heads to), the color and duration.",
+					"Requires Minecraft 1.21.4+")
+				.examples("set {_trail} to trail(location of target block, blue, 1 second)",
+					"make 10 of trail using {_trail} at location of player")
+				.since("INSERT VERSION");
+		}
 
 	}
 
