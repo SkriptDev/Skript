@@ -1,0 +1,19 @@
+test "tag values expression" when running minecraft "1.21":
+	set {_tag} to biome registry tag "minecraft:is_forest"
+	assert tag values of {_tag} contains forest with "Tag 'minecraft:is_forest' should contain forest"
+	delete {_tag}
+
+	set {_tag} to block registry tag "minecraft:air"
+	assert tag values of {_tag} contains air with "Tag 'minecraft:air' should contain air"
+	delete {_tag}
+
+	set {_tag} to item registry tag "minecraft:banners"
+	assert tag values of {_tag} contains red banner with "Tag 'minecraft:banners' should contain red banner"
+	delete {_tag}
+
+	set {_tag} to entity type registry tag "minecraft:arthropod"
+	assert tag values of {_tag} contains spider with "Tag 'minecraft:arthropod' should contain spider"
+	delete {_tag}
+
+	set {_tag} to enchantment registry tag "minecraft:tooltip_order"
+	assert tag values of {_tag} contains sharpness with "Tag 'minecraft:tooltip_order' should contain sharpness"

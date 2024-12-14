@@ -1,0 +1,23 @@
+test "is tagged condition" when running minecraft "1.21":
+	spawn a spider at spawn of world "world":
+		set {_e} to entity
+
+	assert {_e} is tagged as (entity type registry tag "minecraft:arthropod") with "A spider should be tagged as 'minecraft:arthropod'"
+	delete entity within {_e}
+
+	set {_i} to itemstack of diamond sword
+	set {_tag1} to item registry tag "minecraft:swords"
+	set {_tag2} to item registry tag "minecraft:breaks_decorated_pots"
+	assert {_i} is tagged as {_tag1} with "A diamond sword should be tagged as 'minecraft:swords'"
+	assert {_i} is tagged as {_tag1} or {_tag2} with "A diamond sword should be tagged as 'minecraft:swords' or 'minecraft:breaks_decorated_pots'"
+	assert {_i} is tagged as {_tag1} and {_tag2} with "A diamond sword should be tagged as 'minecraft:swords' and 'minecraft:breaks_decorated_pots'"
+	set {_i} to itemstack of diamond axe
+	assert {_i} is not tagged as (item registry tag "minecraft:swords") with "A diamond axe should NOT be tagged as 'minecraft:swords'"
+
+	set {_loc} to location(20,1,20)
+	set {_biome} to biome of block at {_loc}
+	set biome of block at {_loc} to forest
+	assert biome of block at {_loc} is tagged as (biome registry tag "minecraft:is_forest") with "A block with the biome forest should be tagged as 'minecraft:is_forest'"
+	assert biome of block at {_loc} is not tagged as (biome registry tag "minecraft:is_badlands") with "A block with the biome forest should NOT be tagged as 'minecraft:is_badlands'"
+
+	set biome of block at {_loc} to {_biome}

@@ -21,6 +21,9 @@ public class BukkitClasses {
 		InventoryClasses.init();
 		ServerClasses.init();
 		WorldClasses.init();
+
+		// Paper
+		RegistryClasses.init();
 	}
 
 }
