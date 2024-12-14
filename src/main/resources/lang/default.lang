@@ -548,6 +548,8 @@ types:
 	commandsender: command sender¦s @a
 	damagecause: damage cause¦s @a
 	difficulty: difficult¦y¦ies @a
+	dustoption: dust option¦s @a
+	dusttransition: dust transition¦s @a
 	equipmentslot: equipment slot¦s @an
 	enchantment: enchantment¦s @an
 	enchantmentoffer: enchantment offer¦s @an
@@ -575,6 +577,7 @@ types:
 	metadataholder: metadata holder¦s @a
 	moonphase: moonphase¦s @a
 	offlineplayer: offline player¦s @a
+	particle: particle¦s @a
 	player: player¦s @a
 	potioneffect: potion effect¦s @a
 	potioneffecttype: potion effect type¦s @a
@@ -586,9 +589,11 @@ types:
 	spawnreason: spawn reason¦s @a
 	tag: tag¦s @a
 	teleportcause: teleport cause¦s @a
+	trail: trail¦s @a
 	transformreason: transform reason¦s @a
 	treetype: tree type¦s @a
 	vector: vector¦s @a
+	vibration: vibration¦s @a
 	world: world¦s @a
 
 	# Skript
