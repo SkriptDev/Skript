@@ -9,7 +9,8 @@ test "particle spawn effect":
 	make 2 of block using dirt at {_loc} with offset vector(1,1,1) with extra 2 with force to all players
 
 	# Test different particle datas
-	spawn 3 of block_crumble using stone[] at location above {_loc} with offset vector(1,1,1)
+	parse if running minecraft "1.21.2":
+		spawn 3 of block_crumble using stone[] at location above {_loc} with offset vector(1,1,1)
 	spawn 3 of block_marker using diamond ore at location above {_loc} with offset vector(1,1,1) with extra 1
 	spawn 1 of dust using dustOption(red,3) at {_loc}
 	spawn 1 of dust color transition using dustTransition(red, blue, 10) at {_loc}
