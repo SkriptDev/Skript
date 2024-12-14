@@ -225,9 +225,9 @@ public final class Skript extends JavaPlugin implements Listener {
 
 	public static ServerPlatform getServerPlatform() {
 		if (classExists("net.glowstone.GlowServer")) {
-			return ServerPlatform.BUKKIT_GLOWSTONE; // Glowstone has timings too, so must check for it first
+			return ServerPlatform.BUKKIT_GLOWSTONE;
 		} else if (classExists("io.papermc.paper.ServerBuildInfo")) {
-			return ServerPlatform.BUKKIT_PAPER; // Could be Sponge, but it doesn't work at all at the moment
+			return ServerPlatform.BUKKIT_PAPER;
 		} else if (classExists("org.spigotmc.SpigotConfig")) {
 			return ServerPlatform.BUKKIT_SPIGOT;
 		} else if (classExists("org.bukkit.craftbukkit.CraftServer") || classExists("org.bukkit.craftbukkit.Main")) {
@@ -280,8 +280,8 @@ public final class Skript extends JavaPlugin implements Listener {
 			}
 		} else if (!serverPlatform.supported) {
 			Skript.warning("This server platform (" + serverPlatform.name + ") is not supported by Skript.");
-			Skript.warning("It will still probably work, but if it does not, you are on your own.");
-			Skript.warning("Skript officially supports Paper and Spigot.");
+			Skript.warning("It may still work, but if it does not, you are on your own.");
+			Skript.warning("Skript officially supports Paper and its forks.");
 		}
 
 		// If nothing got triggered, everything is probably ok
