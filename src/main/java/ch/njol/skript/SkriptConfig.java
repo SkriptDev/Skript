@@ -40,7 +40,7 @@ import java.util.regex.PatternSyntaxException;
 
 /**
  * Important: don't save values from the config, a '/skript reload config/configs/all' won't work correctly otherwise!
- * 
+ *
  * @author Peter Güttinger
  */
 @SuppressWarnings("unused")
@@ -49,59 +49,59 @@ public class SkriptConfig {
 	@Nullable
 	static Config mainConfig;
 	static Collection<Config> configs = new ArrayList<>();
-	
+
 	static final Option<String> version = new Option<>("version", Skript.getVersion().toString())
-			.optional(true);
-	
+		.optional(true);
+
 	public static final Option<String> language = new Option<>("language", "english")
-			.optional(true)
-			.setter(s -> {
-				if (!Language.load(s)) {
-					Skript.error("No language file found for '" + s + "'!");
-				}
-			});
-	
+		.optional(true)
+		.setter(s -> {
+			if (!Language.load(s)) {
+				Skript.error("No language file found for '" + s + "'!");
+			}
+		});
+
 	public static final Option<Boolean> checkForNewVersion = new Option<>("check for new version", false)
-			.setter(t -> {
-				SkriptUpdater updater = Skript.getInstance().getUpdater();
-				if (updater != null)
-					updater.setEnabled(t);
-			});
+		.setter(t -> {
+			SkriptUpdater updater = Skript.getInstance().getUpdater();
+			if (updater != null)
+				updater.setEnabled(t);
+		});
 	public static final Option<Timespan> updateCheckInterval = new Option<>("update check interval", new Timespan(12 * 60 * 60 * 1000))
-			.setter(t -> {
-				SkriptUpdater updater = Skript.getInstance().getUpdater();
-				if (updater != null)
-					updater.setCheckFrequency(t.getTicks());
-			});
+		.setter(t -> {
+			SkriptUpdater updater = Skript.getInstance().getUpdater();
+			if (updater != null)
+				updater.setCheckFrequency(t.getTicks());
+		});
 	static final Option<Integer> updaterDownloadTries = new Option<>("updater download tries", 7)
-			.optional(true);
+		.optional(true);
 	public static final Option<String> releaseChannel = new Option<>("release channel", "none")
-			.setter(t -> {
-				ReleaseChannel channel;
-				switch (t) {
-					case "alpha":
-					case "beta":
-						Skript.warning("'alpha' and 'beta' are no longer valid release channels. Use 'prerelease' instead.");
-					case "prerelease": // All development builds are valid
-						channel = new ReleaseChannel((name) -> true, t);
-						break;
-					case "stable":
-						// TODO a better option would be to check that it is not a pre-release through GH API
-						channel = new ReleaseChannel((name) -> !(name.contains("-")), t);
-						break;
-					case "none":
-						channel = new ReleaseChannel((name) -> false, t);
-						break;
-					default:
-						channel = new ReleaseChannel((name) -> false, t);
-						Skript.error("Unknown release channel '" + t + "'.");
-						break;
-				}
-				SkriptUpdater updater = Skript.getInstance().getUpdater();
-				if (updater != null) {
-					updater.setReleaseChannel(channel);
-				}
-			});
+		.setter(t -> {
+			ReleaseChannel channel;
+			switch (t) {
+				case "alpha":
+				case "beta":
+					Skript.warning("'alpha' and 'beta' are no longer valid release channels. Use 'prerelease' instead.");
+				case "prerelease": // All development builds are valid
+					channel = new ReleaseChannel((name) -> true, t);
+					break;
+				case "stable":
+					// TODO a better option would be to check that it is not a pre-release through GH API
+					channel = new ReleaseChannel((name) -> !(name.contains("-")), t);
+					break;
+				case "none":
+					channel = new ReleaseChannel((name) -> false, t);
+					break;
+				default:
+					channel = new ReleaseChannel((name) -> false, t);
+					Skript.error("Unknown release channel '" + t + "'.");
+					break;
+			}
+			SkriptUpdater updater = Skript.getInstance().getUpdater();
+			if (updater != null) {
+				updater.setReleaseChannel(channel);
+			}
+		});
 
 	public static final Option<Boolean> enableEffectCommands = new Option<>("enable effect commands", false);
 	public static final Option<String> effectCommandToken = new Option<>("effect command token", "!");
@@ -116,10 +116,10 @@ public class SkriptConfig {
 
 	// everything handled by Variables
 	public static final OptionSection databases = new OptionSection("databases");
-	
+
 	public static final Option<Boolean> usePlayerUUIDsInVariableNames = new Option<>("use player UUIDs in variable names", false); // TODO change to true later (as well as in the default config)
 	public static final Option<Boolean> enablePlayerVariableFix = new Option<>("player variable fix", true);
-	
+
 	@SuppressWarnings("null")
 	private static final DateFormat shortDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
 	public static final Option<DateFormat> dateFormat = new Option<>("date format", shortDateFormat, s -> {
@@ -132,17 +132,17 @@ public class SkriptConfig {
 		}
 		return null;
 	});
-	
+
 	public static String formatDate(final long timestamp) {
 		final DateFormat f = dateFormat.value();
 		synchronized (f) {
 			return "" + f.format(timestamp);
 		}
 	}
-	
+
 	public static final Option<Verbosity> verbosity = new Option<>("verbosity", Verbosity.NORMAL, new EnumParser<>(Verbosity.class, "verbosity"))
-			.setter(SkriptLogger::setVerbosity);
-	
+		.setter(SkriptLogger::setVerbosity);
+
 	public static final Option<EventPriority> defaultEventPriority = new Option<>("plugin priority", EventPriority.NORMAL, s -> {
 		try {
 			return EventPriority.valueOf(s.toUpperCase(Locale.ENGLISH));
@@ -156,127 +156,127 @@ public class SkriptConfig {
 	 * Determines whether `on &lt;event&gt;` will be triggered by cancelled events or not.
 	 */
 	public static final Option<Boolean> listenCancelledByDefault = new Option<>("listen to cancelled events by default", false)
-			.optional(true);
+		.optional(true);
 
-	
+
 	/**
 	 * Maximum number of digits to display after the period for floats and doubles
 	 */
 	public static final Option<Integer> numberAccuracy = new Option<>("number accuracy", 2);
-	
+
 	public static final Option<Integer> maxTargetBlockDistance = new Option<>("maximum target block distance", 100);
-	
+
 	public static final Option<Boolean> caseSensitive = new Option<>("case sensitive", false);
 	public static final Option<Boolean> allowFunctionsBeforeDefs = new Option<>("allow function calls before definations", false)
-			.optional(true);
+		.optional(true);
 
 	public static final Option<Boolean> disableObjectCannotBeSavedWarnings = new Option<>("disable variable will not be saved warnings", false);
 	public static final Option<Boolean> disableMissingAndOrWarnings = new Option<>("disable variable missing and/or warnings", false);
 	public static final Option<Boolean> disableVariableStartingWithExpressionWarnings =
 		new Option<>("disable starting a variable's name with an expression warnings", false);
-	
+
 	@Deprecated
 	public static final Option<Boolean> enableScriptCaching = new Option<>("enable script caching", false)
-			.optional(true);
-	
+		.optional(true);
+
 	public static final Option<Boolean> keepConfigsLoaded = new Option<>("keep configs loaded", false)
-			.optional(true);
-	
+		.optional(true);
+
 	public static final Option<Boolean> addonSafetyChecks = new Option<>("addon safety checks", false)
-			.optional(true);
-	
+		.optional(true);
+
 	public static final Option<Boolean> apiSoftExceptions = new Option<>("soft api exceptions", false);
-	
+
 	public static final Option<Boolean> enableTimings = new Option<>("enable timings", false)
-			.setter(t -> {
-				if (!Skript.classExists("co.aikar.timings.Timings")) { // Check for Timings
-					if (t) // Warn the server admin that timings won't work
-						Skript.warning("Timings cannot be enabled! You are running Bukkit/Spigot, but Paper is required.");
-					SkriptTimings.setEnabled(false); // Just to be sure, deactivate timings support completely
-					return;
-				}
-				if (Timings.class.isAnnotationPresent(Deprecated.class)) { // check for deprecated Timings
-					if (t) // Warn the server admin that timings won't work
-						Skript.warning("Timings cannot be enabled! Paper no longer supports Timings as of 1.19.4.");
-					SkriptTimings.setEnabled(false); // Just to be sure, deactivate timings support completely
-					return;
-				}
-				// If we get here, we can safely enable timings
-				if (t)
-					Skript.info("Timings support enabled!");
-				SkriptTimings.setEnabled(t); // Config option will be used
-			});
-	
+		.setter(t -> {
+			if (!Skript.classExists("co.aikar.timings.Timings")) { // Check for Timings
+				if (t) // Warn the server admin that timings won't work
+					Skript.warning("Timings cannot be enabled! You are running Bukkit/Spigot, but Paper is required.");
+				SkriptTimings.setEnabled(false); // Just to be sure, deactivate timings support completely
+				return;
+			}
+			if (Timings.class.isAnnotationPresent(Deprecated.class)) { // check for deprecated Timings
+				if (t) // Warn the server admin that timings won't work
+					Skript.warning("Timings cannot be enabled! Paper no longer supports Timings as of 1.19.4.");
+				SkriptTimings.setEnabled(false); // Just to be sure, deactivate timings support completely
+				return;
+			}
+			// If we get here, we can safely enable timings
+			if (t)
+				Skript.info("Timings support enabled!");
+			SkriptTimings.setEnabled(t); // Config option will be used
+		});
+
 	public static final Option<String> parseLinks = new Option<>("parse links in chat messages", "disabled")
-			.setter(t -> {
-				try {
-					switch (t) {
-						case "false":
-						case "disabled":
-							ChatMessages.linkParseMode = LinkParseMode.DISABLED;
-							break;
-						case "true":
-						case "lenient":
-							ChatMessages.linkParseMode = LinkParseMode.LENIENT;
-							break;
-						case "strict":
-							ChatMessages.linkParseMode = LinkParseMode.STRICT;
-							break;
-						default:
-							ChatMessages.linkParseMode = LinkParseMode.DISABLED;
-							Skript.warning("Unknown link parse mode: " + t + ", please use disabled, strict or lenient");
-					}
-				} catch (Error e) {
-					// Ignore it, we're on unsupported server platform and class loading failed
+		.setter(t -> {
+			try {
+				switch (t) {
+					case "false":
+					case "disabled":
+						ChatMessages.linkParseMode = LinkParseMode.DISABLED;
+						break;
+					case "true":
+					case "lenient":
+						ChatMessages.linkParseMode = LinkParseMode.LENIENT;
+						break;
+					case "strict":
+						ChatMessages.linkParseMode = LinkParseMode.STRICT;
+						break;
+					default:
+						ChatMessages.linkParseMode = LinkParseMode.DISABLED;
+						Skript.warning("Unknown link parse mode: " + t + ", please use disabled, strict or lenient");
 				}
-			});
+			} catch (Error e) {
+				// Ignore it, we're on unsupported server platform and class loading failed
+			}
+		});
 
 	public static final Option<Boolean> caseInsensitiveVariables = new Option<>("case-insensitive variables", true)
-			.setter(t -> Variables.caseInsensitiveVariables = t);
+		.setter(t -> Variables.caseInsensitiveVariables = t);
 
 	public static final Option<Boolean> caseInsensitiveCommands = new Option<>("case-insensitive commands", false)
 		.optional(true);
-	
+
 	public static final Option<Boolean> colorResetCodes = new Option<>("color codes reset formatting", true)
-			.setter(t -> {
-				try {
-					ChatMessages.colorResetCodes = t;
-				} catch (Error e) {
-					// Ignore it, we're on unsupported server platform and class loading failed
-				}
-			});
+		.setter(t -> {
+			try {
+				ChatMessages.colorResetCodes = t;
+			} catch (Error e) {
+				// Ignore it, we're on unsupported server platform and class loading failed
+			}
+		});
 
 	public static final Option<String> scriptLoaderThreadSize = new Option<>("script loader thread size", "0")
-			.setter(s -> {
-				int asyncLoaderSize;
-				
-				if (s.equalsIgnoreCase("processor count")) {
-					asyncLoaderSize = Runtime.getRuntime().availableProcessors();
-				} else {
-					try {
-						asyncLoaderSize = Integer.parseInt(s);
-					} catch (NumberFormatException e) {
-						Skript.error("Invalid option: " + s);
-						return;
-					}
+		.setter(s -> {
+			int asyncLoaderSize;
+
+			if (s.equalsIgnoreCase("processor count")) {
+				asyncLoaderSize = Runtime.getRuntime().availableProcessors();
+			} else {
+				try {
+					asyncLoaderSize = Integer.parseInt(s);
+				} catch (NumberFormatException e) {
+					Skript.error("Invalid option: " + s);
+					return;
 				}
-				
-				ScriptLoader.setAsyncLoaderSize(asyncLoaderSize);
-			})
-			.optional(true);
-	
+			}
+
+			ScriptLoader.setAsyncLoaderSize(asyncLoaderSize);
+		})
+		.optional(true);
+
 	public static final Option<Boolean> allowUnsafePlatforms = new Option<>("allow unsafe platforms", false)
-			.optional(true);
+		.optional(true);
 
 	public static final Option<Boolean> keepLastUsageDates = new Option<>("keep command last usage dates", false)
-			.optional(true);
-	
+		.optional(true);
+
 	public static final Option<Boolean> loadDefaultAliases = new Option<>("load default aliases", true)
-			.optional(true);
+		.optional(true);
 
 	public static final Option<Boolean> executeFunctionsWithMissingParams = new Option<>("execute functions with missing parameters", true)
-			.optional(true)
-			.setter(t -> Function.executeWithNulls = t);
+		.optional(true)
+		.setter(t -> Function.executeWithNulls = t);
 
 	public final static Option<Boolean> disableHookVault = new Option<>("disable hooks.vault", false)
 		.optional(true)
@@ -303,6 +303,7 @@ public class SkriptConfig {
 		.setter(value -> {
 			userDisableHooks(WorldGuardHook.class, value);
 		});
+
 	/**
 	 * Disables the specified hook depending on the option value, or gives an error if this isn't allowed at this time.
 	 */
@@ -335,12 +336,12 @@ public class SkriptConfig {
 	public static Config getConfig() {
 		return mainConfig;
 	}
-	
+
 	// also used for reloading
 	static boolean load() {
 		try {
-			final File oldConfigFile = new File(Skript.getInstance().getDataFolder(), "config.cfg");
-			final File configFile = new File(Skript.getInstance().getDataFolder(), "config.sk");
+			final File oldConfigFile = new File(SkriptPlugin.getInstance().getDataFolder(), "config.cfg");
+			final File configFile = new File(SkriptPlugin.getInstance().getDataFolder(), "config.sk");
 			if (oldConfigFile.exists()) {
 				if (!configFile.exists()) {
 					oldConfigFile.renameTo(configFile);
@@ -357,7 +358,7 @@ public class SkriptConfig {
 				Skript.error("Config file 'config.sk' cannot be read!");
 				return false;
 			}
-			
+
 			Config mc;
 			try {
 				mc = new Config(configFile, false, false, ":");
@@ -370,16 +371,16 @@ public class SkriptConfig {
 			String configVersion = mc.get(version.key);
 			if (configVersion == null || Skript.getVersion().compareTo(new Version(configVersion)) != 0) {
 				try {
-					final InputStream in = Skript.getInstance().getResource("config.sk");
+					final InputStream in = SkriptPlugin.getInstance().getResource("config.sk");
 					if (in == null) {
 						Skript.error("Your config is outdated, but Skript couldn't find the newest config in its jar.");
 						return false;
 					}
 					final Config newConfig = new Config(in, "Skript.jar/config.sk", false, false, ":");
 					in.close();
-					
+
 					boolean forceUpdate = false;
-					
+
 					if (mc.getMainNode().get("database") != null) { // old database layout
 						forceUpdate = true;
 						try {
@@ -389,15 +390,15 @@ public class SkriptConfig {
 							assert newDBs != null;
 							final SectionNode newDB = (SectionNode) newDBs.get("database 1");
 							assert newDB != null;
-							
+
 							newDB.setValues(oldDB);
-							
+
 							// '.db' was dynamically added before
 							final String file = newDB.getValue("file");
 							assert file != null;
 							if (!file.endsWith(".db"))
 								newDB.set("file", file + ".db");
-							
+
 							final SectionNode def = (SectionNode) newDBs.get("default");
 							assert def != null;
 							def.set("backup interval", "" + mc.get("variables backup interval"));
@@ -409,7 +410,7 @@ public class SkriptConfig {
 							return false;
 						}
 					}
-					
+
 					if (newConfig.setValues(mc, version.key, databases.key) || forceUpdate) { // new config is different
 						final File bu = FileUtils.backup(configFile);
 						newConfig.getMainNode().set(version.key, Skript.getVersion().toString());
@@ -426,9 +427,9 @@ public class SkriptConfig {
 					Skript.error("Could not load the new config from the jar file: " + e.getLocalizedMessage());
 				}
 			}
-			
+
 			mc.load(SkriptConfig.class);
-			
+
 //			if (!keepConfigsLoaded.value())
 //				mainConfig = null;
 		} catch (final RuntimeException e) {

@@ -782,7 +782,7 @@ public class ScriptLoader {
 		}
 
 		try {
-			String name = Skript.getInstance().getDataFolder().toPath().toAbsolutePath()
+			String name = SkriptPlugin.getInstance().getDataFolder().toPath().toAbsolutePath()
 					.resolve(Skript.SCRIPTSFOLDER).relativize(file.toPath().toAbsolutePath()).toString();
 			return loadStructure(Files.newInputStream(file.toPath()), name);
 		} catch (IOException e) {
@@ -805,7 +805,7 @@ public class ScriptLoader {
 			return new Config(
 				source,
 				name,
-				Skript.getInstance().getDataFolder().toPath().resolve(Skript.SCRIPTSFOLDER).resolve(name).toFile().getCanonicalFile(),
+				SkriptPlugin.getInstance().getDataFolder().toPath().resolve(Skript.SCRIPTSFOLDER).resolve(name).toFile().getCanonicalFile(),
 				true,
 				false,
 				":"

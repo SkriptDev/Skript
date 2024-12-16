@@ -1,6 +1,7 @@
 package ch.njol.skript.util;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.SkriptPlugin;
 import com.destroystokyo.paper.block.BlockSoundGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -159,12 +160,7 @@ public class DelayedChangeBlock implements Block {
 		if (newState != null) {
 			newState.setType(type);
 		} else {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Skript.getInstance(), new Runnable() {
-				@Override
-				public void run() {
-					block.setType(type);
-				}
-			});
+			Bukkit.getScheduler().scheduleSyncDelayedTask(SkriptPlugin.getInstance(), () -> block.setType(type));
 		}
 	}
 
@@ -285,12 +281,7 @@ public class DelayedChangeBlock implements Block {
 		if (newState != null) {
 			return false;
 		} else {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Skript.getInstance(), new Runnable() {
-				@Override
-				public void run() {
-					block.breakNaturally();
-				}
-			});
+			Bukkit.getScheduler().scheduleSyncDelayedTask(SkriptPlugin.getInstance(), () -> block.breakNaturally());
 			return true;
 		}
 	}
@@ -300,12 +291,7 @@ public class DelayedChangeBlock implements Block {
 		if (newState != null) {
 			return false;
 		} else {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Skript.getInstance(), new Runnable() {
-				@Override
-				public void run() {
-					block.breakNaturally(tool);
-				}
-			});
+			Bukkit.getScheduler().scheduleSyncDelayedTask(SkriptPlugin.getInstance(), () -> block.breakNaturally(tool));
 			return true;
 		}
 	}
@@ -315,12 +301,7 @@ public class DelayedChangeBlock implements Block {
 		if (newState != null) {
 			return false;
 		} else {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Skript.getInstance(), new Runnable() {
-				@Override
-				public void run() {
-					block.breakNaturally(triggerEffect);
-				}
-			});
+			Bukkit.getScheduler().scheduleSyncDelayedTask(SkriptPlugin.getInstance(), () -> block.breakNaturally(triggerEffect));
 			return true;
 		}
 	}
@@ -330,12 +311,7 @@ public class DelayedChangeBlock implements Block {
 		if (newState != null) {
 			return false;
 		} else {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Skript.getInstance(), new Runnable() {
-				@Override
-				public void run() {
-					block.breakNaturally(tool, triggerEffect);
-				}
-			});
+			Bukkit.getScheduler().scheduleSyncDelayedTask(SkriptPlugin.getInstance(), () -> block.breakNaturally(tool, triggerEffect));
 			return true;
 		}
 	}
@@ -394,12 +370,7 @@ public class DelayedChangeBlock implements Block {
 		if (newState != null) {
 			newState.setType(type);
 		} else {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Skript.getInstance(), new Runnable() {
-				@Override
-				public void run() {
-					block.setType(type, applyPhysics);
-				}
-			});
+			Bukkit.getScheduler().scheduleSyncDelayedTask(SkriptPlugin.getInstance(), () -> block.setType(type, applyPhysics));
 		}
 	}
 
@@ -418,7 +389,7 @@ public class DelayedChangeBlock implements Block {
 		if (newState != null) {
 			newState.setBlockData(data);
 		} else {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Skript.getInstance(), () -> block.setBlockData(data, applyPhysics));
+			Bukkit.getScheduler().scheduleSyncDelayedTask(SkriptPlugin.getInstance(), () -> block.setBlockData(data, applyPhysics));
 		}
 	}
 

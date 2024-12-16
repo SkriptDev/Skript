@@ -19,6 +19,7 @@
 package ch.njol.skript.bukkitutil;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.SkriptPlugin;
 import ch.njol.skript.util.Task;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.Bukkit;
@@ -50,7 +51,7 @@ public abstract class PlayerUtils {
 	}
 
 	static {
-		new Task(Skript.getInstance(), 1, 1) {
+		new Task(SkriptPlugin.getInstance(), 1, 1) {
 			@Override
 			public void run() {
 				for (Player p : inventoryUpdateList)

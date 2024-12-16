@@ -1,6 +1,7 @@
 package ch.njol.skript.events;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.SkriptPlugin;
 import ch.njol.skript.bukkitutil.ClickEventTracker;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
@@ -34,7 +35,7 @@ public class EvtClick extends SkriptEvent {
 	/**
 	 * Tracks PlayerInteractEvents to deduplicate them.
 	 */
-	public static final ClickEventTracker interactTracker = new ClickEventTracker(Skript.getInstance());
+	public static final ClickEventTracker interactTracker = new ClickEventTracker(SkriptPlugin.getInstance());
 
 	static {
 		Class<? extends PlayerEvent>[] eventTypes = CollectionUtils.array(

@@ -19,6 +19,7 @@
 package ch.njol.skript.events;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.SkriptPlugin;
 import ch.njol.skript.events.bukkit.ScriptEvent;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
@@ -87,8 +88,8 @@ public class EvtScript extends SkriptEvent {
 		if (async || Bukkit.isPrimaryThread()) {
 			trigger.execute(event);
 		} else {
-			if (Skript.getInstance().isEnabled())
-				Bukkit.getScheduler().scheduleSyncDelayedTask(Skript.getInstance(), () -> trigger.execute(event));
+			if (SkriptPlugin.getInstance().isEnabled())
+				Bukkit.getScheduler().scheduleSyncDelayedTask(SkriptPlugin.getInstance(), () -> trigger.execute(event));
 		}
 	}
 	

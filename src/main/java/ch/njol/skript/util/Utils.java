@@ -31,6 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import ch.njol.skript.SkriptPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -500,7 +501,7 @@ public abstract class Utils {
 			Predicate<ByteArrayDataInput> messageVerifier, String... data) {
 		CompletableFuture<ByteArrayDataInput> completableFuture = new CompletableFuture<>();
 
-		Skript skript = Skript.getInstance();
+		SkriptPlugin skript = SkriptPlugin.getInstance();
 		Messenger messenger = Bukkit.getMessenger();
 
 		messenger.registerOutgoingPluginChannel(skript, channel);
@@ -527,7 +528,7 @@ public abstract class Utils {
 
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		Stream.of(data).forEach(out::writeUTF);
-		player.sendPluginMessage(Skript.getInstance(), channel, out.toByteArray());
+		player.sendPluginMessage(skript, channel, out.toByteArray());
 
 		return completableFuture;
 	}

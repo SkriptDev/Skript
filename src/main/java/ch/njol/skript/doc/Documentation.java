@@ -19,6 +19,7 @@
 package ch.njol.skript.doc;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.SkriptPlugin;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.conditions.CondZCompare;
 import ch.njol.skript.lang.ExpressionInfo;
@@ -59,8 +60,8 @@ public class Documentation {
 	private static final Pattern CP_EMPTY_PARSE_MARKS_PATTERN = Pattern.compile("\\(\\)");
 	private static final Pattern CP_PARSE_TAGS_PATTERN = Pattern.compile("(?<=[(|\\[ ])[-a-zA-Z0-9!$#%^&*_+~=\"'<>?,.]*?:");
 	private static final Pattern CP_EXTRA_OPTIONAL_PATTERN = Pattern.compile("\\[\\(((\\w+? ?)+)\\)]");
-	private static final File DOCS_TEMPLATE_DIRECTORY = new File(Skript.getInstance().getDataFolder(), "docs/templates");
-	private static final File DOCS_OUTPUT_DIRECTORY = new File(Skript.getInstance().getDataFolder(), "docs");
+	private static final File DOCS_TEMPLATE_DIRECTORY = new File(SkriptPlugin.getInstance().getDataFolder(), "docs/templates");
+	private static final File DOCS_OUTPUT_DIRECTORY = new File(SkriptPlugin.getInstance().getDataFolder(), "docs");
 
 	/**
 	 * Force register hooks even if their plugins are not present in the server
@@ -92,7 +93,7 @@ public class Documentation {
 		if (!generate)
 			return;
 		try {
-			final PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(Skript.getInstance().getDataFolder(), "doc.sql")), "UTF-8"));
+			final PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(SkriptPlugin.getInstance().getDataFolder(), "doc.sql")), "UTF-8"));
 			asSql(pw);
 			pw.flush();
 			pw.close();
@@ -105,7 +106,7 @@ public class Documentation {
 		}
 	}
 
-	public final static boolean generate = Skript.testing() && new File(Skript.getInstance().getDataFolder(), "generate-doc").exists(); // don't generate the documentation on normal servers
+	public final static boolean generate = Skript.testing() && new File(SkriptPlugin.getInstance().getDataFolder(), "generate-doc").exists(); // don't generate the documentation on normal servers
 
 	private static void asSql(final PrintWriter pw) {
 		pw.println("-- syntax elements");

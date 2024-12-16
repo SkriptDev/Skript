@@ -20,6 +20,7 @@ package ch.njol.skript.hooks.regions.events;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptConfig;
+import ch.njol.skript.SkriptPlugin;
 import ch.njol.skript.hooks.regions.RegionsPlugin;
 import ch.njol.skript.hooks.regions.classes.Region;
 import ch.njol.skript.lang.Literal;
@@ -141,9 +142,9 @@ public class EvtRegionBorder extends SkriptEvent {
 		TRIGGERS.add(trigger);
 		if (REGISTERED_EXECUTORS.compareAndSet(false, true)) {
 			EventPriority priority = SkriptConfig.defaultEventPriority.value();
-			Bukkit.getPluginManager().registerEvent(PlayerMoveEvent.class, new Listener(){}, priority, EXECUTOR, Skript.getInstance(), true);
-			Bukkit.getPluginManager().registerEvent(PlayerTeleportEvent.class, new Listener(){}, priority, EXECUTOR, Skript.getInstance(), true);
-			Bukkit.getPluginManager().registerEvent(PlayerPortalEvent.class, new Listener(){}, priority, EXECUTOR, Skript.getInstance(), true);
+			Bukkit.getPluginManager().registerEvent(PlayerMoveEvent.class, new Listener(){}, priority, EXECUTOR, SkriptPlugin.getInstance(), true);
+			Bukkit.getPluginManager().registerEvent(PlayerTeleportEvent.class, new Listener(){}, priority, EXECUTOR, SkriptPlugin.getInstance(), true);
+			Bukkit.getPluginManager().registerEvent(PlayerPortalEvent.class, new Listener(){}, priority, EXECUTOR, SkriptPlugin.getInstance(), true);
 		}
 		return true;
 	}

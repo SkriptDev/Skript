@@ -20,14 +20,14 @@ package ch.njol.skript.hooks;
 
 import java.io.IOException;
 
+import ch.njol.skript.SkriptAddon;
+import ch.njol.skript.SkriptPlugin;
 import ch.njol.skript.doc.Documentation;
 import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-
-import ch.njol.skript.Skript;
 
 /**
  * @author Peter Güttinger
@@ -58,12 +58,13 @@ public class VaultHook extends Hook<Vault> {
 	@Override
 	@SuppressWarnings("null")
 	protected void loadClasses() throws IOException {
+		SkriptAddon addonInstance = SkriptPlugin.getInstance().getAddonInstance();
 		if (economy != null || Documentation.canGenerateUnsafeDocs())
-			Skript.getAddonInstance().loadClasses(getClass().getPackage().getName() + ".economy");
+			addonInstance.loadClasses(getClass().getPackage().getName() + ".economy");
 		if (chat != null || (Documentation.canGenerateUnsafeDocs()))
-			Skript.getAddonInstance().loadClasses(getClass().getPackage().getName() + ".chat");
+			addonInstance.loadClasses(getClass().getPackage().getName() + ".chat");
 		if (permission != null || (Documentation.canGenerateUnsafeDocs()))
-			Skript.getAddonInstance().loadClasses(getClass().getPackage().getName() + ".permission");
+			addonInstance.loadClasses(getClass().getPackage().getName() + ".permission");
 
 	}
 	

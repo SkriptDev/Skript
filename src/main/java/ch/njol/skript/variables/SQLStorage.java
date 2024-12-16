@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
+import ch.njol.skript.SkriptPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
@@ -524,7 +525,7 @@ public abstract class SQLStorage extends VariablesStorage {
 			}
 
 			if (!closed) { // Skript may have been disabled in the meantime // TODO not fixed
-				new Task(Skript.getInstance(), (long) Math.ceil(2. * monitor_interval / 50) + 100, true) { // 2 times the interval + 5 seconds
+				new Task(SkriptPlugin.getInstance(), (long) Math.ceil(2. * monitor_interval / 50) + 100, true) { // 2 times the interval + 5 seconds
 					@Override
 					public void run() {
 						try {

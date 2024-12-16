@@ -21,6 +21,7 @@ package ch.njol.skript.variables;
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAPIException;
 import ch.njol.skript.SkriptConfig;
+import ch.njol.skript.SkriptPlugin;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.classes.ConfigurationSerializer;
 import ch.njol.skript.config.Config;
@@ -182,7 +183,7 @@ public class Variables {
 			return false;
 		}
 
-		Skript.closeOnDisable(Variables::close);
+		SkriptPlugin.closeOnDisable(Variables::close);
 
 		// reports once per second how many variables were loaded. Useful to make clear that Skript is still doing something if it's loading many variables
 		Thread loadingLoggerThread = new Thread(() -> {

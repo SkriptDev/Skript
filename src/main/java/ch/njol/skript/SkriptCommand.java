@@ -119,7 +119,7 @@ public class SkriptCommand implements CommandExecutor {
 					ScriptLoader.loadScripts(Skript.getInstance().getScriptsFolder(), OpenCloseable.combine(logHandler, timingLogHandler))
 						.thenAccept(info -> {
 							if (info.files == 0)
-								Skript.warning(Skript.m_no_scripts.toString());
+								Skript.warning(Skript.message_no_scripts.toString());
 							reloaded(sender, logHandler, timingLogHandler, "config and scripts");
 						});
 				} else if (args[1].equalsIgnoreCase("scripts")) {
@@ -129,7 +129,7 @@ public class SkriptCommand implements CommandExecutor {
 					ScriptLoader.loadScripts(Skript.getInstance().getScriptsFolder(), OpenCloseable.combine(logHandler, timingLogHandler))
 						.thenAccept(info -> {
 							if (info.files == 0)
-								Skript.warning(Skript.m_no_scripts.toString());
+								Skript.warning(Skript.message_no_scripts.toString());
 							reloaded(sender, logHandler, timingLogHandler, "scripts");
 						});
 				} else if (args[1].equalsIgnoreCase("config")) {
@@ -333,7 +333,7 @@ public class SkriptCommand implements CommandExecutor {
 					Skript.info(sender, " - " + desc.getFullName() + (web != null ? " (" + web + ")" : ""));
 				}
 
-				List<String> dependencies = Skript.getInstance().getDescription().getSoftDepend();
+				List<String> dependencies = SkriptPlugin.getInstance().getDescription().getSoftDepend();
 				boolean dependenciesFound = false;
 				for (String dep : dependencies) { // Check if any dependency is found in the server plugins
 					Plugin plugin = Bukkit.getPluginManager().getPlugin(dep);
@@ -385,7 +385,7 @@ public class SkriptCommand implements CommandExecutor {
 				ScriptLoader.loadScripts(scriptFile, logHandler)
 					.thenAccept(scriptInfo ->
 						// Code should run on server thread
-						Bukkit.getScheduler().scheduleSyncDelayedTask(Skript.getInstance(), () -> {
+						Bukkit.getScheduler().scheduleSyncDelayedTask(SkriptPlugin.getInstance(), () -> {
 							Bukkit.getPluginManager().callEvent(new SkriptTestEvent()); // Run it
 							ScriptLoader.unloadScripts(ScriptLoader.getLoadedScripts());
 

@@ -21,6 +21,7 @@ package ch.njol.skript.log;
 import java.util.logging.Filter;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.SkriptPlugin;
 import ch.njol.util.LoggerFilter;
 
 /**
@@ -41,7 +42,7 @@ public class BukkitLoggerFilter {
 	private static final LoggerFilter filter = new LoggerFilter(SkriptLogger.LOGGER);
 	
 	static {
-		Skript.closeOnDisable(filter);
+		SkriptPlugin.closeOnDisable(filter);
 	}
 	
 	/**

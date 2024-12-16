@@ -2,6 +2,7 @@ package ch.njol.skript.structures;
 
 import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
+import ch.njol.skript.SkriptPlugin;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.classes.Parser;
 import ch.njol.skript.command.Argument;
@@ -324,8 +325,8 @@ public class StructCommand extends Structure {
 			SYNC_COMMANDS.set(false);
 			if (DELAY_COMMAND_SYNCING) {
 				// if the plugin is disabled, the server is likely closing and delaying will cause an error.
-				if (Bukkit.getPluginManager().isPluginEnabled(Skript.getInstance()))
-					Bukkit.getScheduler().runTask(Skript.getInstance(), this::forceCommandSync);
+				if (Bukkit.getPluginManager().isPluginEnabled(SkriptPlugin.getInstance()))
+					Bukkit.getScheduler().runTask(SkriptPlugin.getInstance(), this::forceCommandSync);
 			} else {
 				forceCommandSync();
 			}

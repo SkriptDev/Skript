@@ -65,7 +65,7 @@ public class SkriptUpdater extends Updater {
 	 */
 	private static ReleaseManifest loadManifest() {
 		String manifest;
-		try (InputStream is = Skript.getInstance().getResource("release-manifest.json");
+		try (InputStream is = SkriptPlugin.getInstance().getResource("release-manifest.json");
 				Scanner s = new Scanner(is)) {
 			s.useDelimiter("\\\\A");
 			manifest = s.next();

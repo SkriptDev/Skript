@@ -20,6 +20,7 @@ package ch.njol.skript.hooks;
 
 import java.io.IOException;
 
+import ch.njol.skript.SkriptPlugin;
 import ch.njol.skript.doc.Documentation;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -69,7 +70,7 @@ public abstract class Hook<P extends Plugin> {
 	}
 	
 	protected void loadClasses() throws IOException {
-		Skript.getAddonInstance().loadClasses("" + getClass().getPackage().getName());
+		SkriptPlugin.getInstance().getAddonInstance().loadClasses("" + getClass().getPackage().getName());
 	}
 	
 	/**

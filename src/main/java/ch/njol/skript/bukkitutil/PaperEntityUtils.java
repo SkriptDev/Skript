@@ -20,6 +20,7 @@ package ch.njol.skript.bukkitutil;
 
 import java.util.EnumSet;
 
+import ch.njol.skript.SkriptPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -131,7 +132,7 @@ public class PaperEntityUtils {
 
 	public static class LookGoal implements Goal<Mob> {
 
-		private static final GoalKey<Mob> SKRIPT_LOOK_KEY = GoalKey.of(Mob.class, new NamespacedKey(Skript.getInstance(), "skript_entity_look"));
+		private static final GoalKey<Mob> SKRIPT_LOOK_KEY = GoalKey.of(Mob.class, new NamespacedKey(SkriptPlugin.getInstance(), "skript_entity_look"));
 		private static final EnumSet<GoalType> LOOK_GOAL = EnumSet.of(GoalType.LOOK);
 
 		private static final int VECTOR = 0, LOCATION = 1, ENTITY = 2;

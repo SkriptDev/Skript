@@ -21,6 +21,7 @@ package ch.njol.skript.test.runner;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
+import ch.njol.skript.SkriptPlugin;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,7 +72,7 @@ public class EffDebug extends Effect  {
 				if (effect == null) {
 					logHandler.printError();
 				} else {
-					Logger logger = Skript.getInstance().getLogger();
+					Logger logger = SkriptPlugin.getInstance().getLogger();
 					logger.info("--------------------");
 					logger.info("Parsed '" + string + "' to be Effect " + effect.getClass().getName());
 					logger.info("--------------------");
@@ -89,7 +90,7 @@ public class EffDebug extends Effect  {
 				if (conditon == null) {
 					logHandler.printError();
 				} else {
-					Logger logger = Skript.getInstance().getLogger();
+					Logger logger = SkriptPlugin.getInstance().getLogger();
 					logger.info("--------------------");
 					logger.info("Parsed '" + string + "' to be Condition " + conditon.getClass().getName());
 					logger.info("--------------------");

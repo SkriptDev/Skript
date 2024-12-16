@@ -3,6 +3,7 @@ package ch.njol.skript.events;
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.SkriptEventHandler;
+import ch.njol.skript.SkriptPlugin;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -126,7 +127,7 @@ public class EvtMoveOn extends SkriptEvent {
 			if (REGISTERED_EXECUTOR.compareAndSet(false, true)) {
 				Bukkit.getPluginManager().registerEvent(
 					PlayerMoveEvent.class, new Listener() {
-					}, SkriptConfig.defaultEventPriority.value(), EXECUTOR, Skript.getInstance(), true
+					}, SkriptConfig.defaultEventPriority.value(), EXECUTOR, SkriptPlugin.getInstance(), true
 				);
 			}
 		}

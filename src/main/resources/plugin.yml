@@ -26,7 +26,7 @@ authors: [Njol, Mirreski, 'SkriptLang Team', Contributors]
 
 website: https://skriptlang.org
 
-main: ch.njol.skript.Skript
+main: ch.njol.skript.SkriptPlugin
 
 version: @version@
 api-version: 1.13

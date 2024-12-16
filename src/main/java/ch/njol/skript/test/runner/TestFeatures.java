@@ -20,6 +20,7 @@ package ch.njol.skript.test.runner;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
+import ch.njol.skript.SkriptPlugin;
 import ch.njol.skript.patterns.PatternCompiler;
 import ch.njol.skript.patterns.SkriptPattern;
 import org.skriptlang.skript.lang.experiment.Experiment;
@@ -81,7 +82,7 @@ public enum TestFeatures implements Experiment {
 	}
 
 	static {
-		registerAll(Skript.getAddonInstance(), Skript.experiments());
+		registerAll(SkriptPlugin.getInstance().getAddonInstance(), Skript.experiments());
 	}
 
 }

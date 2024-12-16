@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
+import ch.njol.skript.SkriptPlugin;
 import org.junit.Test;
 
 import ch.njol.skript.Skript;
@@ -36,7 +37,7 @@ public class FilesGenerate {
 	@Test
 	public void checkFiles() {
 		Skript skript = Skript.getInstance();
-		File dataFolder = skript.getDataFolder();
+		File dataFolder = SkriptPlugin.getInstance().getDataFolder();
 		assertTrue(skript.getScriptsFolder().exists());
 		assertTrue(skript.getScriptsFolder().isDirectory());
 		assertTrue(new File(dataFolder, "config.sk").exists());
@@ -48,7 +49,7 @@ public class FilesGenerate {
 	@Test
 	@SuppressWarnings("deprecation")
 	public void checkConfigurationVersion() {
-		assertEquals(SkriptConfig.getConfig().get("version"), Skript.getInstance().getDescription().getVersion());
+		assertEquals(SkriptConfig.getConfig().get("version"), SkriptPlugin.getInstance().getDescription().getVersion());
 	}
 
 }

@@ -22,6 +22,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.njol.skript.SkriptPlugin;
 import org.bukkit.event.Event;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
@@ -121,10 +122,10 @@ public class ExprMetadata<T> extends SimpleExpression<T> {
 			for (Metadatable holder : holders.getArray(e)) {
 				switch (mode) {
 					case SET:
-						holder.setMetadata(value, new FixedMetadataValue(Skript.getInstance(), delta[0]));
+						holder.setMetadata(value, new FixedMetadataValue(SkriptPlugin.getInstance(), delta[0]));
 						break;
 					case DELETE:
-						holder.removeMetadata(value, Skript.getInstance());
+						holder.removeMetadata(value, SkriptPlugin.getInstance());
 				}
 			}
 		}

@@ -19,6 +19,7 @@
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.SkriptPlugin;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -87,12 +88,12 @@ public class EffPlayerVisibility extends Effect {
                     if (USE_DEPRECATED_METHOD)
                         targetPlayer.showPlayer(player);
                     else
-                        targetPlayer.showPlayer(Skript.getInstance(), player);
+                        targetPlayer.showPlayer(SkriptPlugin.getInstance(), player);
                 } else {
                     if (USE_DEPRECATED_METHOD)
                         targetPlayer.hidePlayer(player);
                     else
-                        targetPlayer.hidePlayer(Skript.getInstance(), player);
+                        targetPlayer.hidePlayer(SkriptPlugin.getInstance(), player);
                 }
             }
         }

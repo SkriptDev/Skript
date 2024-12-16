@@ -20,6 +20,7 @@ package ch.njol.skript.events;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptEventHandler;
+import ch.njol.skript.SkriptPlugin;
 import ch.njol.skript.events.bukkit.ScheduledEvent;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
@@ -124,7 +125,7 @@ public class EvtAtTime extends SkriptEvent implements Comparable<EvtAtTime> {
 			return;
 		// For each world:
 		// check each instance in order until triggerTime > (worldTime + period)
-		taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Skript.getInstance(), () -> {
+		taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(SkriptPlugin.getInstance(), () -> {
 			for (Entry<World, EvtAtInfo> entry : TRIGGERS.entrySet()) {
 				EvtAtInfo info = entry.getValue();
 				int worldTime = (int) entry.getKey().getTime();

@@ -20,6 +20,7 @@ package ch.njol.skript.update;
 
 import java.util.concurrent.CompletableFuture;
 
+import ch.njol.skript.SkriptPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import ch.njol.skript.Skript;
@@ -144,7 +145,7 @@ public abstract class Updater {
 				// Call this again later
 				long ticks = checkFrequency;
 				if (ticks > 0) {
-					new Task(Skript.getInstance(), ticks, true) {
+					new Task(SkriptPlugin.getInstance(), ticks, true) {
 						
 						@Override
 						public void run() {

@@ -24,6 +24,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import ch.njol.skript.SkriptPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import ch.njol.skript.Skript;
@@ -235,7 +236,7 @@ public abstract class VariablesStorage implements Closeable {
 			return false;
 
 		writeThread.start();
-		Skript.closeOnDisable(this);
+		SkriptPlugin.closeOnDisable(this);
 
 		return true;
 	}
@@ -312,7 +313,7 @@ public abstract class VariablesStorage implements Closeable {
 		if (file == null || backupInterval.getTicks() == 0)
 			return;
 
-		backupTask = new Task(Skript.getInstance(), backupInterval.getTicks(), backupInterval.getTicks(), true) {
+		backupTask = new Task(SkriptPlugin.getInstance(), backupInterval.getTicks(), backupInterval.getTicks(), true) {
 			@Override
 			public void run() {
 				synchronized (connectionLock) {

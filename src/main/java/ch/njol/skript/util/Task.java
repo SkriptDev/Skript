@@ -23,6 +23,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import ch.njol.skript.SkriptPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
@@ -69,7 +70,7 @@ public abstract class Task implements Runnable, Closeable {
 	 */
 	private void schedule(final long delay) {
 		assert !isAlive();
-		if (!Skript.getInstance().isEnabled())
+		if (!SkriptPlugin.getInstance().isEnabled())
 			return;
 		
 		if (period == -1) {
@@ -145,7 +146,7 @@ public abstract class Task implements Runnable, Closeable {
 	 */
 	@Nullable
 	public static <T> T callSync(final Callable<T> c) {
-		return callSync(c, Skript.getInstance());
+		return callSync(c, SkriptPlugin.getInstance());
 	}
 	
 	/**

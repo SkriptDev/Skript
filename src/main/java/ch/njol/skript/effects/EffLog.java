@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.logging.Level;
 
+import ch.njol.skript.SkriptPlugin;
 import org.skriptlang.skript.lang.script.Script;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
@@ -63,11 +64,11 @@ public class EffLog extends Effect {
 		Skript.registerEffect(EffLog.class, "log %strings% [(to|in) [file[s]] %-strings%] [with [the|a] severity [of] (1:warning|2:severe)]");
 	}
 	
-	private static final File logsFolder = new File(Skript.getInstance().getDataFolder(), "logs");
+	private static final File logsFolder = new File(SkriptPlugin.getInstance().getDataFolder(), "logs");
 	
 	final static HashMap<String, PrintWriter> writers = new HashMap<>();
 	static {
-		Skript.closeOnDisable(new Closeable() {
+		SkriptPlugin.closeOnDisable(new Closeable() {
 			@Override
 			public void close() {
 				for (PrintWriter pw : writers.values())

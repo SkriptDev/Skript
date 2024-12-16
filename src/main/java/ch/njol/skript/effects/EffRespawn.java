@@ -18,6 +18,7 @@
  */
 package ch.njol.skript.effects;
 
+import ch.njol.skript.SkriptPlugin;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -77,7 +78,7 @@ public class EffRespawn extends Effect {
 						p.spigot().respawn();
 					}
 
-				}.runTaskLater(Skript.getInstance(), 1);
+				}.runTaskLater(SkriptPlugin.getInstance(), 1);
 			} else { // Just respawn
 				p.spigot().respawn();
 			}

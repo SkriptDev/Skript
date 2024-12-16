@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Function;
 
+import ch.njol.skript.SkriptPlugin;
 import ch.njol.skript.command.ScriptCommand;
 import ch.njol.skript.command.ScriptCommandEvent;
 import ch.njol.skript.util.Utils;
@@ -191,7 +192,7 @@ public class ExprCommandInfo extends SimpleExpression<String> {
 	}
 
 	private static List<String> getAliases(Command command) {
-		if (!(command instanceof PluginCommand) || ((PluginCommand) command).getPlugin() != Skript.getInstance())
+		if (!(command instanceof PluginCommand) || ((PluginCommand) command).getPlugin() != SkriptPlugin.getInstance())
 			return command.getAliases();
 		ScriptCommand scriptCommand = Commands.getScriptCommand(command.getName());
 		return scriptCommand == null ? command.getAliases() : scriptCommand.getAliases();

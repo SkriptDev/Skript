@@ -18,6 +18,7 @@
  */
 package ch.njol.skript.effects;
 
+import ch.njol.skript.SkriptPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +41,7 @@ public class IndeterminateDelay extends Delay {
 		long start = Skript.debug() ? System.nanoTime() : 0;
 		TriggerItem next = getNext();
 
-		if (next != null && Skript.getInstance().isEnabled()) { // See https://github.com/SkriptLang/Skript/issues/3702
+		if (next != null && SkriptPlugin.getInstance().isEnabled()) { // See https://github.com/SkriptLang/Skript/issues/3702
 			Delay.addDelayedEvent(event);
 			Timespan duration = this.duration.getSingle(event);
 			if (duration == null)
@@ -49,7 +50,7 @@ public class IndeterminateDelay extends Delay {
 			// Back up local variables
 			Object localVars = Variables.removeLocals(event);
 			
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Skript.getInstance(), () -> {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(SkriptPlugin.getInstance(), () -> {
 				Skript.debug(getIndentation() + "... continuing after " + (System.nanoTime() - start) / 1_000_000_000. + "s");
 
 				// Re-set local variables
