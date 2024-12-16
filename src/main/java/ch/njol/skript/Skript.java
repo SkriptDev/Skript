@@ -116,14 +116,31 @@ public final class Skript implements Listener {
 		this.plugin = plugin;
 	}
 
-	public static Skript getInstance() {
+	/**
+	 * Get an instance of {@link Skript}
+	 *
+	 * @return Instance of Skript
+	 * @see #getSkriptPluginInstance()
+	 */
+	public static Skript getSkriptInstance() {
 		if (instance == null) {
 			throw new IllegalStateException("Skript has not initialized");
 		}
 		return instance;
 	}
 
-	public static SkriptPlugin getPlugin() {
+	/**
+	 * Gets an instance of {@link SkriptPlugin}
+	 *
+	 * @return Instance of SkriptPlugin
+	 * @deprecated Use {@link #getSkriptPluginInstance()} instead
+	 */
+	@Deprecated
+	public static SkriptPlugin getInstance() {
+		return getSkriptPluginInstance();
+	}
+
+	public static SkriptPlugin getSkriptPluginInstance() {
 		if (instance == null || instance.plugin == null) {
 			throw new IllegalStateException("Skript has not initialized");
 		}
@@ -909,7 +926,7 @@ public final class Skript implements Listener {
 			}
 		}
 
-		SkriptUpdater updater = Skript.getInstance().getUpdater();
+		SkriptUpdater updater = Skript.getSkriptInstance().getUpdater();
 
 		// Check if server platform is supported
 		if (tainted) {

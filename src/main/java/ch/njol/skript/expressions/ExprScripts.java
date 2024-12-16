@@ -16,9 +16,7 @@ import ch.njol.util.Kleenean;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.bukkit.event.Event;
@@ -44,7 +42,7 @@ public class ExprScripts extends SimpleExpression<String> {
 				"[all [of the]|the] (disabled|unloaded) scripts [1:without ([subdirectory] paths|parents)]");
 	}
 
-	private static final Path SCRIPTS_PATH = Skript.getInstance().getScriptsFolder().getAbsoluteFile().toPath();
+	private static final Path SCRIPTS_PATH = Skript.getSkriptInstance().getScriptsFolder().getAbsoluteFile().toPath();
 
 	private boolean includeEnabled;
 	private boolean includeDisabled;

@@ -10,7 +10,6 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.Statement;
 import ch.njol.skript.lang.TriggerItem;
 import ch.njol.skript.lang.TriggerSection;
-import ch.njol.skript.lang.function.EffFunctionCall;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.log.*;
 import ch.njol.skript.sections.SecLoop;
@@ -29,7 +28,6 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.util.event.EventRegistry;
 import org.skriptlang.skript.lang.script.Script;
-import org.skriptlang.skript.lang.script.ScriptWarning;
 import org.skriptlang.skript.lang.structure.Structure;
 
 import java.io.File;
@@ -1251,7 +1249,7 @@ public class ScriptLoader {
 	@Deprecated
 	static void loadScripts() {
 		unloadScripts(getLoadedScripts());
-		loadScripts(Skript.getInstance().getScriptsFolder(), OpenCloseable.EMPTY).join();
+		loadScripts(Skript.getSkriptInstance().getScriptsFolder(), OpenCloseable.EMPTY).join();
 	}
 
 	/**

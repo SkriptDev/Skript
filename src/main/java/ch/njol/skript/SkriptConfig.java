@@ -63,13 +63,13 @@ public class SkriptConfig {
 
 	public static final Option<Boolean> checkForNewVersion = new Option<>("check for new version", false)
 		.setter(t -> {
-			SkriptUpdater updater = Skript.getInstance().getUpdater();
+			SkriptUpdater updater = Skript.getSkriptInstance().getUpdater();
 			if (updater != null)
 				updater.setEnabled(t);
 		});
 	public static final Option<Timespan> updateCheckInterval = new Option<>("update check interval", new Timespan(12 * 60 * 60 * 1000))
 		.setter(t -> {
-			SkriptUpdater updater = Skript.getInstance().getUpdater();
+			SkriptUpdater updater = Skript.getSkriptInstance().getUpdater();
 			if (updater != null)
 				updater.setCheckFrequency(t.getTicks());
 		});
@@ -97,7 +97,7 @@ public class SkriptConfig {
 					Skript.error("Unknown release channel '" + t + "'.");
 					break;
 			}
-			SkriptUpdater updater = Skript.getInstance().getUpdater();
+			SkriptUpdater updater = Skript.getSkriptInstance().getUpdater();
 			if (updater != null) {
 				updater.setReleaseChannel(channel);
 			}

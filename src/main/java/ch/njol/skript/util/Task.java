@@ -124,7 +124,7 @@ public abstract class Task implements Runnable, Closeable {
 	}
 	
 	/**
-	 * Equivalent to <tt>{@link #callSync(Callable, Plugin) callSync}(c, {@link Skript#getInstance()})</tt>
+	 * Equivalent to <tt>{@link #callSync(Callable, Plugin) callSync}(c, {@link Skript#getSkriptInstance()})</tt>
 	 */
 	@Nullable
 	public static <T> T callSync(final Callable<T> c) {
