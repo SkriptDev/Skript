@@ -1,21 +1,3 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.variables;
 
 import java.io.File;
@@ -24,6 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import ch.njol.skript.SkriptPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import ch.njol.skript.Skript;
@@ -235,7 +218,7 @@ public abstract class VariablesStorage implements Closeable {
 			return false;
 
 		writeThread.start();
-		Skript.closeOnDisable(this);
+		SkriptPlugin.closeOnDisable(this);
 
 		return true;
 	}
@@ -312,7 +295,7 @@ public abstract class VariablesStorage implements Closeable {
 		if (file == null || backupInterval.getTicks() == 0)
 			return;
 
-		backupTask = new Task(Skript.getInstance(), backupInterval.getTicks(), backupInterval.getTicks(), true) {
+		backupTask = new Task(SkriptPlugin.getInstance(), backupInterval.getTicks(), backupInterval.getTicks(), true) {
 			@Override
 			public void run() {
 				synchronized (connectionLock) {

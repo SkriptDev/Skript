@@ -22,9 +22,12 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 @Name("Entities")
 @Description("All entities in all worlds, in a specific world, in a chunk or in a radius around a certain location, " +
@@ -55,11 +58,19 @@ public class ExprEntities extends SimpleExpression<Entity> {
 	private Expression<Location> center;
 
 	private boolean isUsingRadius;
+	private Class<? extends Entity> returnType = Entity.class;
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
 		types = (Literal<?>) exprs[0];
+		if (this.types != null && this.types.isSingle()) {
+			Object type = this.types.getSingle();
+			if (type instanceof EntityType entityType)
+				this.returnType = entityType.getEntityClass();
+			else if (type instanceof EntityCategory entityCategory)
+				this.returnType = entityCategory.getEntityClass();
+		}
 
 		isUsingRadius = matchedPattern == 1;
 		if (isUsingRadius) {
@@ -78,13 +89,20 @@ public class ExprEntities extends SimpleExpression<Entity> {
 	@Override
 	@Nullable
 	protected Entity[] get(Event e) {
+		List<Entity> entities = new ArrayList<>();
+		Objects.requireNonNull(iterator(e)).forEachRemaining(entities::add);
+		return getEntitiesByReturnType(this.returnType, entities);
+	}
+
+	@Override
+	public @Nullable Iterator<? extends Entity> iterator(Event event) {
 		if (isUsingRadius) {
 			if (this.center == null || this.radius == null) return null;
 
-			Object[] types = this.types.getArray(e);
+			Object[] types = this.types.getArray(event);
 
-			Location center = this.center.getSingle(e);
-			Number radiusNum = this.radius.getSingle(e);
+			Location center = this.center.getSingle(event);
+			Number radiusNum = this.radius.getSingle(event);
 			if (center == null || radiusNum == null) return null;
 
 			int radius = radiusNum.intValue();
@@ -98,14 +116,14 @@ public class ExprEntities extends SimpleExpression<Entity> {
 					if (isOfType(entity, types)) entities.add(entity);
 				}
 			}
-			return entities.toArray(new Entity[0]);
+			return entities.iterator();
 		} else {
 			List<Entity> entities = new ArrayList<>();
 			if (this.chunks != null) {
-				for (Chunk chunk : this.chunks.getArray(e)) {
+				for (Chunk chunk : this.chunks.getArray(event)) {
 					for (@NotNull Entity entity : chunk.getEntities()) {
 						if (this.types != null) {
-							if (isOfType(entity, this.types.getArray(e)))
+							if (isOfType(entity, this.types.getArray(event)))
 								entities.add(entity);
 						} else {
 							entities.add(entity);
@@ -113,11 +131,11 @@ public class ExprEntities extends SimpleExpression<Entity> {
 					}
 				}
 			} else {
-				List<World> worlds = this.worlds != null ? Arrays.asList(this.worlds.getArray(e)) : Bukkit.getWorlds();
+				List<World> worlds = this.worlds != null ? Arrays.asList(this.worlds.getArray(event)) : Bukkit.getWorlds();
 				for (World world : worlds) {
 					for (@NotNull Entity entity : world.getEntities()) {
 						if (this.types != null) {
-							if (isOfType(entity, this.types.getArray(e)))
+							if (isOfType(entity, this.types.getArray(event)))
 								entities.add(entity);
 						} else {
 							entities.add(entity);
@@ -125,7 +143,7 @@ public class ExprEntities extends SimpleExpression<Entity> {
 					}
 				}
 			}
-			return entities.toArray(new Entity[0]);
+			return entities.iterator();
 		}
 	}
 
@@ -136,14 +154,7 @@ public class ExprEntities extends SimpleExpression<Entity> {
 
 	@Override
 	public Class<? extends Entity> getReturnType() {
-		if (this.types != null && this.types.isSingle()) {
-			Object type = this.types.getSingle();
-			if (type instanceof EntityType entityType)
-				return entityType.getEntityClass();
-			else if (type instanceof EntityCategory entityCategory)
-				return entityCategory.getEntityClass();
-		}
-		return Entity.class;
+		return this.returnType;
 	}
 
 	@Override
@@ -167,6 +178,11 @@ public class ExprEntities extends SimpleExpression<Entity> {
 			return false;
 		}
 		return true;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <E extends Entity> E[] getEntitiesByReturnType(Class<E> type, List<Entity> entities) {
+		return entities.toArray((E[]) Array.newInstance(type, entities.size()));
 	}
 
 }

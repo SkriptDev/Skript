@@ -1,0 +1,41 @@
+test "EvtBlock JUnit Test" when running JUnit:
+	ensure junit test "org.skriptlang.skript.test.tests.syntaxes.events.EvtBlockTest" completes "on break"
+	ensure junit test "org.skriptlang.skript.test.tests.syntaxes.events.EvtBlockTest" completes "on break of material"
+	ensure junit test "org.skriptlang.skript.test.tests.syntaxes.events.EvtBlockTest" completes "on break of blockdata"
+
+	ensure junit test "org.skriptlang.skript.test.tests.syntaxes.events.EvtBlockTest" completes "on place"
+	ensure junit test "org.skriptlang.skript.test.tests.syntaxes.events.EvtBlockTest" completes "on place of material"
+	ensure junit test "org.skriptlang.skript.test.tests.syntaxes.events.EvtBlockTest" completes "on place of blockdata"
+
+on break:
+	junit test is "org.skriptlang.skript.test.tests.syntaxes.events.EvtBlockTest"
+	assert material of event-block is oak stairs with "Broken block should be oak stairs"
+	complete objective "on break" for "org.skriptlang.skript.test.tests.syntaxes.events.EvtBlockTest"
+
+on break of oak stairs:
+	junit test is "org.skriptlang.skript.test.tests.syntaxes.events.EvtBlockTest"
+	assert material of event-block is oak stairs with "Broken block should be oak stairs"
+	complete objective "on break of material" for "org.skriptlang.skript.test.tests.syntaxes.events.EvtBlockTest"
+
+on break of oak_stairs[]:
+	junit test is "org.skriptlang.skript.test.tests.syntaxes.events.EvtBlockTest"
+	assert event-block is oak_stairs[] with "Broken block should be oak stairs"
+	complete objective "on break of blockdata" for "org.skriptlang.skript.test.tests.syntaxes.events.EvtBlockTest"
+
+on place:
+	junit test is "org.skriptlang.skript.test.tests.syntaxes.events.EvtBlockTest"
+	assert past event-block is air with "Past event-block should be air"
+	assert future event-block is dirt with "Future event-block should be dirt"
+	complete objective "on place" for "org.skriptlang.skript.test.tests.syntaxes.events.EvtBlockTest"
+
+on place of dirt:
+	junit test is "org.skriptlang.skript.test.tests.syntaxes.events.EvtBlockTest"
+	assert past event-block is air with "Past event-block should be air"
+	assert future event-block is dirt with "Future event-block should be dirt"
+	complete objective "on place of material" for "org.skriptlang.skript.test.tests.syntaxes.events.EvtBlockTest"
+
+on place of dirt[]:
+	junit test is "org.skriptlang.skript.test.tests.syntaxes.events.EvtBlockTest"
+	assert past event-block is air with "Past event-block should be air"
+	assert future event-block is dirt with "Future event-block should be dirt"
+	complete objective "on place of blockdata" for "org.skriptlang.skript.test.tests.syntaxes.events.EvtBlockTest"

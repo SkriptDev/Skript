@@ -1,25 +1,8 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.localization;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
+import ch.njol.skript.SkriptPlugin;
 import ch.njol.skript.config.Config;
 import ch.njol.skript.util.ExceptionUtils;
 import ch.njol.skript.util.FileUtils;
@@ -81,8 +64,8 @@ public class Language {
 			return value;
 		}
 
-		if (Skript.testing())
-			missingEntryError(key);
+//		if (Skript.testing())
+//			missingEntryError(key);
 		return null;
 	}
 	
@@ -199,7 +182,7 @@ public class Language {
 			}
 		}
 		HashMap<String, String> def = load(defaultIs, "default", false);
-		HashMap<String, String> en = load(englishIs, "english", addon == Skript.getAddonInstance());
+		HashMap<String, String> en = load(englishIs, "english", addon == SkriptPlugin.getInstance().getAddonInstance());
 
 		String v = def.get("version");
 		if (v == null)
@@ -221,7 +204,7 @@ public class Language {
 		name = "" + name.toLowerCase(Locale.ENGLISH);
 
 		localizedLanguage = new HashMap<>();
-		boolean exists = load(Skript.getAddonInstance(), name, true);
+		boolean exists = load(SkriptPlugin.getInstance().getAddonInstance(), name, true);
 		for (SkriptAddon addon : Skript.getAddons()) {
 			exists |= load(addon, name, false);
 		}
@@ -301,7 +284,7 @@ public class Language {
 			if (tryUpdate && (langVersion == null || Skript.getVersion().compareTo(new Version(langVersion)) != 0)) {
 				String langFileName = "lang/" + name + ".lang";
 
-				InputStream newConfigIn = Skript.getInstance().getResource(langFileName);
+				InputStream newConfigIn = SkriptPlugin.getInstance().getResource(langFileName);
 				if (newConfigIn == null) {
 					Skript.error("The lang file '" + name + ".lang' is outdated, but Skript couldn't find the newest version of it in its jar.");
 					return new HashMap<>();
@@ -309,7 +292,7 @@ public class Language {
 				Config newLangConfig = new Config(newConfigIn, "Skript.jar/" + langFileName, false, false, ":");
 				newConfigIn.close();
 
-				File langFile = new File(Skript.getInstance().getDataFolder(), langFileName);
+				File langFile = new File(SkriptPlugin.getInstance().getDataFolder(), langFileName);
 				if (!newLangConfig.compareValues(langConfig, "version")) {
 					File langFileBackup = FileUtils.backup(langFile);
 					newLangConfig.getMainNode().set("version", Skript.getVersion().toString());

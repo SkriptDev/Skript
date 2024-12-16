@@ -1,6 +1,7 @@
 package org.skriptlang.skript.test.tests.syntaxes.effects;
 
 import ch.njol.skript.test.runner.SkriptJUnitTest;
+import org.bukkit.entity.Pig;
 import org.junit.Test;
 
 public class EffCancelEventTest extends SkriptJUnitTest {
@@ -11,7 +12,7 @@ public class EffCancelEventTest extends SkriptJUnitTest {
 
 	@Test
 	public void test() {
-		spawnTestPig();
+		spawnTestEntity(Pig.class);
 	}
 
 }

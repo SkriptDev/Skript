@@ -1,26 +1,7 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptConfig;
-import ch.njol.skript.bukkitutil.ItemUtils;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -36,10 +17,8 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Targeted Block")
-@Description({
-	"The block at the crosshair. This regards all blocks that are not air as fully solid, e.g. torches will be like a solid stone block for this expression.",
-	"The actual target block will regard the actual hit box of the block."
-})
+@Description({"The block at the crosshair. This regards all blocks that are not air as fully solid, e.g. torches will be like a solid stone block for this expression.",
+	"The actual target block will regard the actual hit box of the block."})
 @Examples({
 	"set target block of player to stone",
 	"set target block of player to oak_stairs[waterlogged=true]",
@@ -55,7 +34,7 @@ public class ExprTargetedBlock extends PropertyExpression<LivingEntity, Block> {
 
 	static {
 		Skript.registerExpression(ExprTargetedBlock.class, Block.class, ExpressionType.COMBINED,
-				"[the] [actual:(actual[ly]|exact)] target[ed] block[s] [of %livingentities%]", "%livingentities%'[s] [actual:(actual[ly]|exact)] target[ed] block[s]");
+			"[the] [actual:(actual[ly]|exact)] target[ed] block[s] [of %livingentities%]", "%livingentities%'[s] [actual:(actual[ly]|exact)] target[ed] block[s]");
 	}
 
 	private boolean actual;
@@ -78,7 +57,7 @@ public class ExprTargetedBlock extends PropertyExpression<LivingEntity, Block> {
 			} else {
 				block = livingEntity.getTargetBlock(null, distance);
 			}
-			if (block != null && ItemUtils.isAir(block.getType()))
+			if (block != null && block.getType().isAir())
 				return null;
 			return block;
 		});

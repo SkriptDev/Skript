@@ -1,17 +1,6 @@
 package ch.njol.skript;
 
 import ch.njol.skript.classes.ClassInfo;
-import ch.njol.skript.classes.data.BukkitEventValues;
-import ch.njol.skript.classes.data.DefaultComparators;
-import ch.njol.skript.classes.data.DefaultConverters;
-import ch.njol.skript.classes.data.DefaultFunctions;
-import ch.njol.skript.classes.data.DefaultOperations;
-import ch.njol.skript.classes.data.JavaClasses;
-import ch.njol.skript.classes.data.SkriptClasses;
-import ch.njol.skript.classes.data.bukkit.BukkitClasses;
-import ch.njol.skript.command.Commands;
-import ch.njol.skript.doc.Documentation;
-import ch.njol.skript.events.EvtSkript;
 import ch.njol.skript.hooks.Hook;
 import ch.njol.skript.lang.Condition;
 import ch.njol.skript.lang.Effect;
@@ -29,67 +18,38 @@ import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.localization.Language;
 import ch.njol.skript.localization.Message;
 import ch.njol.skript.localization.PluralizingArgsMessage;
-import ch.njol.skript.log.BukkitLoggerFilter;
-import ch.njol.skript.log.CountingLogHandler;
-import ch.njol.skript.log.ErrorDescLogHandler;
 import ch.njol.skript.log.ErrorQuality;
 import ch.njol.skript.log.LogEntry;
-import ch.njol.skript.log.LogHandler;
 import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.log.Verbosity;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.registrations.EventValues;
-import ch.njol.skript.registrations.Feature;
-import ch.njol.skript.test.runner.EffObjectives;
-import ch.njol.skript.test.runner.SkriptJUnitTest;
-import ch.njol.skript.test.runner.SkriptTestEvent;
-import ch.njol.skript.test.runner.TestMode;
-import ch.njol.skript.test.runner.TestTracker;
-import ch.njol.skript.timings.SkriptTimings;
 import ch.njol.skript.update.ReleaseManifest;
 import ch.njol.skript.update.ReleaseStatus;
-import ch.njol.skript.update.UpdateManifest;
-import ch.njol.skript.util.Date;
 import ch.njol.skript.util.EmptyStacktraceException;
-import ch.njol.skript.util.ExceptionUtils;
-import ch.njol.skript.util.FileUtils;
 import ch.njol.skript.util.Getter;
-import ch.njol.skript.util.Task;
 import ch.njol.skript.util.Utils;
 import ch.njol.skript.util.Version;
-import ch.njol.skript.util.chat.BungeeConverter;
 import ch.njol.skript.util.chat.ChatMessages;
-import ch.njol.skript.variables.Variables;
 import ch.njol.util.Closeable;
 import ch.njol.util.Kleenean;
 import ch.njol.util.NullableChecker;
 import ch.njol.util.StringUtils;
 import ch.njol.util.coll.iterator.CheckedIterator;
-import ch.njol.util.coll.iterator.EnumerationIterable;
-import com.google.common.collect.Lists;
-import com.google.gson.Gson;
-import org.bstats.bukkit.Metrics;
+import io.papermc.paper.ServerBuildInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
-import org.junit.After;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
-import org.skriptlang.skript.bukkit.SkriptMetrics;
 import org.skriptlang.skript.lang.comparator.Comparator;
 import org.skriptlang.skript.lang.comparator.Comparators;
 import org.skriptlang.skript.lang.converter.Converter;
@@ -101,14 +61,8 @@ import org.skriptlang.skript.lang.structure.Structure;
 import org.skriptlang.skript.lang.structure.StructureInfo;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -116,21 +70,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
-
-// TODO meaningful error if someone uses an %expression with percent signs% outside of text or a variable
 
 /**
  * <b>Skript</b> - A Bukkit plugin to modify how Minecraft behaves without having to write a single line of code (You'll likely be writing some code though if you're reading this
@@ -157,34 +102,72 @@ import java.util.zip.ZipFile;
  * @see Comparators#registerComparator(Class, Class, Comparator)
  * @see Converters#registerConverter(Class, Class, Converter)
  */
-public final class Skript extends JavaPlugin implements Listener {
+public final class Skript implements Listener {
 
-	// ================ PLUGIN ================
+	private static Skript instance;
 
-	@Nullable
-	private static Skript instance = null;
+	private SkriptPlugin plugin;
 
-	private static boolean disabled = false;
-	private static boolean partDisabled = false;
-
-	public static Skript getInstance() {
-		final Skript i = instance;
-		if (i == null)
-			throw new IllegalStateException();
-		return i;
+	public Skript(SkriptPlugin plugin) {
+		if (instance != null) {
+			throw new IllegalStateException("Skript already initialized");
+		}
+		instance = this;
+		this.plugin = plugin;
 	}
+
+	/**
+	 * Get an instance of {@link Skript}
+	 *
+	 * @return Instance of Skript
+	 * @see #getSkriptPluginInstance()
+	 */
+	public static Skript getSkriptInstance() {
+		if (instance == null) {
+			throw new IllegalStateException("Skript has not initialized");
+		}
+		return instance;
+	}
+
+	/**
+	 * Gets an instance of {@link SkriptPlugin}
+	 *
+	 * @return Instance of SkriptPlugin
+	 * @deprecated Use {@link #getSkriptPluginInstance()} instead
+	 */
+	@Deprecated
+	public static SkriptPlugin getInstance() {
+		return getSkriptPluginInstance();
+	}
+
+	public static SkriptPlugin getSkriptPluginInstance() {
+		if (instance == null || instance.plugin == null) {
+			throw new IllegalStateException("Skript has not initialized");
+		}
+		return instance.plugin;
+	}
+
+	static final Set<Class<? extends Hook<?>>> disabledHookRegistrations = new HashSet<>();
+	static boolean finishedLoadingHooks = false;
+	@Nullable
+	static Version version = null;
+	public static final Message
+		message_invalid_reload = new Message("skript.invalid reload"),
+		message_finished_loading = new Message("skript.finished loading"),
+		message_no_errors = new Message("skript.no errors"),
+		message_no_scripts = new Message("skript.no scripts");
+	static final PluralizingArgsMessage message_scripts_loaded = new PluralizingArgsMessage("skript.scripts loaded");
+	@SuppressWarnings("null")
+	final static Collection<Closeable> closeOnDisable = Collections.synchronizedCollection(new ArrayList<>());
+	static boolean partDisabled = false;
 
 	/**
 	 * Current updater instance used by Skript.
 	 */
-	@Nullable
-	private SkriptUpdater updater;
 
-	public Skript() throws IllegalStateException {
-		if (instance != null)
-			throw new IllegalStateException("Cannot create multiple instances of Skript!");
-		instance = this;
-	}
+	@Deprecated(forRemoval = true)
+	// TODO this field will be replaced by a proper registry later
+	static @UnknownNullability ExperimentRegistry experimentRegistry;
 
 	private static Version minecraftVersion = new Version(666), UNKNOWN_VERSION = new Version(666);
 	private static ServerPlatform serverPlatform = ServerPlatform.BUKKIT_UNKNOWN; // Start with unknown... onLoad changes this
@@ -204,30 +187,15 @@ public final class Skript extends JavaPlugin implements Listener {
 		}
 	}
 
-	@Nullable
-	private static Version version = null;
-	@Deprecated(forRemoval = true) // TODO this field will be replaced by a proper registry later
-	private static @UnknownNullability ExperimentRegistry experimentRegistry;
-
 	public static Version getVersion() {
-		final Version v = version;
-		if (v == null)
-			throw new IllegalStateException();
-		return v;
+		return version;
 	}
-
-	public static final Message
-		m_invalid_reload = new Message("skript.invalid reload"),
-		m_finished_loading = new Message("skript.finished loading"),
-		m_no_errors = new Message("skript.no errors"),
-		m_no_scripts = new Message("skript.no scripts");
-	private static final PluralizingArgsMessage m_scripts_loaded = new PluralizingArgsMessage("skript.scripts loaded");
 
 	public static ServerPlatform getServerPlatform() {
 		if (classExists("net.glowstone.GlowServer")) {
-			return ServerPlatform.BUKKIT_GLOWSTONE; // Glowstone has timings too, so must check for it first
+			return ServerPlatform.BUKKIT_GLOWSTONE;
 		} else if (classExists("io.papermc.paper.ServerBuildInfo")) {
-			return ServerPlatform.BUKKIT_PAPER; // Could be Sponge, but it doesn't work at all at the moment
+			return ServerPlatform.BUKKIT_PAPER;
 		} else if (classExists("org.spigotmc.SpigotConfig")) {
 			return ServerPlatform.BUKKIT_SPIGOT;
 		} else if (classExists("org.bukkit.craftbukkit.CraftServer") || classExists("org.bukkit.craftbukkit.Main")) {
@@ -241,14 +209,15 @@ public final class Skript extends JavaPlugin implements Listener {
 	/**
 	 * Checks if server software and Minecraft version are supported.
 	 * Prints errors or warnings to console if something is wrong.
+	 *
 	 * @return Whether Skript can continue loading at all.
 	 */
-	private static boolean checkServerPlatform() {
+	static boolean checkServerPlatform() {
 		String bukkitV = Bukkit.getBukkitVersion();
 		Matcher m = Pattern.compile("\\d+\\.\\d+(\\.\\d+)?").matcher(bukkitV);
 		if (!m.find()) {
 			Skript.error("The Bukkit version '" + bukkitV + "' does not contain a version number which is required for Skript to enable or disable certain features. " +
-					"Skript will still work, but you might get random errors if you use features that are not available in your version of Bukkit.");
+				"Skript will still work, but you might get random errors if you use features that are not available in your version of Bukkit.");
 			minecraftVersion = new Version(666, 0, 0);
 		} else {
 			minecraftVersion = new Version("" + m.group());
@@ -280,19 +249,17 @@ public final class Skript extends JavaPlugin implements Listener {
 			}
 		} else if (!serverPlatform.supported) {
 			Skript.warning("This server platform (" + serverPlatform.name + ") is not supported by Skript.");
-			Skript.warning("It will still probably work, but if it does not, you are on your own.");
-			Skript.warning("Skript officially supports Paper and Spigot.");
+			Skript.warning("It may still work, but if it does not, you are on your own.");
+			Skript.warning("Skript officially supports Paper and its forks.");
 		}
 
 		// If nothing got triggered, everything is probably ok
 		return true;
 	}
 
-	private static final Set<Class<? extends Hook<?>>> disabledHookRegistrations = new HashSet<>();
-	private static boolean finishedLoadingHooks = false;
-
 	/**
 	 * Checks whether a hook has been enabled.
+	 *
 	 * @param hook The hook to check.
 	 * @return Whether the hook is enabled.
 	 * @see #disableHookRegistration(Class[])
@@ -312,6 +279,7 @@ public final class Skript extends JavaPlugin implements Listener {
 	/**
 	 * Disables the registration for the given hook classes. If Skript has been enabled, this method
 	 * will throw an API exception. It should be used in something like {@link JavaPlugin#onLoad()}.
+	 *
 	 * @param hooks The hooks to disable the registration of.
 	 * @see #isHookEnabled(Class)
 	 */
@@ -327,13 +295,17 @@ public final class Skript extends JavaPlugin implements Listener {
 	 * The folder containing all Scripts.
 	 * Never reference this field directly. Use {@link #getScriptsFolder()}.
 	 */
-	private File scriptsFolder;
+	File scriptsFolder;
 
 	/**
 	 * @return The manager for experimental, optional features.
 	 */
 	public static ExperimentRegistry experiments() {
 		return experimentRegistry;
+	}
+
+	public static void setInstance(Skript instance) {
+		Skript.instance = instance;
 	}
 
 	/**
@@ -346,495 +318,8 @@ public final class Skript extends JavaPlugin implements Listener {
 		return scriptsFolder;
 	}
 
-	@Override
-	public void onEnable() {
-		Bukkit.getPluginManager().registerEvents(this, this);
-		if (disabled) {
-			Skript.error(m_invalid_reload.toString());
-			setEnabled(false);
-			return;
-		}
-
-		handleJvmArguments(); // JVM arguments
-
-		version = new Version("" + getDescription().getVersion()); // Skript version
-
-		// Start the updater
-		// Note: if config prohibits update checks, it will NOT do network connections
-		try {
-			this.updater = new SkriptUpdater();
-		} catch (Exception e) {
-			Skript.exception(e, "Update checker could not be initialized.");
-		}
-		experimentRegistry = new ExperimentRegistry(this);
-		Feature.registerAll(getAddonInstance(), experimentRegistry);
-
-		if (!getDataFolder().isDirectory())
-			getDataFolder().mkdirs();
-
-		scriptsFolder = new File(getDataFolder(), SCRIPTSFOLDER);
-		File config = new File(getDataFolder(), "config.sk");
-		File lang = new File(getDataFolder(), "lang");
-		if (!scriptsFolder.isDirectory() || !config.exists() || !lang.exists()) {
-			ZipFile f = null;
-			try {
-				boolean populateExamples = false;
-				if (!scriptsFolder.isDirectory()) {
-					if (!scriptsFolder.mkdirs())
-						throw new IOException("Could not create the directory " + scriptsFolder);
-					populateExamples = true;
-				}
-
-				boolean populateLanguageFiles = false;
-				if (!lang.isDirectory()) {
-					if (!lang.mkdirs())
-						throw new IOException("Could not create the directory " + lang);
-					populateLanguageFiles = true;
-				}
-
-				f = new ZipFile(getFile());
-				for (ZipEntry e : new EnumerationIterable<ZipEntry>(f.entries())) {
-					if (e.isDirectory())
-						continue;
-					File saveTo = null;
-					if (populateExamples && e.getName().startsWith(SCRIPTSFOLDER + "/")) {
-						String fileName = e.getName().substring(e.getName().indexOf("/") + 1);
-						// All example scripts must be disabled for jar security.
-						if (!fileName.startsWith(ScriptLoader.DISABLED_SCRIPT_PREFIX))
-							fileName = ScriptLoader.DISABLED_SCRIPT_PREFIX + fileName;
-						saveTo = new File(scriptsFolder, fileName);
-					} else if (populateLanguageFiles
-							&& e.getName().startsWith("lang/")
-							&& !e.getName().endsWith("default.lang")) {
-						String fileName = e.getName().substring(e.getName().lastIndexOf("/") + 1);
-						saveTo = new File(lang, fileName);
-					} else if (e.getName().equals("config.sk")) {
-						if (!config.exists())
-							saveTo = config;
-					}
-					if (saveTo != null) {
-						InputStream in = f.getInputStream(e);
-						try {
-							assert in != null;
-							FileUtils.save(in, saveTo);
-						} finally {
-							in.close();
-						}
-					}
-				}
-				info("Successfully generated the config and the example scripts.");
-			} catch (ZipException ignored) {} catch (IOException e) {
-				error("Error generating the default files: " + ExceptionUtils.toString(e));
-			} finally {
-				if (f != null) {
-					try {
-						f.close();
-					} catch (IOException ignored) {}
-				}
-			}
-		}
-
-		// initialize the Skript addon instance
-		getAddonInstance();
-
-		// Load classes which are always safe to use
-		new JavaClasses(); // These may be needed in configuration
-
-		// Check server software, Minecraft version, etc.
-		if (!checkServerPlatform()) {
-			disabled = true; // Nothing was loaded, nothing needs to be unloaded
-			setEnabled(false); // Cannot continue; user got errors in console to tell what happened
-			return;
-		}
-
-		// And then not-so-safe classes
-		Throwable classLoadError = null;
-		try {
-			new SkriptClasses();
-			BukkitClasses.init();
-		} catch (Throwable e) {
-			classLoadError = e;
-		}
-
-		// Config must be loaded after Java and Skript classes are parseable
-		// ... but also before platform check, because there is a config option to ignore some errors
-		SkriptConfig.load();
-
-		// Now override the verbosity if test mode is enabled
-		if (TestMode.VERBOSITY != null)
-			SkriptLogger.setVerbosity(Verbosity.valueOf(TestMode.VERBOSITY));
-
-		// Use the updater, now that it has been configured to (not) do stuff
-		if (updater != null) {
-			CommandSender console = Bukkit.getConsoleSender();
-			assert console != null;
-			assert updater != null;
-			updater.updateCheck(console);
-		}
-
-		// If loading can continue (platform ok), check for potentially thrown error
-		if (classLoadError != null) {
-			exception(classLoadError);
-			setEnabled(false);
-			return;
-		}
-
-		PluginCommand skriptCommand = getCommand("skript");
-		assert skriptCommand != null; // It is defined, unless build is corrupted or something like that
-		skriptCommand.setExecutor(new SkriptCommand());
-		skriptCommand.setTabCompleter(new SkriptCommandTabCompleter());
-
-		// Load Bukkit stuff. It is done after platform check, because something might be missing!
-		new BukkitEventValues();
-
-		new DefaultComparators();
-		new DefaultConverters();
-		new DefaultFunctions();
-		new DefaultOperations();
-
-		ChatMessages.registerListeners();
-
-		try {
-			getAddonInstance().loadClasses("ch.njol.skript",
-				"conditions", "effects", "events", "expressions", "entity", "sections", "structures");
-		} catch (final Exception e) {
-			exception(e, "Could not load required .class files: " + e.getLocalizedMessage());
-			setEnabled(false);
-			return;
-		}
-
-		Commands.registerListeners();
-
-		if (logNormal())
-			info(" " + Language.get("skript.copyright"));
-
-		final long tick = testing() ? Bukkit.getWorlds().get(0).getFullTime() : 0;
-		Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-			@SuppressWarnings("synthetic-access")
-			@Override
-			public void run() {
-				assert Bukkit.getWorlds().get(0).getFullTime() == tick;
-
-				// Load hooks from Skript jar
-				try {
-					try (JarFile jar = new JarFile(getFile())) {
-						for (JarEntry e : new EnumerationIterable<>(jar.entries())) {
-							if (e.getName().startsWith("ch/njol/skript/hooks/") && e.getName().endsWith("Hook.class") && StringUtils.count("" + e.getName(), '/') <= 5) {
-								final String c = e.getName().replace('/', '.').substring(0, e.getName().length() - ".class".length());
-								try {
-									Class<?> hook = Class.forName(c, true, getClassLoader());
-									if (Hook.class.isAssignableFrom(hook) && !Modifier.isAbstract(hook.getModifiers()) && isHookEnabled((Class<? extends Hook<?>>) hook)) {
-										hook.getDeclaredConstructor().setAccessible(true);
-										hook.getDeclaredConstructor().newInstance();
-									}
-								} catch (ClassNotFoundException ex) {
-									Skript.exception(ex, "Cannot load class " + c);
-								} catch (ExceptionInInitializerError err) {
-									Skript.exception(err.getCause(), "Class " + c + " generated an exception while loading");
-								} catch (Exception ex) {
-									Skript.exception(ex, "Exception initializing hook: " + c);
-								}
-							}
-						}
-					}
-				} catch (IOException e) {
-					error("Error while loading plugin hooks" + (e.getLocalizedMessage() == null ? "" : ": " + e.getLocalizedMessage()));
-					Skript.exception(e);
-				}
-				finishedLoadingHooks = true;
-
-				if (TestMode.ENABLED) {
-					info("Preparing Skript for testing...");
-					tainted = true;
-					try {
-						getAddonInstance().loadClasses("ch.njol.skript.test.runner");
-						if (TestMode.JUNIT)
-							getAddonInstance().loadClasses("org.skriptlang.skript.test.junit.registration");
-					} catch (IOException e) {
-						Skript.exception("Failed to load testing environment.");
-						Bukkit.getServer().shutdown();
-					}
-				}
-
-				stopAcceptingRegistrations();
-
-
-				Documentation.generate(); // TODO move to test classes?
-
-				// Variable loading
-				if (logNormal())
-					info("Loading variables...");
-				long vls = System.currentTimeMillis();
-
-				LogHandler h = SkriptLogger.startLogHandler(new ErrorDescLogHandler() {
-					@Override
-					public LogResult log(final LogEntry entry) {
-						super.log(entry);
-						if (entry.level.intValue() >= Level.SEVERE.intValue()) {
-							logEx(entry.message); // no [Skript] prefix
-							return LogResult.DO_NOT_LOG;
-						} else {
-							return LogResult.LOG;
-						}
-					}
-
-					@Override
-					protected void beforeErrors() {
-						logEx();
-						logEx("===!!!=== Skript variable load error ===!!!===");
-						logEx("Unable to load (all) variables:");
-					}
-
-					@Override
-					protected void afterErrors() {
-						logEx();
-						logEx("Skript will work properly, but old variables might not be available at all and new ones may or may not be saved until Skript is able to create a backup of the old file and/or is able to connect to the database (which requires a restart of Skript)!");
-						logEx();
-					}
-				});
-
-				try (CountingLogHandler c = new CountingLogHandler(SkriptLogger.SEVERE).start()) {
-					if (!Variables.load())
-						if (c.getCount() == 0)
-							error("(no information available)");
-				} finally {
-					h.stop();
-				}
-
-				long vld = System.currentTimeMillis() - vls;
-				if (logNormal())
-					info("Loaded " + Variables.numVariables() + " variables in " + ((vld / 100) / 10.) + " seconds");
-
-				// Skript initialization done
-				debug("Early init done");
-
-				if (TestMode.ENABLED) {
-					Bukkit.getScheduler().runTaskLater(Skript.this, () -> info("Skript testing environment enabled, starting soon..."), 1);
-					// Ignore late init (scripts, etc.) in test mode
-					Bukkit.getScheduler().runTaskLater(Skript.this, () -> {
-						// Delay is in Minecraft ticks.
-						long shutdownDelay = 0;
-						if (TestMode.GEN_DOCS) {
-							Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "skript gen-docs");
-						} else if (TestMode.DEV_MODE) { // Developer controlled environment.
-							info("Test development mode enabled. Test scripts are at " + TestMode.TEST_DIR);
-							return;
-						} else {
-							info("Loading all tests from " + TestMode.TEST_DIR);
-
-							// Treat parse errors as fatal testing failure
-							CountingLogHandler errorCounter = new CountingLogHandler(Level.SEVERE);
-							try {
-								errorCounter.start();
-								File testDir = TestMode.TEST_DIR.toFile();
-								assert testDir != null;
-								ScriptLoader.loadScripts(testDir, errorCounter);
-							} finally {
-								errorCounter.stop();
-							}
-
-							Bukkit.getPluginManager().callEvent(new SkriptTestEvent());
-							if (errorCounter.getCount() > 0) {
-								TestTracker.testStarted("parse scripts");
-								TestTracker.testFailed(errorCounter.getCount() + " error(s) found");
-							}
-							if (errored) { // Check for exceptions thrown while script was executing
-								TestTracker.testStarted("run scripts");
-								TestTracker.testFailed("exception was thrown during execution");
-							}
-							if (TestMode.JUNIT) {
-								info("Running all JUnit tests...");
-								long milliseconds = 0, tests = 0, fails = 0, ignored = 0, size = 0;
-								try {
-									List<Class<?>> classes = Lists.newArrayList(Utils.getClasses(Skript.getInstance(), "org.skriptlang.skript.test", "tests"));
-									// Don't attempt to run inner/anonymous classes as tests
-									classes.removeIf(Class::isAnonymousClass);
-									classes.removeIf(Class::isLocalClass);
-									// Test that requires package access. This is only present when compiling with src/test.
-									classes.add(Class.forName("ch.njol.skript.variables.FlatFileStorageTest"));
-									size = classes.size();
-									for (Class<?> clazz : classes) {
-										// Reset class SkriptJUnitTest which stores test requirements.
-										String test = clazz.getName();
-										SkriptJUnitTest.setCurrentJUnitTest(test);
-										SkriptJUnitTest.setShutdownDelay(0);
-
-										info("Running JUnit test '" + test + "'");
-										Result junit = JUnitCore.runClasses(clazz);
-										TestTracker.testStarted("JUnit: '" + test + "'");
-
-										/**
-										 * Usage of @After is pointless if the JUnit class requires delay. As the @After will happen instantly.
-										 * The JUnit must override the 'cleanup' method to avoid Skript automatically cleaning up the test data.
-										 */
-										boolean overrides = false;
-										for (Method method : clazz.getDeclaredMethods()) {
-											if (!method.isAnnotationPresent(After.class))
-												continue;
-											if (SkriptJUnitTest.getShutdownDelay() > 1)
-												warning("Using @After in JUnit classes, happens instantaneously, and JUnit class '" + test + "' requires a delay. Do your test cleanup in the script junit file or 'cleanup' method.");
-											if (method.getName().equals("cleanup"))
-												overrides = true;
-										}
-										if (SkriptJUnitTest.getShutdownDelay() > 1 && !overrides)
-											error("The JUnit class '" + test + "' does not override the method 'cleanup' thus the test data will instantly be cleaned up. " +
-													"This JUnit test requires longer shutdown time: " + SkriptJUnitTest.getShutdownDelay());
-
-										// Collect all data from the current JUnit test.
-										shutdownDelay = Math.max(shutdownDelay, SkriptJUnitTest.getShutdownDelay());
-										tests += junit.getRunCount();
-										milliseconds += junit.getRunTime();
-										ignored += junit.getIgnoreCount();
-										fails += junit.getFailureCount();
-
-										// If JUnit failures are present, add them to the TestTracker.
-										junit.getFailures().forEach(failure -> {
-											String message = failure.getMessage() == null ? "" : " " + failure.getMessage();
-											TestTracker.JUnitTestFailed(test, message);
-											Skript.exception(failure.getException(), "JUnit test '" + failure.getTestHeader() + " failed.");
-										});
-										if (SkriptJUnitTest.class.isAssignableFrom(clazz))
-											((SkriptJUnitTest) clazz.getConstructor().newInstance()).cleanup();
-										SkriptJUnitTest.clearJUnitTest();
-									}
-								} catch (IOException e) {
-									Skript.exception(e, "Failed to execute JUnit runtime tests.");
-								} catch (ClassNotFoundException e) {
-									// Should be the Skript test jar gradle task.
-									assert false : "Class 'ch.njol.skript.variables.FlatFileStorageTest' was not found.";
-								} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-									Skript.exception(e, "Failed to initalize test JUnit classes.");
-								}
-								if (ignored > 0)
-									Skript.warning("There were " + ignored + " ignored test cases! This can mean they are not properly setup in order in that class!");
-
-								info("Completed " + tests + " JUnit tests in " + size + " classes with " + fails + " failures in " + milliseconds + " milliseconds.");
-							}
-						}
-						double display = shutdownDelay / 20;
-						info("Testing done, shutting down the server in " + display + " second" + (display <= 1D ? "" : "s") + "...");
-						// Delay server shutdown to stop the server from crashing because the current tick takes a long time due to all the tests
-						Bukkit.getScheduler().runTaskLater(Skript.this, () -> {
-							if (TestMode.JUNIT && !EffObjectives.isJUnitComplete())
-								EffObjectives.fail();
-
-							info("Collecting results to " + TestMode.RESULTS_FILE);
-							String results = new Gson().toJson(TestTracker.collectResults());
-							try {
-								Files.write(TestMode.RESULTS_FILE, results.getBytes(StandardCharsets.UTF_8));
-							} catch (IOException e) {
-								Skript.exception(e, "Failed to write test results.");
-							}
-
-							Bukkit.getServer().shutdown();
-						}, shutdownDelay);
-					}, 100);
-				}
-
-				Skript.metrics = new Metrics(Skript.getInstance(), 722); // 722 is our bStats plugin ID
-				SkriptMetrics.setupMetrics(Skript.metrics);
-
-				/*
-				 * Start loading scripts
-				 */
-				Date start = new Date();
-				CountingLogHandler logHandler = new CountingLogHandler(Level.SEVERE);
-
-				File scriptsFolder = getScriptsFolder();
-				ScriptLoader.updateDisabledScripts(scriptsFolder.toPath());
-				ScriptLoader.loadScripts(scriptsFolder, logHandler)
-					.thenAccept(scriptInfo -> {
-						try {
-							if (logHandler.getCount() == 0)
-								Skript.info(m_no_errors.toString());
-							if (scriptInfo.files == 0)
-								Skript.warning(m_no_scripts.toString());
-							if (Skript.logNormal() && scriptInfo.files > 0)
-								Skript.info(m_scripts_loaded.toString(
-									scriptInfo.files,
-									scriptInfo.structures,
-									start.difference(new Date())
-								));
-
-							Skript.info(m_finished_loading.toString());
-
-							// EvtSkript.onSkriptStart should be called on main server thread
-							if (!ScriptLoader.isAsync()) {
-								EvtSkript.onSkriptStart();
-
-								// Suppresses the "can't keep up" warning after loading all scripts
-								// Only for non-asynchronous loading
-								Filter filter = record -> {
-									if (record == null)
-										return false;
-									return record.getMessage() == null
-										|| !record.getMessage().toLowerCase(Locale.ENGLISH).startsWith("can't keep up!");
-								};
-								BukkitLoggerFilter.addFilter(filter);
-								Bukkit.getScheduler().scheduleSyncDelayedTask(
-									Skript.this,
-									() -> BukkitLoggerFilter.removeFilter(filter),
-									1);
-							} else {
-								Bukkit.getScheduler().scheduleSyncDelayedTask(Skript.this,
-									EvtSkript::onSkriptStart);
-							}
-						} catch (Exception e) {
-							// Something went wrong, we need to make sure the exception is printed
-							throw Skript.exception(e);
-						}
-					});
-
-			}
-		});
-
-		Bukkit.getPluginManager().registerEvents(new Listener() {
-			@EventHandler
-			public void onJoin(final PlayerJoinEvent e) {
-				if (e.getPlayer().hasPermission("skript.admin")) {
-					new Task(Skript.this, 0) {
-						@Override
-						public void run() {
-							Player p = e.getPlayer();
-							SkriptUpdater updater = getUpdater();
-							if (updater == null)
-								return;
-
-							// Don't actually check for updates to avoid breaking Github rate limit
-							if (updater.getReleaseStatus() == ReleaseStatus.OUTDATED) {
-								// Last check indicated that an update is available
-								UpdateManifest update = updater.getUpdateManifest();
-								assert update != null; // Because we just checked that one is available
-								Skript.info(p, "" + SkriptUpdater.m_update_available.toString(update.id, Skript.getVersion()));
-								p.spigot().sendMessage(BungeeConverter.convert(ChatMessages.parseToArray(
-										"Download it at: <aqua><u><link:" + update.downloadUrl + ">" + update.downloadUrl)));
-							}
-						}
-					};
-				}
-			}
-		}, this);
-
-		// Tell Timings that we are here!
-		SkriptTimings.setSkript(this);
-	}
-
-	/**
-	 * Handles -Dskript.stuff command line arguments.
-	 */
-	private void handleJvmArguments() {
-		// Unused
-	}
-
 	public static Version getMinecraftVersion() {
 		return minecraftVersion;
-	}
-
-	/**
-	 * @return Whether this server is running CraftBukkit
-	 */
-	public static boolean isRunningCraftBukkit() {
-		return serverPlatform == ServerPlatform.BUKKIT_CRAFTBUKKIT;
 	}
 
 	/**
@@ -862,18 +347,6 @@ public final class Skript extends JavaPlugin implements Listener {
 	}
 
 	/**
-	 * Used to test whether certain Bukkit features are supported.
-	 *
-	 * @param className
-	 * @return Whether the given class exists.
-	 * @deprecated use {@link #classExists(String)}
-	 */
-	@Deprecated
-	public static boolean supports(final String className) {
-		return classExists(className);
-	}
-
-	/**
 	 * Tests whether a given class exists in the classpath.
 	 *
 	 * @param className The {@link Class#getCanonicalName() canonical name} of the class
@@ -891,8 +364,8 @@ public final class Skript extends JavaPlugin implements Listener {
 	/**
 	 * Tests whether a method exists in the given class.
 	 *
-	 * @param c The class
-	 * @param methodName The name of the method
+	 * @param c              The class
+	 * @param methodName     The name of the method
 	 * @param parameterTypes The parameter types of the method
 	 * @return Whether the given method exists.
 	 */
@@ -912,10 +385,10 @@ public final class Skript extends JavaPlugin implements Listener {
 	 * <p>
 	 * Note that this method doesn't work properly if multiple methods with the same name and parameters exist but have different return types.
 	 *
-	 * @param c The class
-	 * @param methodName The name of the method
+	 * @param c              The class
+	 * @param methodName     The name of the method
 	 * @param parameterTypes The parameter types of the method
-	 * @param returnType The expected return type
+	 * @param returnType     The expected return type
 	 * @return Whether the given method exists.
 	 */
 	public static boolean methodExists(final Class<?> c, final String methodName, final Class<?>[] parameterTypes, final Class<?> returnType) {
@@ -932,7 +405,7 @@ public final class Skript extends JavaPlugin implements Listener {
 	/**
 	 * Tests whether a field exists in the given class.
 	 *
-	 * @param c The class
+	 * @param c         The class
 	 * @param fieldName The name of the field
 	 * @return Whether the given field exists.
 	 */
@@ -947,76 +420,12 @@ public final class Skript extends JavaPlugin implements Listener {
 		}
 	}
 
-	@Nullable
-	static Metrics metrics;
-
-	@Nullable
-	public static Metrics getMetrics() {
-		return metrics;
-	}
-
-	@SuppressWarnings("null")
-	private final static Collection<Closeable> closeOnDisable = Collections.synchronizedCollection(new ArrayList<Closeable>());
-
-	/**
-	 * Registers a Closeable that should be closed when this plugin is disabled.
-	 * <p>
-	 * All registered Closeables will be closed after all scripts have been stopped.
-	 *
-	 * @param closeable
-	 */
-	public static void closeOnDisable(final Closeable closeable) {
-		closeOnDisable.add(closeable);
-	}
-
-	@SuppressWarnings("unused")
-	@EventHandler
-	public void onPluginDisable(PluginDisableEvent event) {
-		Plugin plugin = event.getPlugin();
-		PluginDescriptionFile descriptionFile = plugin.getDescription();
-		if (descriptionFile.getDepend().contains("Skript") || descriptionFile.getSoftDepend().contains("Skript")) {
-			// An addon being disabled, check if server is being stopped
-			if (Bukkit.getServer().isStopping()) {
-				beforeDisable();
-			}
-		}
-	}
-
-	private void beforeDisable() {
-		partDisabled = true;
-		EvtSkript.onSkriptStop(); // TODO [code style] warn user about delays in Skript stop events
-
-		ScriptLoader.unloadScripts(ScriptLoader.getLoadedScripts());
-	}
-
-	@Override
-	public void onDisable() {
-		if (disabled)
-			return;
-		disabled = true;
-		this.experimentRegistry = null;
-
-		if (!partDisabled) {
-			beforeDisable();
-		}
-
-		Bukkit.getScheduler().cancelTasks(this);
-
-		for (Closeable c : closeOnDisable) {
-			try {
-				c.close();
-			} catch (final Exception e) {
-				Skript.exception(e, "An error occurred while shutting down.", "This might or might not cause any issues.");
-			}
-		}
-	}
-
 	// ================ CONSTANTS, OPTIONS & OTHER ================
 
 	public final static String SCRIPTSFOLDER = "scripts";
 
 	public static void outdatedError() {
-		error("Skript v" + getInstance().getDescription().getVersion() + " is not fully compatible with Bukkit " + Bukkit.getVersion() + ". Some feature(s) will be broken until you update Skript.");
+		error("Skript v" + SkriptPlugin.getInstance().getDescription().getVersion() + " is not fully compatible with Bukkit " + Bukkit.getVersion() + ". Some feature(s) will be broken until you update Skript.");
 	}
 
 	public static void outdatedError(final Exception e) {
@@ -1033,7 +442,7 @@ public final class Skript extends JavaPlugin implements Listener {
 	 * <pre>
 	 * Math.abs(a - b) &lt; Skript.EPSILON
 	 * </pre>
-	 *
+	 * <p>
 	 * or whether a location is within a specific radius of another location:
 	 *
 	 * <pre>
@@ -1049,15 +458,6 @@ public final class Skript extends JavaPlugin implements Listener {
 	 * @see #EPSILON
 	 */
 	public final static double EPSILON_MULT = 1.00001;
-
-	/**
-	 * The maximum ID a block can have in Minecraft.
-	 */
-	public final static int MAXBLOCKID = 255;
-	/**
-	 * The maximum data value of Minecraft, i.e. Short.MAX_VALUE - Short.MIN_VALUE.
-	 */
-	public final static int MAXDATAVALUE = Short.MAX_VALUE - Short.MIN_VALUE;
 
 	// TODO localise Infinity, -Infinity, NaN (and decimal point?)
 	public static String toString(final double n) {
@@ -1085,6 +485,7 @@ public final class Skript extends JavaPlugin implements Listener {
 	private static boolean acceptRegistrations = true;
 
 	public static boolean isAcceptRegistrations() {
+		SkriptPlugin instance = SkriptPlugin.getInstance();
 		if (instance == null)
 			throw new IllegalStateException("Skript was never loaded");
 		return acceptRegistrations && instance.isEnabled();
@@ -1095,7 +496,7 @@ public final class Skript extends JavaPlugin implements Listener {
 			throw new SkriptAPIException("Registration can only be done during plugin initialization");
 	}
 
-	private static void stopAcceptingRegistrations() {
+	static void stopAcceptingRegistrations() {
 		Converters.createChainedConverters();
 
 		acceptRegistrations = false;
@@ -1137,20 +538,6 @@ public final class Skript extends JavaPlugin implements Listener {
 		return Collections.unmodifiableCollection(addons.values());
 	}
 
-	@Nullable
-	private static SkriptAddon addon;
-
-	/**
-	 * @return A {@link SkriptAddon} representing Skript.
-	 */
-	public static SkriptAddon getAddonInstance() {
-		if (addon == null) {
-			addon = new SkriptAddon(Skript.getInstance());
-			addon.setLanguageFileDirectory("lang");
-		}
-		return addon;
-	}
-
 	// ================ CONDITIONS & EFFECTS & SECTIONS ================
 
 	private static final Collection<SyntaxElementInfo<? extends Condition>> conditions = new ArrayList<>(50);
@@ -1162,7 +549,7 @@ public final class Skript extends JavaPlugin implements Listener {
 	 * registers a {@link Condition}.
 	 *
 	 * @param condition The condition's class
-	 * @param patterns Skript patterns to match this condition
+	 * @param patterns  Skript patterns to match this condition
 	 */
 	public static <E extends Condition> void registerCondition(final Class<E> condition, final String... patterns) throws IllegalArgumentException {
 		checkAcceptRegistrations();
@@ -1175,7 +562,7 @@ public final class Skript extends JavaPlugin implements Listener {
 	/**
 	 * Registers an {@link Effect}.
 	 *
-	 * @param effect The effect's class
+	 * @param effect   The effect's class
 	 * @param patterns Skript patterns to match this effect
 	 */
 	public static <E extends Effect> void registerEffect(final Class<E> effect, final String... patterns) throws IllegalArgumentException {
@@ -1189,7 +576,7 @@ public final class Skript extends JavaPlugin implements Listener {
 	/**
 	 * Registers a {@link Section}.
 	 *
-	 * @param section The section's class
+	 * @param section  The section's class
 	 * @param patterns Skript patterns to match this section
 	 * @see Section
 	 */
@@ -1225,10 +612,10 @@ public final class Skript extends JavaPlugin implements Listener {
 	/**
 	 * Registers an expression.
 	 *
-	 * @param c The expression's class
+	 * @param c          The expression's class
 	 * @param returnType The superclass of all values returned by the expression
-	 * @param type The expression's {@link ExpressionType type}. This is used to determine in which order to try to parse expressions.
-	 * @param patterns Skript patterns that match this expression
+	 * @param type       The expression's {@link ExpressionType type}. This is used to determine in which order to try to parse expressions.
+	 * @param patterns   Skript patterns that match this expression
 	 * @throws IllegalArgumentException if returnType is not a normal class
 	 */
 	public static <E extends Expression<T>, T> void registerExpression(final Class<E> c, final Class<T> returnType, final ExpressionType type, final String... patterns) throws IllegalArgumentException {
@@ -1272,24 +659,24 @@ public final class Skript extends JavaPlugin implements Listener {
 	/**
 	 * Registers an event.
 	 *
-	 * @param name Capitalised name of the event without leading "On" which is added automatically (Start the name with an asterisk to prevent this). Used for error messages and
-	 *            the documentation.
-	 * @param c The event's class
-	 * @param event The Bukkit event this event applies to
+	 * @param name     Capitalised name of the event without leading "On" which is added automatically (Start the name with an asterisk to prevent this). Used for error messages and
+	 *                 the documentation.
+	 * @param c        The event's class
+	 * @param event    The Bukkit event this event applies to
 	 * @param patterns Skript patterns to match this event
 	 * @return A SkriptEventInfo representing the registered event. Used to generate Skript's documentation.
 	 */
 	@SuppressWarnings("unchecked")
 	public static <E extends SkriptEvent> SkriptEventInfo<E> registerEvent(String name, Class<E> c, Class<? extends Event> event, String... patterns) {
-		return registerEvent(name, c, new Class[] {event}, patterns);
+		return registerEvent(name, c, new Class[]{event}, patterns);
 	}
 
 	/**
 	 * Registers an event.
 	 *
-	 * @param name The name of the event, used for error messages
-	 * @param c The event's class
-	 * @param events The Bukkit events this event applies to
+	 * @param name     The name of the event, used for error messages
+	 * @param c        The event's class
+	 * @param events   The Bukkit events this event applies to
 	 * @param patterns Skript patterns to match this event
 	 * @return A SkriptEventInfo representing the registered event. Used to generate Skript's documentation.
 	 */
@@ -1467,12 +854,12 @@ public final class Skript extends JavaPlugin implements Listener {
 	/**
 	 * Set by Skript when doing something that users shouldn't do.
 	 */
-	private static boolean tainted = false;
+	static boolean tainted = false;
 
 	/**
 	 * Set to true when an exception is thrown.
 	 */
-	private static boolean errored = false;
+	static boolean errored = false;
 
 	/**
 	 * Mark that an exception has occurred at some point during runtime.
@@ -1486,7 +873,7 @@ public final class Skript extends JavaPlugin implements Listener {
 	 * Used if something happens that shouldn't happen
 	 *
 	 * @param cause exception that shouldn't occur
-	 * @param info Description of the error and additional information
+	 * @param info  Description of the error and additional information
 	 * @return an EmptyStacktraceException to throw if code execution should terminate.
 	 */
 	public static EmptyStacktraceException exception(@Nullable Throwable cause, final @Nullable Thread thread, final @Nullable TriggerItem item, final String... info) {
@@ -1533,32 +920,26 @@ public final class Skript extends JavaPlugin implements Listener {
 		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 		Set<PluginDescriptionFile> stackPlugins = new HashSet<>();
 		for (StackTraceElement s : stackTrace) { // Look through stack trace
-			for (Entry<String,PluginDescriptionFile> e : pluginPackages.entrySet()) { // Look through plugins
+			for (Entry<String, PluginDescriptionFile> e : pluginPackages.entrySet()) { // Look through plugins
 				if (s.getClassName().contains(e.getKey())) // Hey, is this plugin in that stack trace?
 					stackPlugins.add(e.getValue()); // Yes? Add it to list
 			}
 		}
 
-		SkriptUpdater updater = Skript.getInstance().getUpdater();
+		SkriptUpdater updater = Skript.getSkriptInstance().getUpdater();
 
 		// Check if server platform is supported
 		if (tainted) {
 			logEx("Skript is running with developer command-line options.");
 			logEx("If you are not a developer, consider disabling them.");
-		} else if (getInstance().getDescription().getVersion().contains("nightly")) {
+		} else if (SkriptPlugin.getInstance().getDescription().getVersion().contains("nightly")) {
 			logEx("You're running a (buggy) nightly version of Skript.");
 			logEx("If this is not a test server, switch to a more stable release NOW!");
 			logEx("Your players are unlikely to appreciate crashes and/or data loss due to Skript bugs.");
 			logEx("");
 			logEx("Just testing things? Good. Please report this bug, so that we can fix it before a stable release.");
 			logEx("Issue tracker: " + issuesUrl);
-		} else if (!isRunningMinecraft(1, 9)) {
-			logEx("You are running an outdated Minecraft version not supported by Skript.");
-			logEx("Please update to Minecraft 1.9.4 or later or fix this yourself and send us a pull request.");
-			logEx("Alternatively, use an older Skript version; do note that those are also unsupported by us.");
-			logEx("");
-			logEx("Again, we do not support Minecraft versions this old.");
-		} else if (!serverPlatform.supported){
+		} else if (!serverPlatform.supported) {
 			logEx("Your server platform appears to be unsupported by Skript. It might not work reliably.");
 			logEx("You can report this at " + issuesUrl + ". However, we may be unable to fix the issue.");
 			logEx("It is recommended that you switch to Paper or Spigot, should you encounter more problems.");
@@ -1576,29 +957,26 @@ public final class Skript extends JavaPlugin implements Listener {
 				logEx("It looks like you are using some plugin(s) that alter how Skript works (addons).");
 				if (stackPlugins.isEmpty()) {
 					logEx("Here is full list of them:");
-					StringBuilder pluginsMessage = new StringBuilder();
 					for (PluginDescriptionFile desc : pluginPackages.values()) {
+						StringBuilder pluginsMessage = new StringBuilder(" - ");
 						pluginsMessage.append(desc.getFullName());
 						String website = desc.getWebsite();
 						if (website != null && !website.isEmpty()) // Add website if found
 							pluginsMessage.append(" (").append(desc.getWebsite()).append(")");
-
-						pluginsMessage.append(" ");
+						logEx(pluginsMessage.toString());
 					}
-					logEx(pluginsMessage.toString());
 					logEx("We could not identify which of those are specially related, so this might also be Skript issue.");
 				} else {
 					logEx("Following plugins are probably related to this error in some way:");
-					StringBuilder pluginsMessage = new StringBuilder();
 					for (PluginDescriptionFile desc : stackPlugins) {
+						StringBuilder pluginsMessage = new StringBuilder(" - ");
 						pluginsMessage.append(desc.getName());
 						String website = desc.getWebsite();
 						if (website != null && !website.isEmpty()) // Add website if found
 							pluginsMessage.append(" (").append(desc.getWebsite()).append(")");
 
-						pluginsMessage.append(" ");
+						logEx(pluginsMessage.toString());
 					}
-					logEx(pluginsMessage.toString());
 				}
 
 				logEx("You should try disabling those plugins one by one, trying to find which one causes it.");
@@ -1629,20 +1007,20 @@ public final class Skript extends JavaPlugin implements Listener {
 		if (updater != null) {
 			ReleaseStatus status = updater.getReleaseStatus();
 			logEx("  Skript: " + getVersion() + (status == ReleaseStatus.LATEST ? " (latest)"
-					: status == ReleaseStatus.OUTDATED ? " (OUTDATED)"
-					: status == ReleaseStatus.CUSTOM ? " (custom version)" : ""));
+				: status == ReleaseStatus.OUTDATED ? " (OUTDATED)"
+				: status == ReleaseStatus.CUSTOM ? " (custom version)" : ""));
 			ReleaseManifest current = updater.getCurrentRelease();
 			logEx("    Flavor: " + current.flavor);
 			logEx("    Date: " + current.date);
 		} else {
 			logEx("  Skript: " + getVersion() + " (unknown; likely custom)");
 		}
-		logEx("  Bukkit: " + Bukkit.getBukkitVersion());
-		logEx("  Minecraft: " + getMinecraftVersion());
+		ServerBuildInfo serverBuildInfo = ServerBuildInfo.buildInfo();
+		logEx("  Server Platform: " + serverBuildInfo.brandId());
+		logEx("  Server Version: " + serverBuildInfo.asString(ServerBuildInfo.StringRepresentation.VERSION_FULL).split(" ")[0]);
+		logEx("  Minecraft Version: " + serverBuildInfo.minecraftVersionId());
 		logEx("  Java: " + System.getProperty("java.version") + " (" + System.getProperty("java.vm.name") + " " + System.getProperty("java.vm.version") + ")");
 		logEx("  OS: " + System.getProperty("os.name") + " " + System.getProperty("os.arch") + " " + System.getProperty("os.version"));
-		logEx();
-		logEx("Server platform: " + serverPlatform.name + (serverPlatform.supported ? "" : " (unsupported)"));
 		logEx();
 		logEx("Current node: " + SkriptLogger.getNode());
 		logEx("Current item: " + (item == null ? "null" : item.toString(null, true)));
@@ -1711,11 +1089,12 @@ public final class Skript extends JavaPlugin implements Listener {
 
 	/**
 	 * Gets the updater instance currently used by Skript.
+	 *
 	 * @return SkriptUpdater instance.
 	 */
 	@Nullable
 	public SkriptUpdater getUpdater() {
-		return updater;
+		return SkriptPlugin.getInstance().updater;
 	}
 
 }

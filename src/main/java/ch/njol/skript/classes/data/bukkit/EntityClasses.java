@@ -8,7 +8,7 @@ import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.classes.EnumClassInfo;
 import ch.njol.skript.classes.Parser;
 import ch.njol.skript.classes.Serializer;
-import ch.njol.skript.classes.data.DefaultChangers;
+import ch.njol.skript.classes.data.defaults.DefaultChangers;
 import ch.njol.skript.classes.registry.RegistryClassInfo;
 import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.lang.ParseContext;

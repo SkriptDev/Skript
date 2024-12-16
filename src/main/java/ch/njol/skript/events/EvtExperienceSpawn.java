@@ -3,6 +3,7 @@ package ch.njol.skript.events;
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.SkriptEventHandler;
+import ch.njol.skript.SkriptPlugin;
 import ch.njol.skript.events.bukkit.ExperienceSpawnEvent;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
@@ -125,7 +126,7 @@ public class EvtExperienceSpawn extends SkriptEvent {
 			//noinspection unchecked
 			for (Class<? extends Event> clazz : new Class[]{BlockExpEvent.class, EntityDeathEvent.class, ExpBottleEvent.class, PlayerFishEvent.class})
 				Bukkit.getPluginManager().registerEvent(clazz, new Listener() {
-				}, priority, EXECUTOR, Skript.getInstance(), true);
+				}, priority, EXECUTOR, SkriptPlugin.getInstance(), true);
 		}
 		return true;
 	}

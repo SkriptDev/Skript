@@ -1,21 +1,3 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.ScriptLoader;
@@ -34,9 +16,7 @@ import ch.njol.util.Kleenean;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.bukkit.event.Event;
@@ -62,7 +42,7 @@ public class ExprScripts extends SimpleExpression<String> {
 				"[all [of the]|the] (disabled|unloaded) scripts [1:without ([subdirectory] paths|parents)]");
 	}
 
-	private static final Path SCRIPTS_PATH = Skript.getInstance().getScriptsFolder().getAbsoluteFile().toPath();
+	private static final Path SCRIPTS_PATH = Skript.getSkriptInstance().getScriptsFolder().getAbsoluteFile().toPath();
 
 	private boolean includeEnabled;
 	private boolean includeDisabled;

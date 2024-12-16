@@ -1,4 +1,4 @@
-package ch.njol.skript.classes.data;
+package ch.njol.skript.classes.data.defaults;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.command.Commands;
@@ -28,10 +28,10 @@ import java.util.UUID;
 
 public class DefaultConverters {
 
-	public DefaultConverters() {
+	private DefaultConverters() {
 	}
 
-	static {
+	static void init() {
 		// Number to subtypes converters
 		Converters.registerConverter(Number.class, Byte.class, Number::byteValue);
 		Converters.registerConverter(Number.class, Double.class, Number::doubleValue);

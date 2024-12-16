@@ -19,7 +19,7 @@ public enum ServerPlatform {
 	/**
 	 * Spigot, with its Bukkit API extensions.
 	 */
-	BUKKIT_SPIGOT("Spigot", false, true),
+	BUKKIT_SPIGOT("Spigot", false, false),
 
 	/**
 	 * Paper Minecraft server, which is a Spigot fork with additional features.
@@ -31,7 +31,7 @@ public enum ServerPlatform {
 	 * Glowstone (or similar) fully open source Minecraft server, which
 	 * supports Spigot API.
 	 */
-	BUKKIT_GLOWSTONE("Glowstone", true, false),
+	BUKKIT_GLOWSTONE("Glowstone", false, false),
 
 	/**
 	 * Doesn't work at all currently.

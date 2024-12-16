@@ -1,24 +1,7 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.SkriptPlugin;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -80,7 +63,7 @@ public class Delay extends Effect {
 		debug(event, true);
 		long start = Skript.debug() ? System.nanoTime() : 0;
 		TriggerItem next = getNext();
-		if (next != null && Skript.getInstance().isEnabled()) { // See https://github.com/SkriptLang/Skript/issues/3702
+		if (next != null && SkriptPlugin.getInstance().isEnabled()) { // See https://github.com/SkriptLang/Skript/issues/3702
 			addDelayedEvent(event);
 
 			Timespan duration = this.duration.getSingle(event);
@@ -90,7 +73,7 @@ public class Delay extends Effect {
 			// Back up local variables
 			Object localVars = Variables.removeLocals(event);
 			
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Skript.getInstance(), () -> {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(SkriptPlugin.getInstance(), () -> {
 				Skript.debug(getIndentation() + "... continuing after " + (System.nanoTime() - start) / 1_000_000_000. + "s");
 
 				// Re-set local variables

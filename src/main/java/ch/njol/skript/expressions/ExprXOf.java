@@ -44,6 +44,8 @@ public class ExprXOf extends PropertyExpression<Object, ItemStack> {
 			return null;
 
 		int amount = a.intValue();
+		if (amount <= 0) return null;
+
 		return get(source, object -> {
 			if (object instanceof Material material) {
 				if (!material.isItem()) return null;

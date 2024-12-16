@@ -1,26 +1,9 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.command;
 
 import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptConfig;
+import ch.njol.skript.SkriptPlugin;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.TriggerItem;
 import ch.njol.skript.lang.parser.ParserInstance;
@@ -295,7 +278,7 @@ public abstract class Commands {
 
 	public static void registerListeners() {
 		if (!registeredListeners) {
-			Bukkit.getPluginManager().registerEvents(commandListener, Skript.getInstance());
+			Bukkit.getPluginManager().registerEvents(commandListener, SkriptPlugin.getInstance());
 
 			Bukkit.getPluginManager().registerEvents(new Listener() {
 				@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -306,7 +289,7 @@ public abstract class Commands {
 						if (handleEffectCommand(event.getPlayer(), event.getMessage()))
 							event.setCancelled(true);
 					} else {
-						Future<Boolean> f = Bukkit.getScheduler().callSyncMethod(Skript.getInstance(), () -> handleEffectCommand(event.getPlayer(), event.getMessage()));
+						Future<Boolean> f = Bukkit.getScheduler().callSyncMethod(SkriptPlugin.getInstance(), () -> handleEffectCommand(event.getPlayer(), event.getMessage()));
 						try {
 							while (true) {
 								try {
@@ -321,7 +304,7 @@ public abstract class Commands {
 						}
 					}
 				}
-			}, Skript.getInstance());
+			}, SkriptPlugin.getInstance());
 
 			registeredListeners = true;
 		}

@@ -58,7 +58,7 @@ public class SkriptMetrics {
 		}));
 
 		metrics.addCustomChart(new SimplePie("buildFlavor", () -> {
-			Updater updater = Skript.getInstance().getUpdater();
+			Updater updater = Skript.getSkriptInstance().getUpdater();
 			if (updater != null)
 				return updater.getCurrentRelease().flavor;
 			return "unknown";

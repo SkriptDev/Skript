@@ -1,0 +1,28 @@
+test "tag expression" when running minecraft "1.21":
+	set {_tag} to biome registry tag "minecraft:is_forest"
+	assert {_tag} is set with "Tag 'minecraft:is_forest' should be set"
+	delete {_tag}
+
+	set {_tag} to block registry tag "minecraft:air"
+	assert {_tag} is set with "Tag 'minecraft:air' should be set"
+	delete {_tag}
+
+	set {_tag} to item registry tag "minecraft:banners"
+	assert {_tag} is set with "Tag 'minecraft:banners' should be set"
+	delete {_tag}
+
+	set {_tag} to entity type registry tag "minecraft:arrows"
+	assert {_tag} is set with "Tag 'minecraft:arrows' should be set"
+	delete {_tag}
+
+	set {_tag} to enchantment registry tag "minecraft:tooltip_order"
+	assert {_tag} is set with "Tag 'minecraft:tooltip_order' should be set"
+	delete {_tag}
+
+	set {_tag} to item registry tag "minecraft:blah_blah_blah"
+	assert {_tag} is not set with "Fake tag 'minecraft:blah_blah_blah' should not be set"
+	delete {_tag}
+
+	set {_tag} to item registry tag "minecraft banners"
+	assert {_tag} is not set with "Broken key/tag 'minecraft banners' should not be set"
+	delete {_tag}

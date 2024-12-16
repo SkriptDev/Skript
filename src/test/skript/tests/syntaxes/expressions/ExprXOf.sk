@@ -23,3 +23,6 @@ test "X of":
 	set {_i} to 1 of sand
 	assert {_i} is set with "We can make an itemstack of sand"
 	assert material of {_i} = sand with "The item should be sane"
+	delete {_i}
+	set {_i} to 0 of stick
+	assert {_i} is not set with "ItemStack shouldn't have an amount less than 1"

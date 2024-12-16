@@ -116,20 +116,20 @@ public class SkriptCommand implements CommandExecutor {
 					SkriptConfig.load();
 
 					ScriptLoader.unloadScripts(ScriptLoader.getLoadedScripts());
-					ScriptLoader.loadScripts(Skript.getInstance().getScriptsFolder(), OpenCloseable.combine(logHandler, timingLogHandler))
+					ScriptLoader.loadScripts(Skript.getSkriptInstance().getScriptsFolder(), OpenCloseable.combine(logHandler, timingLogHandler))
 						.thenAccept(info -> {
 							if (info.files == 0)
-								Skript.warning(Skript.m_no_scripts.toString());
+								Skript.warning(Skript.message_no_scripts.toString());
 							reloaded(sender, logHandler, timingLogHandler, "config and scripts");
 						});
 				} else if (args[1].equalsIgnoreCase("scripts")) {
 					reloading(sender, "scripts");
 
 					ScriptLoader.unloadScripts(ScriptLoader.getLoadedScripts());
-					ScriptLoader.loadScripts(Skript.getInstance().getScriptsFolder(), OpenCloseable.combine(logHandler, timingLogHandler))
+					ScriptLoader.loadScripts(Skript.getSkriptInstance().getScriptsFolder(), OpenCloseable.combine(logHandler, timingLogHandler))
 						.thenAccept(info -> {
 							if (info.files == 0)
-								Skript.warning(Skript.m_no_scripts.toString());
+								Skript.warning(Skript.message_no_scripts.toString());
 							reloaded(sender, logHandler, timingLogHandler, "scripts");
 						});
 				} else if (args[1].equalsIgnoreCase("config")) {
@@ -180,7 +180,7 @@ public class SkriptCommand implements CommandExecutor {
 				if (args[1].equalsIgnoreCase("all")) {
 					try {
 						info(sender, "enable.all.enabling");
-						ScriptLoader.loadScripts(toggleFiles(Skript.getInstance().getScriptsFolder(), true), logHandler)
+						ScriptLoader.loadScripts(toggleFiles(Skript.getSkriptInstance().getScriptsFolder(), true), logHandler)
 							.thenAccept(scriptInfo -> {
 								if (logHandler.numErrors() == 0) {
 									info(sender, "enable.all.enabled");
@@ -251,7 +251,7 @@ public class SkriptCommand implements CommandExecutor {
 				if (args[1].equalsIgnoreCase("all")) {
 					ScriptLoader.unloadScripts(ScriptLoader.getLoadedScripts());
 					try {
-						toggleFiles(Skript.getInstance().getScriptsFolder(), false);
+						toggleFiles(Skript.getSkriptInstance().getScriptsFolder(), false);
 						info(sender, "disable.all.disabled");
 					} catch (IOException e) {
 						error(sender, "disable.all.io error", ExceptionUtils.toString(e));
@@ -301,7 +301,7 @@ public class SkriptCommand implements CommandExecutor {
 				}
 
 			} else if (args[0].equalsIgnoreCase("update")) {
-				SkriptUpdater updater = Skript.getInstance().getUpdater();
+				SkriptUpdater updater = Skript.getSkriptInstance().getUpdater();
 				if (updater == null) { // Oh. That is bad
 					Skript.info(sender, "" + SkriptUpdater.m_internal_error);
 					return true;
@@ -318,7 +318,7 @@ public class SkriptCommand implements CommandExecutor {
 				info(sender, "info.tutorials");
 				info(sender, "info.server", Bukkit.getVersion());
 
-				SkriptUpdater updater = Skript.getInstance().getUpdater();
+				SkriptUpdater updater = Skript.getSkriptInstance().getUpdater();
 				if (updater != null) {
 					info(sender, "info.version", Skript.getVersion() + " (" + updater.getCurrentRelease().flavor + ")");
 				} else {
@@ -333,7 +333,7 @@ public class SkriptCommand implements CommandExecutor {
 					Skript.info(sender, " - " + desc.getFullName() + (web != null ? " (" + web + ")" : ""));
 				}
 
-				List<String> dependencies = Skript.getInstance().getDescription().getSoftDepend();
+				List<String> dependencies = SkriptPlugin.getInstance().getDescription().getSoftDepend();
 				boolean dependenciesFound = false;
 				for (String dep : dependencies) { // Check if any dependency is found in the server plugins
 					Plugin plugin = Bukkit.getPluginManager().getPlugin(dep);
@@ -385,7 +385,7 @@ public class SkriptCommand implements CommandExecutor {
 				ScriptLoader.loadScripts(scriptFile, logHandler)
 					.thenAccept(scriptInfo ->
 						// Code should run on server thread
-						Bukkit.getScheduler().scheduleSyncDelayedTask(Skript.getInstance(), () -> {
+						Bukkit.getScheduler().scheduleSyncDelayedTask(SkriptPlugin.getInstance(), () -> {
 							Bukkit.getPluginManager().callEvent(new SkriptTestEvent()); // Run it
 							ScriptLoader.unloadScripts(ScriptLoader.getLoadedScripts());
 
@@ -438,7 +438,7 @@ public class SkriptCommand implements CommandExecutor {
 		if (script.startsWith(ScriptLoader.DISABLED_SCRIPT_PREFIX))
 			script = script.substring(ScriptLoader.DISABLED_SCRIPT_PREFIX_LENGTH);
 
-		File scriptFile = new File(Skript.getInstance().getScriptsFolder(), script);
+		File scriptFile = new File(Skript.getSkriptInstance().getScriptsFolder(), script);
 		if (!scriptFile.exists()) {
 			scriptFile = new File(scriptFile.getParentFile(), ScriptLoader.DISABLED_SCRIPT_PREFIX + scriptFile.getName());
 			if (!scriptFile.exists()) {

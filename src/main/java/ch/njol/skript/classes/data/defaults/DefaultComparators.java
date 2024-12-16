@@ -1,4 +1,4 @@
-package ch.njol.skript.classes.data;
+package ch.njol.skript.classes.data.defaults;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptConfig;
@@ -33,11 +33,10 @@ import java.util.UUID;
 
 public class DefaultComparators {
 
-	public DefaultComparators() {
+	private DefaultComparators() {
 	}
 
-	static {
-
+	static void init() {
 		// Number - Number
 		Comparators.registerComparator(Number.class, Number.class, new Comparator<>() {
 			@Override

@@ -1,4 +1,4 @@
-package ch.njol.skript.classes.data;
+package ch.njol.skript.classes.data.defaults;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.bukkitutil.InventoryUtils;
@@ -163,12 +163,12 @@ import java.util.Set;
 @SuppressWarnings("deprecation")
 public final class BukkitEventValues {
 
-	public BukkitEventValues() {
+	private BukkitEventValues() {
 	}
 
 	private static final ItemStack AIR_IS = new ItemStack(Material.AIR);
 
-	static {
+	static void init() {
 
 		// === WorldEvents ===
 		EventValues.registerEventValue(WorldEvent.class, World.class, new Getter<>() {

@@ -19,8 +19,12 @@ public class BukkitClasses {
 		EntityClasses.init();
 		EventClasses.init();
 		InventoryClasses.init();
+		ParticleClasses.init();
 		ServerClasses.init();
 		WorldClasses.init();
+
+		// Paper
+		RegistryClasses.init();
 	}
 
 }
