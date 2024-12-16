@@ -68,6 +68,7 @@ import ch.njol.util.coll.iterator.CheckedIterator;
 import ch.njol.util.coll.iterator.EnumerationIterable;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+import io.papermc.paper.ServerBuildInfo;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -1552,12 +1553,6 @@ public final class Skript extends JavaPlugin implements Listener {
 			logEx("");
 			logEx("Just testing things? Good. Please report this bug, so that we can fix it before a stable release.");
 			logEx("Issue tracker: " + issuesUrl);
-		} else if (!isRunningMinecraft(1, 9)) {
-			logEx("You are running an outdated Minecraft version not supported by Skript.");
-			logEx("Please update to Minecraft 1.9.4 or later or fix this yourself and send us a pull request.");
-			logEx("Alternatively, use an older Skript version; do note that those are also unsupported by us.");
-			logEx("");
-			logEx("Again, we do not support Minecraft versions this old.");
 		} else if (!serverPlatform.supported){
 			logEx("Your server platform appears to be unsupported by Skript. It might not work reliably.");
 			logEx("You can report this at " + issuesUrl + ". However, we may be unable to fix the issue.");
@@ -1576,29 +1571,26 @@ public final class Skript extends JavaPlugin implements Listener {
 				logEx("It looks like you are using some plugin(s) that alter how Skript works (addons).");
 				if (stackPlugins.isEmpty()) {
 					logEx("Here is full list of them:");
-					StringBuilder pluginsMessage = new StringBuilder();
 					for (PluginDescriptionFile desc : pluginPackages.values()) {
+						StringBuilder pluginsMessage = new StringBuilder(" - ");
 						pluginsMessage.append(desc.getFullName());
 						String website = desc.getWebsite();
 						if (website != null && !website.isEmpty()) // Add website if found
 							pluginsMessage.append(" (").append(desc.getWebsite()).append(")");
-
-						pluginsMessage.append(" ");
+						logEx(pluginsMessage.toString());
 					}
-					logEx(pluginsMessage.toString());
 					logEx("We could not identify which of those are specially related, so this might also be Skript issue.");
 				} else {
 					logEx("Following plugins are probably related to this error in some way:");
-					StringBuilder pluginsMessage = new StringBuilder();
 					for (PluginDescriptionFile desc : stackPlugins) {
+						StringBuilder pluginsMessage = new StringBuilder(" - ");
 						pluginsMessage.append(desc.getName());
 						String website = desc.getWebsite();
 						if (website != null && !website.isEmpty()) // Add website if found
 							pluginsMessage.append(" (").append(desc.getWebsite()).append(")");
 
-						pluginsMessage.append(" ");
+						logEx(pluginsMessage.toString());
 					}
-					logEx(pluginsMessage.toString());
 				}
 
 				logEx("You should try disabling those plugins one by one, trying to find which one causes it.");
@@ -1637,12 +1629,12 @@ public final class Skript extends JavaPlugin implements Listener {
 		} else {
 			logEx("  Skript: " + getVersion() + " (unknown; likely custom)");
 		}
-		logEx("  Bukkit: " + Bukkit.getBukkitVersion());
-		logEx("  Minecraft: " + getMinecraftVersion());
+		ServerBuildInfo serverBuildInfo = ServerBuildInfo.buildInfo();
+		logEx("  Server Platform: " + serverBuildInfo.brandId());
+		logEx("  Server Version: " + serverBuildInfo.asString(ServerBuildInfo.StringRepresentation.VERSION_FULL).split(" ")[0]);
+		logEx("  Minecraft Version: " + serverBuildInfo.minecraftVersionId());
 		logEx("  Java: " + System.getProperty("java.version") + " (" + System.getProperty("java.vm.name") + " " + System.getProperty("java.vm.version") + ")");
 		logEx("  OS: " + System.getProperty("os.name") + " " + System.getProperty("os.arch") + " " + System.getProperty("os.version"));
-		logEx();
-		logEx("Server platform: " + serverPlatform.name + (serverPlatform.supported ? "" : " (unsupported)"));
 		logEx();
 		logEx("Current node: " + SkriptLogger.getNode());
 		logEx("Current item: " + (item == null ? "null" : item.toString(null, true)));
