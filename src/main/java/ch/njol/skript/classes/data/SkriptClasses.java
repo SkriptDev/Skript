@@ -32,10 +32,17 @@ import java.util.Locale;
  */
 @SuppressWarnings("rawtypes")
 public class SkriptClasses {
-	public SkriptClasses() {
+
+	private static boolean INITIALIZED = false;
+
+	private SkriptClasses() {
 	}
 
-	static {
+	public static void init() {
+		if (INITIALIZED) {
+			throw new IllegalStateException("SkriptClasses have already been initialized");
+		}
+		INITIALIZED = true;
 		//noinspection unchecked
 		Classes.registerClass(new ClassInfo<>(ClassInfo.class, "classinfo")
 			.user("types?")

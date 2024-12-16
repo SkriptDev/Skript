@@ -1,13 +1,9 @@
 package ch.njol.skript;
 
-import ch.njol.skript.classes.data.BukkitEventValues;
-import ch.njol.skript.classes.data.DefaultComparators;
-import ch.njol.skript.classes.data.DefaultConverters;
-import ch.njol.skript.classes.data.DefaultFunctions;
-import ch.njol.skript.classes.data.DefaultOperations;
 import ch.njol.skript.classes.data.JavaClasses;
 import ch.njol.skript.classes.data.SkriptClasses;
 import ch.njol.skript.classes.data.bukkit.BukkitClasses;
+import ch.njol.skript.classes.data.defaults.DefaultValues;
 import ch.njol.skript.command.Commands;
 import ch.njol.skript.doc.Documentation;
 import ch.njol.skript.events.EvtSkript;
@@ -197,7 +193,7 @@ public class SkriptPlugin extends JavaPlugin implements Listener {
 		getAddonInstance();
 
 		// Load classes which are always safe to use
-		new JavaClasses(); // These may be needed in configuration
+		JavaClasses.init(); // These may be needed in configuration
 
 		// Check server software, Minecraft version, etc.
 		if (!Skript.checkServerPlatform()) {
@@ -209,7 +205,7 @@ public class SkriptPlugin extends JavaPlugin implements Listener {
 		// And then not-so-safe classes
 		Throwable classLoadError = null;
 		try {
-			new SkriptClasses();
+			SkriptClasses.init();
 			BukkitClasses.init();
 		} catch (Throwable e) {
 			classLoadError = e;
@@ -243,12 +239,7 @@ public class SkriptPlugin extends JavaPlugin implements Listener {
 		skriptCommand.setTabCompleter(new SkriptCommandTabCompleter());
 
 		// Load Bukkit stuff. It is done after platform check, because something might be missing!
-		new BukkitEventValues();
-
-		new DefaultComparators();
-		new DefaultConverters();
-		new DefaultFunctions();
-		new DefaultOperations();
+		DefaultValues.init();
 
 		ChatMessages.registerListeners();
 

@@ -1,4 +1,4 @@
-package ch.njol.skript.classes.data;
+package ch.njol.skript.classes.data.defaults;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.bukkitutil.ParticleUtils;
@@ -41,11 +41,14 @@ import java.util.UUID;
 
 public class DefaultFunctions {
 
+	private DefaultFunctions() {
+	}
+
 	private static String str(double n) {
 		return StringUtils.toString(n, 4);
 	}
 
-	static {
+	static void init() {
 		Parameter<?>[] numberParam = new Parameter[]{new Parameter<>("n", DefaultClasses.NUMBER, true, null)};
 		Parameter<?>[] numbersParam = new Parameter[]{new Parameter<>("ns", DefaultClasses.NUMBER, false, null)};
 

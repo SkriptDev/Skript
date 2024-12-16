@@ -1,4 +1,4 @@
-package ch.njol.skript.classes.data;
+package ch.njol.skript.classes.data.defaults;
 
 import ch.njol.skript.bukkitutil.ItemUtils;
 import ch.njol.skript.bukkitutil.PlayerUtils;

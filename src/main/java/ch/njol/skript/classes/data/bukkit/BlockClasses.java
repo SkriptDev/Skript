@@ -3,7 +3,7 @@ package ch.njol.skript.classes.data.bukkit;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.classes.Parser;
 import ch.njol.skript.classes.Serializer;
-import ch.njol.skript.classes.data.DefaultChangers;
+import ch.njol.skript.classes.data.defaults.DefaultChangers;
 import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.registrations.Classes;
