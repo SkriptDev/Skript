@@ -36,7 +36,7 @@ public class FilesGenerate {
 
 	@Test
 	public void checkFiles() {
-		Skript skript = Skript.getInstance();
+		Skript skript = Skript.getSkriptInstance();
 		File dataFolder = SkriptPlugin.getInstance().getDataFolder();
 		assertTrue(skript.getScriptsFolder().exists());
 		assertTrue(skript.getScriptsFolder().isDirectory());
