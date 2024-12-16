@@ -1,4 +1,3 @@
-package
 package ch.njol.skript.conditions;
 
 import ch.njol.skript.Skript;
